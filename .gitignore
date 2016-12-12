@@ -1,0 +1,8 @@
+# Ignore Composer symlink
+composer
+
+# Ignore dependencies
+vendor/
+
+# Ignore IDE
+nbproject/
