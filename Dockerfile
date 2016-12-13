@@ -20,10 +20,19 @@ ENV SUPERVISOR_VERSION=3.3.0
 RUN apk add python=$PYTHON_VERSION py-pip=$PY_PIP_VERSION
 RUN pip install supervisor==$SUPERVISOR_VERSION
 
+# Install source code (minus dependencies)
+COPY src /var/www/src
+COPY public /var/www/public
+
+# Install Composer
+# See https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md
+# wget https://raw.githubusercontent.com/composer/getcomposer.org/1b137f8bf6db3e79a38a5bc45324414a6b1f9df2/web/installer -O - -q | php -- --quiet
+
 # The port is:
 #
 # 8083 - API
 EXPOSE 8083
 
 # @todo This needs a folder (and, of course, something to serve)
-ENTRYPOINT ["php", "-S", "localhost:8083"]
+# We're listening to the public IP for the container, can this be obtained from ifconfig?
+ENTRYPOINT ["php", "-S", "172.17.0.2:8083", "-t", "/var/www/public"]
