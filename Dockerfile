@@ -2,6 +2,9 @@
 #
 # PHP in the container takes it merely to 20M or so, but Supervisor requires
 # Python, and this bumps it up to 66M.
+#
+# A build server would negate the need for Composer and its dependencies, but the approach
+# of building in the container is fine for now.
 
 FROM alpine:3.4
 
@@ -46,6 +49,5 @@ RUN cd /var/www && php /tmp/composer.phar install
 # 8083 - API
 EXPOSE 8083
 
-# @todo This needs a folder (and, of course, something to serve)
 # We're listening to the public IP for the container, can this be obtained from ifconfig?
 ENTRYPOINT ["php", "-S", "172.17.0.2:8083", "-t", "/var/www/public"]
