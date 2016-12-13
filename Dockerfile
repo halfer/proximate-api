@@ -24,9 +24,17 @@ RUN pip install supervisor==$SUPERVISOR_VERSION
 COPY src /var/www/src
 COPY public /var/www/public
 
+# Composer needs all of 'php5-openssl php5-json php5-phar'
+RUN apk --update add openssl php5-openssl php5-json php5-phar
+
+# Refresh the SSL certs, which seem to be missing
+RUN wget -O /etc/ssl/cert.pem https://curl.haxx.se/ca/cacert.pem
+
 # Install Composer
 # See https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md
-# wget https://raw.githubusercontent.com/composer/getcomposer.org/1b137f8bf6db3e79a38a5bc45324414a6b1f9df2/web/installer -O - -q | php -- --quiet
+COPY install/composer.sh /tmp/composer.sh
+RUN chmod u+x /tmp/composer.sh
+RUN sh /tmp/composer.sh
 
 # The port is:
 #
