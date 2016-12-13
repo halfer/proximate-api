@@ -21,6 +21,8 @@ RUN apk add python=$PYTHON_VERSION py-pip=$PY_PIP_VERSION
 RUN pip install supervisor==$SUPERVISOR_VERSION
 
 # Install source code (minus dependencies)
+COPY composer.json /var/www/
+COPY composer.lock /var/www/
 COPY src /var/www/src
 COPY public /var/www/public
 
@@ -34,7 +36,10 @@ RUN wget -O /etc/ssl/cert.pem https://curl.haxx.se/ca/cacert.pem
 # See https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md
 COPY install/composer.sh /tmp/composer.sh
 RUN chmod u+x /tmp/composer.sh
-RUN sh /tmp/composer.sh
+RUN cd /tmp && sh /tmp/composer.sh
+
+# Install deps using Composer
+RUN cd /var/www && php /tmp/composer.phar install
 
 # The port is:
 #
