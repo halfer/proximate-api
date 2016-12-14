@@ -49,5 +49,6 @@ RUN cd /var/www && php /tmp/composer.phar install
 # 8083 - API
 EXPOSE 8083
 
-# We're listening to the public IP for the container, can this be obtained from ifconfig?
-ENTRYPOINT ["php", "-S", "172.17.0.2:8083", "-t", "/var/www/public"]
+# We need a shell command to interpret the env var
+COPY container-start.sh /tmp/
+ENTRYPOINT ["sh", "/tmp/container-start.sh"]
