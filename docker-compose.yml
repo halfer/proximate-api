@@ -1,0 +1,16 @@
+version: '2'
+services:
+
+  # This defines an external port so it can be called by the outside world
+  proximate-api:
+    container_name: "api_instance"
+    image: proximate-api
+    ports:
+    - "8083:8083"
+    links:
+    - proximate-proxy
+
+  # This does not need external ports defined, since it is for internal use only
+  proximate-proxy:
+    image: proximate-proxy
+    container_name: "proxy_instance"
