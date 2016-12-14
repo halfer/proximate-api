@@ -6,7 +6,7 @@ services:
     container_name: "api_instance"
     image: proximate-api
     ports:
-    - "8083:8083"
+    - "8080:8080"
     links:
     - proximate-proxy
 

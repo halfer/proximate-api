@@ -50,8 +50,8 @@ COPY public /var/www/public
 
 # The port is:
 #
-# 8083 - API
-EXPOSE 8083
+# 8080 - API
+EXPOSE 8080
 
 # We need a shell command to interpret the env var
 COPY container-start.sh /tmp/
