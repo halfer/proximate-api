@@ -28,7 +28,7 @@ $app->get('/count/:url', function ($request, $response) {
  *
  * This can use GET "/__admin/mappings" from the WireMock playback instance
  */
-$app->get('/list/[{page}]/[{pagesize}]', function ($request, $response) {
+$app->get('/list/{page}/[{pagesize}]', function ($request, $response) {
     $response->write("List pages");
     return $response;
 });
