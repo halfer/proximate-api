@@ -23,12 +23,6 @@ ENV SUPERVISOR_VERSION=3.3.0
 RUN apk add python=$PYTHON_VERSION py-pip=$PY_PIP_VERSION
 RUN pip install supervisor==$SUPERVISOR_VERSION
 
-# Install source code (minus dependencies)
-COPY composer.json /var/www/
-COPY composer.lock /var/www/
-COPY src /var/www/src
-COPY public /var/www/public
-
 # Composer needs all of 'php5-openssl php5-json php5-phar'
 RUN apk --update add openssl php5-openssl php5-json php5-phar
 
@@ -39,10 +33,20 @@ RUN wget -O /etc/ssl/cert.pem https://curl.haxx.se/ca/cacert.pem
 # See https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md
 COPY install/composer.sh /tmp/composer.sh
 RUN chmod u+x /tmp/composer.sh
+
+# Install dependencies first
+COPY composer.json /var/www/
+COPY composer.lock /var/www/
+
+# Install Composer
 RUN cd /tmp && sh /tmp/composer.sh
 
 # Install deps using Composer
 RUN cd /var/www && php /tmp/composer.phar install
+
+# Install main body of source code after other installations, since this will change more often
+COPY src /var/www/src
+COPY public /var/www/public
 
 # The port is:
 #
