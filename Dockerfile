@@ -42,8 +42,8 @@ RUN cd /tmp && sh /tmp/composer.sh
 COPY composer.json /var/www/
 COPY composer.lock /var/www/
 
-# Install deps using Composer
-RUN cd /var/www && php /tmp/composer.phar install
+# Install deps using Composer (ignore dev deps)
+RUN cd /var/www && php /tmp/composer.phar install --no-dev
 
 # Install main body of source code after other installations, since this will change more often
 COPY src /var/www/src
