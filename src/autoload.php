@@ -36,6 +36,11 @@ class Autoloader
 	{
 		return substr($class, 0, strlen(self::PREFIX)) == self::PREFIX;
 	}
+
+    protected function getProjectRoot()
+    {
+        return realpath(__DIR__ . '/..');
+    }
 }
 
 spl_autoload_register(
