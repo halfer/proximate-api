@@ -10,6 +10,7 @@ abstract class Base
 {
     protected $request;
     protected $response;
+    protected $curl;
 
     public function __construct($request, $response)
     {
@@ -37,10 +38,37 @@ abstract class Base
         return $this->request;
     }
 
+    /**
+     * Gets the current response object
+     *
+     * @return \Slim\Http\Response
+     */
     protected function getResponse()
     {
         return $this->response;
     }
 
+    public function setCurl(\PestJSON $curl)
+    {
+        $this->curl = $curl;
+
+        return $this;
+    }
+
+    /**
+     * Get current curl instance
+     *
+     * @return \PestJSON
+     */
+    public function getCurl()
+    {
+        return $this->curl;
+    }
+
     abstract public function execute();
+
+    protected function setJsonHeader()
+    {
+        $this->getResponse()->withHeader('Content-type', 'application/json');
+    }
 }
