@@ -17,9 +17,7 @@ class Count extends Base
             ]
         ];
 
-        return $this->
-            getResponse()->
-            withJson($result);
+        return $this->getResponse()->withJson($result);
     }
 
     protected function fetchCount()
