@@ -11,8 +11,21 @@ class Count extends Base
 {
     public function execute()
     {
-        $this->
+        $result = [
+            'result' => [
+                'count' => $this->fetchCount(),
+            ]
+        ];
+
+        return $this->
             getResponse()->
-            write("Count total pages");
+            withJson($result);
+    }
+
+    protected function fetchCount()
+    {
+        $mappings = $this->getCurl()->get('__admin/mappings');
+
+        return isset($mappings['meta']['total']) ? $mappings['meta']['total'] : null;
     }
 }

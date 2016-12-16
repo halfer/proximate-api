@@ -5,14 +5,15 @@ require_once $root . '/vendor/autoload.php';
 require_once $root . '/src/autoload.php';
 
 $app = new Slim\App();
+$curl = new PestJSON('http://proximate-proxy:8081');
 
 /**
  * Counts the number of pages stored in the cache
  */
-$app->get('/count', function ($request, $response) {
+$app->get('/count', function ($request, $response) use ($curl) {
     $controller = new Proximate\Controller\Count($request, $response);
-    $controller->execute();
-    return $response;
+    $controller->setCurl($curl);
+    return $controller->execute();
 });
 
 /**

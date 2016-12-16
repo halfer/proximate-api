@@ -69,6 +69,8 @@ abstract class Base
 
     protected function setJsonHeader()
     {
-        $this->getResponse()->withHeader('Content-type', 'application/json');
+        #global $app;
+        $newResponse = $this->getResponse()->withHeader('Content-type', 'application/json');
+        #$app->setResponse($newResponse);
     }
 }
