@@ -9,7 +9,8 @@ $app = new Slim\App();
  * Counts the number of pages stored in the cache
  */
 $app->get('/count', function ($request, $response) {
-    $response->write("Count total pages");
+    $controller = new Proximate\Controller\Count($request, $response);
+    $controller->execute();
     return $response;
 });
 
@@ -29,7 +30,8 @@ $app->get('/count/:url', function ($request, $response) {
  * This can use GET "/__admin/mappings" from the WireMock playback instance
  */
 $app->get('/list/{page}/[{pagesize}]', function ($request, $response) {
-    $response->write("List pages");
+    $controller = new \Proximate\Controller\CacheList($request, $response);
+    $controller->execute();
     return $response;
 });
 
@@ -39,12 +41,20 @@ $app->get('/list/{page}/[{pagesize}]', function ($request, $response) {
  * Adds the item onto the queueing system and returns a unique GUID
  */
 $app->post('/cache/{url}', function ($request, $response, $args) {
-    $response->write("Cache the specified page");
+    $controller = new Proximate\Controller\CacheSave($request, $response);
+    $controller->execute();
     return $response;
 });
 
+/**
+ * Fetches the status of a specific site fetch
+ *
+ * @todo I think I should just use the URL rather than a GUID, since duplicates won't
+ * be separately cached.
+ */
 $app->get('/status/{guid}', function ($request, $response, $args) {
-    $response->write("Determines the status of the specified item");
+    $controller = new Proximate\Controller\ItemStatus($request, $response);
+    $controller->execute();
     return $response;
 });
 
