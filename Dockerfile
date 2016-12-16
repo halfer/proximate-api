@@ -24,7 +24,8 @@ RUN apk add python=$PYTHON_VERSION py-pip=$PY_PIP_VERSION
 RUN pip install supervisor==$SUPERVISOR_VERSION
 
 # Composer needs all of 'php5-openssl php5-json php5-phar'
-RUN apk --update add openssl php5-openssl php5-json php5-phar
+# Pest needs 'php5-curl'
+RUN apk --update add openssl php5-openssl php5-json php5-phar php5-curl
 
 # Refresh the SSL certs, which seem to be missing
 RUN wget -O /etc/ssl/cert.pem https://curl.haxx.se/ca/cacert.pem
