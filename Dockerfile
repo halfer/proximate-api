@@ -34,12 +34,12 @@ RUN wget -O /etc/ssl/cert.pem https://curl.haxx.se/ca/cacert.pem
 COPY install/composer.sh /tmp/composer.sh
 RUN chmod u+x /tmp/composer.sh
 
+# Install Composer
+RUN cd /tmp && sh /tmp/composer.sh
+
 # Install dependencies first
 COPY composer.json /var/www/
 COPY composer.lock /var/www/
-
-# Install Composer
-RUN cd /tmp && sh /tmp/composer.sh
 
 # Install deps using Composer
 RUN cd /var/www && php /tmp/composer.phar install
