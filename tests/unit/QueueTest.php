@@ -151,7 +151,6 @@ $json = '{
         $fileService = $this->getFileServiceMock();
         $globPattern = self::DUMMY_DIR . '/*.' . Queue::STATUS_READY;
         $queueItems = [$this->getQueueEntryPath(), ];
-        $json = $this->getCacheEntry(self::DUMMY_URL);
         $fileService->
 
             // Read a list of queue items
@@ -162,7 +161,7 @@ $json = '{
             // Read the only queue item
             shouldReceive('fileGetContents')->
             with($queueItems[0])->
-            andReturn($json)->
+            andReturn($this->getCacheEntry(self::DUMMY_URL))->
 
             // Status changes
             shouldReceive('rename')->
@@ -186,9 +185,35 @@ $json = '{
         $this->markTestIncomplete();
     }
 
-    public function testProcessorCallsSleep()
+    public function testProcessorOnEmptyQueue()
     {
-        $this->markTestIncomplete();
+        // Set up mocks to return a single item
+        $fileService = $this->getFileServiceMock();
+        $globPattern = self::DUMMY_DIR . '/*.' . Queue::STATUS_READY;
+        $queueItems = [];
+
+        $fileService->
+
+            // Read a list of queue items
+            shouldReceive('glob')->
+            with($globPattern)->
+            andReturn($queueItems)->
+
+            // Should not read anything
+            shouldReceive('fileGetContents')->
+            never()->
+
+            // No status changes
+            shouldReceive('rename')->
+            never();
+
+        // Set up the queue and process zero items
+        $queue = $this->getQueueMock($fileService);
+        $queue->
+            shouldReceive('sleep')->
+            once();
+        $queue->process(1);
+
     }
 
     /**
