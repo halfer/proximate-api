@@ -16,26 +16,16 @@ class QueueTest extends PHPUnit_Framework_TestCase
      */
     public function testConstructorStoresDirectory()
     {
-        $fileService = Mockery::mock(FileService::class);
-        $fileService->
-            shouldReceive('isDirectory')->
-            andReturn(true);
-
         $queue = new QueueTestHarness();
-        $queue->init($dir = self::DUMMY_DIR, $fileService);
+        $queue->init($dir = self::DUMMY_DIR, $this->getFileServiceMock());
 
         $this->assertEquals($dir, $queue->getQueueDir());
     }
 
     public function testConstructorAllowsGoodFolder()
     {
-        $fileService = Mockery::mock(FileService::class);
-        $fileService->
-            shouldReceive('isDirectory')->
-            andReturn(true);
-
         $queue = new QueueTestHarness();
-        $queue->init(self::DUMMY_DIR, $fileService);
+        $queue->init(self::DUMMY_DIR, $this->getFileServiceMock());
 
         $this->assertTrue(true);
     }
@@ -47,20 +37,15 @@ class QueueTest extends PHPUnit_Framework_TestCase
      */
     public function testConstructorRejectsBadFolder()
     {
-        $fileService = Mockery::mock(FileService::class);
-        $fileService->
-            shouldReceive('isDirectory')->
-            andReturn(false);
-
         $queue = new QueueTestHarness();
-        $queue->init(self::DUMMY_DIR, $fileService);
+        $queue->init(self::DUMMY_DIR, $this->getFileServiceMock(false));
     }
 
     public function testUrlStorage()
     {
-        $url = 'http://example.com/';
+        // Doesn't need full initialisation
         $queue = new QueueTestHarness();
-        $queue->setUrl($url, new FileService());
+        $queue->setUrl($url = 'http://example.com/');
 
         $this->assertEquals($url, $queue->getUrl());
     }
@@ -72,15 +57,15 @@ class QueueTest extends PHPUnit_Framework_TestCase
      */
     public function testGetUrlFailsWithNoUrl()
     {
-        $url = 'http://example.com/';
-        $queue = new QueueTestHarness('', new FileService());
+        $queue = new QueueTestHarness();
 
-        $this->assertEquals($url, $queue->getUrl());
+        $this->assertEquals('http://example.com/', $queue->getUrl());
     }
 
     public function testUrlRegexStorage()
     {
-        $queue = new QueueTestHarness('', new FileService());
+        // Doesn't need full initialisation
+        $queue = new QueueTestHarness();
 
         // Test the empty condition first
         $this->assertNull($queue->getUrlRegex());
@@ -95,7 +80,7 @@ class QueueTest extends PHPUnit_Framework_TestCase
     {
         $queue = new QueueTestHarness('', new FileService());
 
-        // Test the initial condition is not null
+        // Test the initial condition has a non-null default value
         $this->assertNotNull($queue->getRejectFiles());
 
         // Now try the setter
@@ -170,6 +155,16 @@ class QueueTest extends PHPUnit_Framework_TestCase
         $queue->init($dir, $fileService ?: new FileService());
 
         return $queue;
+    }
+
+    protected function getFileServiceMock($isDirectory = true)
+    {
+        $fileService = Mockery::mock(FileService::class);
+        $fileService->
+            shouldReceive('isDirectory')->
+            andReturn($isDirectory);
+
+        return $fileService;
     }
 
     public function tearDown()
