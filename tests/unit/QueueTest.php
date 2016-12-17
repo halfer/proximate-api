@@ -92,13 +92,34 @@ class QueueTest extends PHPUnit_Framework_TestCase
 
     public function testNewQueueItemSucceeds()
     {
-        // @todo Will need to mock out file_exists from checkEntryExists first
-        $this->markTestIncomplete();
+        $queue = $this->getQueueMock();
+        $queue->
+            shouldReceive('fileExists')->
+            andReturn(false)->
+            shouldReceive('createQueueEntry');
+
+        $queue->
+            setUrl('http://example.com')->
+            queue();
     }
 
+    /**
+     * @expectedException \Exception
+     *
+     * @todo This can be refactored together with testNewQueueItemSucceeds
+     */
     public function testExistingQueueItemFails()
     {
-        $this->markTestIncomplete();
+        $queue = $this->getQueueMock();
+        $queue->
+            shouldReceive('fileExists')->
+            andReturn(true)->
+            shouldReceive('createQueueEntry')->
+            never();
+
+        $queue->
+            setUrl('http://example.com')->
+            queue();
     }
 
     public function testProcessor()
@@ -106,9 +127,23 @@ class QueueTest extends PHPUnit_Framework_TestCase
         $this->markTestIncomplete();
     }
 
-    public function checkProcessorCallsSleep()
+    public function testProcessorCallsSleep()
     {
         $this->markTestIncomplete();
+    }
+
+    /**
+     * @return Queue|\Mockery\Mock
+     */
+    protected function getQueueMock()
+    {
+        $dir = __DIR__;
+        $queue = Mockery::mock(QueueTestHarness::class, [$dir])->
+            makePartial()->
+            shouldAllowMockingProtectedMethods();
+        $queue->init($dir);
+
+        return $queue;
     }
 }
 

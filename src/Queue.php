@@ -98,7 +98,9 @@ class Queue
     public function queue()
     {
         $this->checkEntryExists();
-        $this->createQueueEntry();
+        $ok = $this->createQueueEntry();
+
+        return $ok;
     }
 
     /**
@@ -110,7 +112,7 @@ class Queue
      */
     protected function checkEntryExists()
     {
-        if (file_exists($this->getQueueEntryPath()))
+        if ($this->fileExists($this->getQueueEntryPath()))
         {
             throw new \Exception(
                 "This URL is already queued"
@@ -243,8 +245,13 @@ class Queue
         return $this->queueDir;
     }
 
-    protected function isDirectory($dir)
+    protected function fileExists($filename)
     {
-        return is_dir($dir);
+        return file_exists($filename);
+    }
+
+    protected function isDirectory($filename)
+    {
+        return is_dir($filename);
     }
 }
