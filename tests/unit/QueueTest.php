@@ -131,6 +131,7 @@ $json = '{
      */
     public function testExistingQueueItemFails()
     {
+        // Will fail because a queue item exists already
         $fileService = $this->getFileServiceMockWithFileExists(true);
 
         $queue = $this->getQueueMock($fileService);
@@ -145,7 +146,20 @@ $json = '{
 
     public function testProcessor()
     {
-        $this->markTestIncomplete();
+        // Set up mocks to return a single item
+        $fileService = $this->getFileServiceMockWithFileExists();
+        $fileService->
+            shouldReceive('glob')->
+            with('pattern')->    // @todo Add the expected pattern into this
+            andReturn('/file/name') // @todo Add an emulated file here
+        ;
+
+        // Set up the queue and process the "waiting" item
+        $queue = $this->getQueueMock($fileService);
+        $queue->
+            shouldReceive('sleep');
+
+        $queue->process();
     }
 
     public function testProcessorCallsSleep()

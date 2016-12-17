@@ -166,7 +166,7 @@ class Queue
         return md5($this->url);
     }
 
-    public function processor($loop = 50)
+    public function process($loop = 50)
     {
         for ($i = 0; $i < $loop; $i++)
         {
@@ -190,12 +190,14 @@ class Queue
      */
     protected function getNextQueueItem()
     {
-        $files = glob($this->getQueueDir() . '/*. ' . self::STATUS_READY);
+        $fileService = $this->getFileService();
+        $pattern = $this->getQueueDir() . '/*. ' . self::STATUS_READY;
+        $files = $fileService->glob($pattern);
         $data = false;
 
         if ($files) {
             $file = current($files);
-            $json = file_get_contents($file);
+            $json = $fileService->fileGetContents($file);
             $data = json_decode($json, true);
 
             // If the item does not contain JSON, bork
