@@ -15,18 +15,15 @@ class QueueReadTest extends QueueTestBase
     {
         // Set up mocks to return a single item
         $fileService = $this->getFileServiceMock();
-        $globPattern = self::DUMMY_DIR . '/*.' . Queue::STATUS_READY;
         $queueItems = [$this->getQueueEntryPath(), ];
-        $fileService->
 
-            // Read a list of queue items
-            shouldReceive('glob')->
-            with($globPattern)->
-            andReturn($queueItems)->
+        $this->setGlobExpectation($fileService, $queueItems);
+        $fileService->
 
             // Read the only queue item
             shouldReceive('fileGetContents')->
             with($queueItems[0])->
+            once()->
             andReturn($this->getCacheEntry(self::DUMMY_URL))->
 
             // Status changes
@@ -46,24 +43,40 @@ class QueueReadTest extends QueueTestBase
         $queue->process(1);
     }
 
+    /**
+     * @expectedException \Exception
+     */
     public function testProcessorBadEntry()
     {
-        $this->markTestIncomplete();
+        // Set up mocks to return a single item
+        $fileService = $this->getFileServiceMock();
+        $queueItems = [$this->getQueueEntryPath(), ];
+
+        $this->setGlobExpectation($fileService, $queueItems);
+        $fileService->
+
+            // Read the only queue item
+            shouldReceive('fileGetContents')->
+            with($queueItems[0])->
+            once()->
+            andReturn("Bad JSON");
+
+        // Set up the queue and process the corrupted item
+        $queue = $this->getQueueMock($fileService);
+        $queue->
+            shouldReceive('sleep')->
+            never();
+        $queue->process(1);
     }
 
     public function testProcessorOnEmptyQueue()
     {
         // Set up mocks to return a single item
         $fileService = $this->getFileServiceMock();
-        $globPattern = self::DUMMY_DIR . '/*.' . Queue::STATUS_READY;
         $queueItems = [];
 
+        $this->setGlobExpectation($fileService, $queueItems);
         $fileService->
-
-            // Read a list of queue items
-            shouldReceive('glob')->
-            with($globPattern)->
-            andReturn($queueItems)->
 
             // Should not read anything
             shouldReceive('fileGetContents')->
@@ -81,7 +94,17 @@ class QueueReadTest extends QueueTestBase
         $queue->process(1);
     }
 
-    protected function getQueueMock($fileService) {
+    protected function setGlobExpectation(FileService $fileService, array $queueItems)
+    {
+        $globPattern = self::DUMMY_DIR . '/*.' . Queue::STATUS_READY;
+        $fileService->
+            shouldReceive('glob')->
+            with($globPattern)->
+            andReturn($queueItems);
+    }
+
+    protected function getQueueMock($fileService)
+    {
         return parent::getQueueMock(QueueReadTestHarness::class, $fileService);
     }
 }

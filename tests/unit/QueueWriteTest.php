@@ -125,7 +125,8 @@ class QueueWriteTest extends QueueTestBase
             queue();
     }
 
-    protected function getQueueMock($fileService = null) {
+    protected function getQueueMock($fileService = null)
+    {
         return parent::getQueueMock(QueueWriteTestHarness::class, $fileService);
     }
 
