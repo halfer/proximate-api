@@ -32,4 +32,9 @@ class File
     {
         return glob($pattern);
     }
+
+    public function rename($oldname, $newname)
+    {
+        rename($oldname, $newname);
+    }
 }

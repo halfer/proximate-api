@@ -9,6 +9,9 @@
  * *.doing      currently working
  * *.done       finished
  * *.error      failed
+ *
+ * This class could in fact be split into two - QueueInsert and QueueRead,
+ * that might simplify the tests too.
  */
 
 namespace Proximate;
@@ -142,9 +145,26 @@ class Queue
         return (bool) $bytes;
     }
 
+    /**
+     * Gets the "ready" entry for current URL
+     *
+     * @return string
+     */
     protected function getQueueEntryPath()
     {
-        return $this->getQueueDir() . '/' . $this->getQueueEntryName();
+        return $this->getQueueDir() . '/' . $this->getQueueEntryName($this->url);
+    }
+
+    /**
+     * Gets an entry for the given URL and status
+     *
+     * @param string $url
+     * @param string $status
+     * @return string
+     */
+    protected function getQueueEntryPathForUrl($url, $status)
+    {
+        return $this->getQueueDir() . '/' . $this->getQueueEntryName($url, $status);
     }
 
     protected function getQueueEntryDetails()
@@ -156,14 +176,14 @@ class Queue
         ];
     }
 
-    protected function getQueueEntryName()
+    protected function getQueueEntryName($url, $status = self::STATUS_READY)
     {
-        return $this->calculateUrlHash() . '.ready';
+        return $this->calculateUrlHash($url) . '.' . $status;
     }
 
-    protected function calculateUrlHash()
+    protected function calculateUrlHash($url)
     {
-        return md5($this->url);
+        return md5($url);
     }
 
     public function process($loop = 50)
@@ -191,7 +211,7 @@ class Queue
     protected function getNextQueueItem()
     {
         $fileService = $this->getFileService();
-        $pattern = $this->getQueueDir() . '/*. ' . self::STATUS_READY;
+        $pattern = $this->getQueueDir() . '/*.' . self::STATUS_READY;
         $files = $fileService->glob($pattern);
         $data = false;
 
@@ -214,10 +234,12 @@ class Queue
 
     protected function processQueueItem(array $itemData)
     {
-        $this->changeItemStatus($itemData, self::STATUS_DOING);
+        $url = $itemData['url'];
+        $this->changeItemStatus($url, self::STATUS_READY, self::STATUS_DOING);
         $ok = $this->fetchSite($itemData);
         $this->changeItemStatus(
-            $itemData,
+            $url,
+            self::STATUS_DOING,
             $ok ? self::STATUS_DONE : self::STATUS_ERROR
         );
     }
@@ -237,16 +259,16 @@ class Queue
                 -e http_proxy=127.0.0.1:8082 \
                 http://www.nimvelo.com/about/careers/
         ";
-        #system($command);
-        trigger_error("Processing fetch", E_USER_ERROR);
-        sleep(1);
 
         return true;
     }
 
-    protected function changeItemStatus(array $itemData, $status)
+    protected function changeItemStatus($url, $oldStatus, $newStatus)
     {
-        // @todo Rename the item from current status to the new one
+        $this->getFileService()->rename(
+            $this->getQueueEntryPathForUrl($url, $oldStatus),
+            $this->getQueueEntryPathForUrl($url, $newStatus)
+        );
     }
 
     protected function sleep()

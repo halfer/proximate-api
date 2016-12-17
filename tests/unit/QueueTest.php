@@ -11,6 +11,7 @@ class QueueTest extends PHPUnit_Framework_TestCase
 {
     const DUMMY_DIR = '/any/dir';
     const DUMMY_URL = 'http://example.com/';
+    const DUMMY_HASH = 'a6bf1757fff057f266b697df9cf176fd';
 
     /**
      * Checks that the folder is stored
@@ -99,7 +100,7 @@ class QueueTest extends PHPUnit_Framework_TestCase
         $fileService = $this->getFileServiceMockWithFileExists();
         $fileService->
             shouldReceive('filePutContents')->
-            with(self::DUMMY_DIR . '/a6bf1757fff057f266b697df9cf176fd.ready', $json)->
+            with($this->getQueueEntryPath(), $json)->
             once()
         ;
 
@@ -147,19 +148,42 @@ $json = '{
     public function testProcessor()
     {
         // Set up mocks to return a single item
-        $fileService = $this->getFileServiceMockWithFileExists();
+        $fileService = $this->getFileServiceMock();
+        $globPattern = self::DUMMY_DIR . '/*.' . Queue::STATUS_READY;
+        $queueItems = [$this->getQueueEntryPath(), ];
+        $json = $this->getCacheEntry(self::DUMMY_URL);
         $fileService->
+
+            // Read a list of queue items
             shouldReceive('glob')->
-            with('pattern')->    // @todo Add the expected pattern into this
-            andReturn('/file/name') // @todo Add an emulated file here
+            with($globPattern)->
+            andReturn($queueItems)->
+
+            // Read the only queue item
+            shouldReceive('fileGetContents')->
+            with($queueItems[0])->
+            andReturn($json)->
+
+            // Status changes
+            shouldReceive('rename')->
+            with($this->getQueueEntryPath(), $this->getQueueEntryPath(Queue::STATUS_DOING))->
+            once()->
+            shouldReceive('rename')->
+            with($this->getQueueEntryPath(Queue::STATUS_DOING), $this->getQueueEntryPath(Queue::STATUS_DONE))->
+            once()
         ;
 
         // Set up the queue and process the "waiting" item
         $queue = $this->getQueueMock($fileService);
         $queue->
-            shouldReceive('sleep');
+            shouldReceive('sleep')->
+            never();
+        $queue->process(1);
+    }
 
-        $queue->process();
+    public function testProcessorBadEntry()
+    {
+        $this->markTestIncomplete();
     }
 
     public function testProcessorCallsSleep()
@@ -200,6 +224,11 @@ $json = '{
             andReturn($fileExists);
 
         return $fileService;
+    }
+
+    protected function getQueueEntryPath($status = Queue::STATUS_READY)
+    {
+        return self::DUMMY_DIR . '/' . self::DUMMY_HASH . '.' . $status;
     }
 
     public function tearDown()
