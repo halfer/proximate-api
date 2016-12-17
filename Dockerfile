@@ -45,6 +45,11 @@ COPY composer.lock /var/www/
 # Install deps using Composer (ignore dev deps)
 RUN cd /var/www && php /tmp/composer.phar install --no-dev
 
+# Configure Supervisor
+COPY conf/supervisord.conf /etc/supervisord.conf
+# -s specify a (null) shell; -D = don't assign a password; -H don't create a home directory
+RUN adduser -s /bin/false -D -H proximate
+
 # Install main body of source code after other installations, since this will change more often
 COPY src /var/www/src
 COPY public /var/www/public
@@ -56,4 +61,6 @@ EXPOSE 8080
 
 # We need a shell command to interpret the env var
 COPY container-start.sh /tmp/
-ENTRYPOINT ["sh", "/tmp/container-start.sh"]
+
+# Use Supervisor as the entry point
+ENTRYPOINT ["supervisord", "--nodaemon", "--configuration", "/etc/supervisord.conf"]
