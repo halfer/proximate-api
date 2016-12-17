@@ -1,18 +1,17 @@
 <?php
 
 /** 
- * Unit tests for the Queue
+ * Unit tests for writing to the Queue
  */
 
-use Proximate\Queue;
+namespace Proximate\Test;
+
+use Proximate\Queue\Write as Queue;
 use Proximate\Service\File as FileService;
+use Mockery;
 
-class QueueTest extends PHPUnit_Framework_TestCase
+class QueueWriteTest extends QueueTestBase
 {
-    const DUMMY_DIR = '/any/dir';
-    const DUMMY_URL = 'http://example.com/';
-    const DUMMY_HASH = 'a6bf1757fff057f266b697df9cf176fd';
-
     /**
      * Checks that the folder is stored
      */
@@ -110,24 +109,6 @@ class QueueTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Creates a JSON string representing a cache entry
-     *
-     * @param string $url
-     * @return string
-     */
-    protected function getCacheEntry($url)
-    {
-$json = '{
-    "url": __URL__,
-    "url_regex": null,
-    "reject_files": "*.png,*.jpg,*.jpeg,*.css,*.js"
-}';
-        $out = str_replace('__URL__', json_encode($url), $json);
-
-        return $out;
-    }
-
-    /**
      * @expectedException \Exception
      */
     public function testExistingQueueItemFails()
@@ -145,101 +126,6 @@ $json = '{
             queue();
     }
 
-    public function testProcessor()
-    {
-        // Set up mocks to return a single item
-        $fileService = $this->getFileServiceMock();
-        $globPattern = self::DUMMY_DIR . '/*.' . Queue::STATUS_READY;
-        $queueItems = [$this->getQueueEntryPath(), ];
-        $fileService->
-
-            // Read a list of queue items
-            shouldReceive('glob')->
-            with($globPattern)->
-            andReturn($queueItems)->
-
-            // Read the only queue item
-            shouldReceive('fileGetContents')->
-            with($queueItems[0])->
-            andReturn($this->getCacheEntry(self::DUMMY_URL))->
-
-            // Status changes
-            shouldReceive('rename')->
-            with($this->getQueueEntryPath(), $this->getQueueEntryPath(Queue::STATUS_DOING))->
-            once()->
-            shouldReceive('rename')->
-            with($this->getQueueEntryPath(Queue::STATUS_DOING), $this->getQueueEntryPath(Queue::STATUS_DONE))->
-            once()
-        ;
-
-        // Set up the queue and process the "waiting" item
-        $queue = $this->getQueueMock($fileService);
-        $queue->
-            shouldReceive('sleep')->
-            never();
-        $queue->process(1);
-    }
-
-    public function testProcessorBadEntry()
-    {
-        $this->markTestIncomplete();
-    }
-
-    public function testProcessorOnEmptyQueue()
-    {
-        // Set up mocks to return a single item
-        $fileService = $this->getFileServiceMock();
-        $globPattern = self::DUMMY_DIR . '/*.' . Queue::STATUS_READY;
-        $queueItems = [];
-
-        $fileService->
-
-            // Read a list of queue items
-            shouldReceive('glob')->
-            with($globPattern)->
-            andReturn($queueItems)->
-
-            // Should not read anything
-            shouldReceive('fileGetContents')->
-            never()->
-
-            // No status changes
-            shouldReceive('rename')->
-            never();
-
-        // Set up the queue and process zero items
-        $queue = $this->getQueueMock($fileService);
-        $queue->
-            shouldReceive('sleep')->
-            once();
-        $queue->process(1);
-
-    }
-
-    /**
-     * @param FileService $fileService
-     * @return Queue|\Mockery\Mock
-     */
-    protected function getQueueMock($fileService = null)
-    {
-        $queue = Mockery::mock(QueueTestHarness::class)->
-            shouldAllowMockingProtectedMethods()->
-            makePartial();
-        $queue->init(self::DUMMY_DIR, $fileService ?: new FileService());
-
-        return $queue;
-    }
-
-    protected function getFileServiceMock($isDirectory = true)
-    {
-        $fileService = Mockery::mock(FileService::class);
-        $fileService->
-            shouldReceive('isDirectory')->
-            andReturn($isDirectory);
-
-        return $fileService;
-    }
-
     protected function getFileServiceMockWithFileExists($fileExists = false)
     {
         $fileService = $this->getFileServiceMock();
@@ -249,11 +135,6 @@ $json = '{
             andReturn($fileExists);
 
         return $fileService;
-    }
-
-    protected function getQueueEntryPath($status = Queue::STATUS_READY)
-    {
-        return self::DUMMY_DIR . '/' . self::DUMMY_HASH . '.' . $status;
     }
 
     public function tearDown()
