@@ -96,12 +96,8 @@ class QueueTest extends PHPUnit_Framework_TestCase
     "url_regex": null,
     "reject_files": "*.png,*.jpg,*.jpeg,*.css,*.js"
 }';
-        $fileService = Mockery::mock(FileService::class)->makePartial();
+        $fileService = $this->getFileServiceMockWithFileExists();
         $fileService->
-            shouldReceive('fileExists')->
-            once()->
-            andReturn(false)->
-
             shouldReceive('filePutContents')->
             with(__DIR__ . '/a9b9f04336ce0181a08e774e01113b31.ready', $json)->
             once()
@@ -114,15 +110,16 @@ class QueueTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Exception
-     *
-     * @todo This can be refactored together with testNewQueueItemSucceeds
      */
     public function testExistingQueueItemFails()
     {
-        $queue = $this->getQueueMock();
-        $queue->
+        $fileService = $this->getFileServiceMockWithFileExists();
+        $fileService->
             shouldReceive('fileExists')->
-            andReturn(true)->
+            andReturn(true);
+
+        $queue = $this->getQueueMock($fileService);
+        $queue->
             shouldReceive('createQueueEntry')->
             never();
 
@@ -147,12 +144,10 @@ class QueueTest extends PHPUnit_Framework_TestCase
      */
     protected function getQueueMock($fileService = null)
     {
-        $dir = __DIR__;
         $queue = Mockery::mock(QueueTestHarness::class)->
             shouldAllowMockingProtectedMethods()->
-            makePartial()
-        ;
-        $queue->init($dir, $fileService ?: new FileService());
+            makePartial();
+        $queue->init(self::DUMMY_DIR, $fileService ?: new FileService());
 
         return $queue;
     }
@@ -163,6 +158,17 @@ class QueueTest extends PHPUnit_Framework_TestCase
         $fileService->
             shouldReceive('isDirectory')->
             andReturn($isDirectory);
+
+        return $fileService;
+    }
+
+    protected function getFileServiceMockWithFileExists($fileExists = false)
+    {
+        $fileService = $this->getFileServiceMock();
+        $fileService->
+            shouldReceive('fileExists')->
+            once()->
+            andReturn($fileExists);
 
         return $fileService;
     }
