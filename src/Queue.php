@@ -18,8 +18,7 @@ class Queue
     const STATUS_READY = 'ready';
     const STATUS_DOING = 'doing';
     const STATUS_DONE = 'done';
-    // Not sure if I need this one yet
-    #const STATUS_ERROR = 'error';
+    const STATUS_ERROR = 'error';
 
     protected $queueDir;
     protected $url;
@@ -29,10 +28,19 @@ class Queue
     /**
      * Constructor
      *
+     * @todo Swap to a more specific exception
+     *
      * @param string $queueDir
      */
     public function __construct($queueDir)
     {
+        if (!is_dir($queueDir))
+        {
+            throw new \Exception(
+                "The supplied queue directory does not exist"
+            );
+        }
+
         $this->queueDir = $queueDir;
     }
 
@@ -107,7 +115,7 @@ class Queue
 
     protected function getQueueEntryPath()
     {
-        return $this->queueDir . '/' . $this->getQueueEntryName();
+        return $this->getQueueDir() . '/' . $this->getQueueEntryName();
     }
 
     protected function getQueueEntryDetails()
@@ -133,9 +141,9 @@ class Queue
     {
         for ($i = 0; $i < $loop; $i++)
         {
-            if ($queueItem = $this->getNextQueueItem())
+            if ($itemData = $this->getNextQueueItem())
             {
-                $this->processQueueItem($queueItem);
+                $this->processQueueItem($itemData);
             }
             else
             {
@@ -144,20 +152,46 @@ class Queue
         }
     }
 
+    /**
+     * Returns the data for the next ready item, if one is available
+     *
+     * @todo Validate the item contains the right keys
+     *
+     * @return string
+     */
     protected function getNextQueueItem()
     {
-        // @todo
-        return false;
+        $files = glob($this->getQueueDir() . '/*. ' . self::STATUS_READY);
+        $data = false;
+
+        if ($files) {
+            $file = current($files);
+            $json = file_get_contents($file);
+            $data = json_decode($json, true);
+
+            // If the item does not contain JSON, bork
+            if (!$data)
+            {
+                throw new \Exception(
+                    "Invalid queue item found"
+                );
+            }
+        }
+
+        return $data;
     }
 
-    protected function processQueueItem($queueItem)
+    protected function processQueueItem(array $itemData)
     {
-        $this->changeItemStatus($queueItem, 'doing');
-        $this->fetchSite($queueItem);
-        $this->changeItemStatus($queueItem, 'done');
+        $this->changeItemStatus($itemData, self::STATUS_DOING);
+        $ok = $this->fetchSite($itemData);
+        $this->changeItemStatus(
+            $itemData,
+            $ok ? self::STATUS_DONE : self::STATUS_ERROR
+        );
     }
 
-    protected function fetchSite($queueItem)
+    protected function fetchSite(array $itemData)
     {
         // @todo Run a wget on the site
         $command = "
@@ -173,9 +207,13 @@ class Queue
                 http://www.nimvelo.com/about/careers/
         ";
         #system($command);
+        trigger_error("Processing fetch", E_USER_ERROR);
+        sleep(1);
+
+        return true;
     }
 
-    protected function changeItemStatus($queueItem, $status)
+    protected function changeItemStatus(array $itemData, $status)
     {
         // @todo Rename the item from current status to the new one
     }
@@ -183,5 +221,10 @@ class Queue
     protected function sleep()
     {
         sleep(2);
+    }
+
+    protected function getQueueDir()
+    {
+        return $this->queueDir;
     }
 }
