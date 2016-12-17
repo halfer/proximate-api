@@ -5,6 +5,7 @@
  */
 
 use Proximate\Queue;
+use Proximate\Service\File as FileService;
 
 class QueueTest extends PHPUnit_Framework_TestCase
 {
@@ -14,17 +15,22 @@ class QueueTest extends PHPUnit_Framework_TestCase
     public function testConstructorStoresDirectory()
     {
         $dir = __DIR__;
-        $queue = new QueueTestHarness($dir);
-        $queue->init($dir);
+        $queue = new QueueTestHarness();
+        $queue->init($dir, new FileService());
 
         $this->assertEquals($dir, $queue->getQueueDir());
     }
 
     public function testConstructorAllowsGoodFolder()
     {
+        $fileService = Mockery::mock(FileService::class);
+        $fileService->
+            shouldReceive('isDirectory')->
+            andReturn(true);
+
         $dir = __DIR__;
-        $queue = new QueueTestHarness($dir);
-        $queue->init($dir);
+        $queue = new QueueTestHarness();
+        $queue->init($dir, $fileService);
 
         $this->assertTrue(true);
     }
@@ -36,17 +42,21 @@ class QueueTest extends PHPUnit_Framework_TestCase
      */
     public function testConstructorRejectsBadFolder()
     {
+        $fileService = Mockery::mock(FileService::class);
+        $fileService->
+            shouldReceive('isDirectory')->
+            andReturn(false);
+
         $dir = __DIR__;
-        $queue = new QueueTestHarness($dir);
-        $queue->setDirectoryFound(false);
-        $queue->init($dir);
+        $queue = new QueueTestHarness();
+        $queue->init($dir, $fileService);
     }
 
     public function testUrlStorage()
     {
         $url = 'http://example.com/';
-        $queue = new QueueTestHarness('');
-        $queue->setUrl($url);
+        $queue = new QueueTestHarness();
+        $queue->setUrl($url, new FileService());
 
         $this->assertEquals($url, $queue->getUrl());
     }
@@ -59,14 +69,14 @@ class QueueTest extends PHPUnit_Framework_TestCase
     public function testGetUrlFailsWithNoUrl()
     {
         $url = 'http://example.com/';
-        $queue = new QueueTestHarness('');
+        $queue = new QueueTestHarness('', new FileService());
 
         $this->assertEquals($url, $queue->getUrl());
     }
 
     public function testUrlRegexStorage()
     {
-        $queue = new QueueTestHarness('');
+        $queue = new QueueTestHarness('', new FileService());
 
         // Test the empty condition first
         $this->assertNull($queue->getUrlRegex());
@@ -79,7 +89,7 @@ class QueueTest extends PHPUnit_Framework_TestCase
 
     public function testRejectFilesStorage()
     {
-        $queue = new QueueTestHarness('');
+        $queue = new QueueTestHarness('', new FileService());
 
         // Test the initial condition is not null
         $this->assertNotNull($queue->getRejectFiles());
@@ -92,13 +102,23 @@ class QueueTest extends PHPUnit_Framework_TestCase
 
     public function testNewQueueItemSucceeds()
     {
-        $queue = $this->getQueueMock();
-        $queue->
+        $json = '{
+    "url": "http:\/\/example.com",
+    "url_regex": null,
+    "reject_files": "*.png,*.jpg,*.jpeg,*.css,*.js"
+}';
+        $fileService = Mockery::mock(FileService::class)->makePartial();
+        $fileService->
             shouldReceive('fileExists')->
+            once()->
             andReturn(false)->
-            shouldReceive('createQueueEntry');
 
-        $queue->
+            shouldReceive('filePutContents')->
+            with(__DIR__ . '/a9b9f04336ce0181a08e774e01113b31.ready', $json)->
+            once()
+        ;
+
+        $this->getQueueMock($fileService)->
             setUrl('http://example.com')->
             queue();
     }
@@ -133,42 +153,37 @@ class QueueTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param FileService $fileService
      * @return Queue|\Mockery\Mock
      */
-    protected function getQueueMock()
+    protected function getQueueMock($fileService = null)
     {
         $dir = __DIR__;
-        $queue = Mockery::mock(QueueTestHarness::class, [$dir])->
-            makePartial()->
-            shouldAllowMockingProtectedMethods();
-        $queue->init($dir);
+        $queue = Mockery::mock(QueueTestHarness::class)->
+            shouldAllowMockingProtectedMethods()->
+            makePartial()
+        ;
+        $queue->init($dir, $fileService ?: new FileService());
 
         return $queue;
+    }
+
+    public function tearDown()
+    {
+        Mockery::close();
     }
 }
 
 class QueueTestHarness extends Queue
 {
-    protected $directoryFound = true;
-
     // Remove the constructor
-    public function __construct($queueDir)
+    public function __construct()
     {
     }
 
     // Make this public
-    public function init($queueDir)
+    public function init($queueDir, \Proximate\Service\File $fileService)
     {
-        parent::init($queueDir);
-    }
-
-    public function setDirectoryFound($directoryFound)
-    {
-        $this->directoryFound = $directoryFound;
-    }
-
-    protected function isDirectory($dir)
-    {
-        return $this->directoryFound;
+        parent::init($queueDir, $fileService);
     }
 }
