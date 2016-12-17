@@ -17,12 +17,13 @@ class QueueTestBase extends \PHPUnit_Framework_TestCase
     const DUMMY_HASH = 'a6bf1757fff057f266b697df9cf176fd';
 
     /**
+     * @param string $queueClassName
      * @param FileService $fileService
      * @return Queue|\Mockery\Mock
      */
-    protected function getQueueMock($fileService = null)
+    protected function getQueueMock($queueClassName, $fileService = null)
     {
-        $queue = Mockery::mock(QueueTestHarness::class)->
+        $queue = Mockery::mock($queueClassName)->
             shouldAllowMockingProtectedMethods()->
             makePartial();
         $queue->init(self::DUMMY_DIR, $fileService ?: new FileService());
@@ -61,5 +62,10 @@ $json = '{
     protected function getQueueEntryPath($status = Queue::STATUS_READY)
     {
         return self::DUMMY_DIR . '/' . self::DUMMY_HASH . '.' . $status;
+    }
+
+    public function tearDown()
+    {
+        Mockery::close();
     }
 }

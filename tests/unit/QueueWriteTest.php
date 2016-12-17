@@ -8,7 +8,6 @@ namespace Proximate\Test;
 
 use Proximate\Queue\Write as Queue;
 use Proximate\Service\File as FileService;
-use Mockery;
 
 class QueueWriteTest extends QueueTestBase
 {
@@ -17,7 +16,7 @@ class QueueWriteTest extends QueueTestBase
      */
     public function testConstructorStoresDirectory()
     {
-        $queue = new QueueTestHarness();
+        $queue = new QueueWriteTestHarness();
         $queue->init($dir = self::DUMMY_DIR, $this->getFileServiceMock());
 
         $this->assertEquals($dir, $queue->getQueueDir());
@@ -25,7 +24,7 @@ class QueueWriteTest extends QueueTestBase
 
     public function testConstructorAllowsGoodFolder()
     {
-        $queue = new QueueTestHarness();
+        $queue = new QueueWriteTestHarness();
         $queue->init(self::DUMMY_DIR, $this->getFileServiceMock());
 
         $this->assertTrue(true);
@@ -38,14 +37,14 @@ class QueueWriteTest extends QueueTestBase
      */
     public function testConstructorRejectsBadFolder()
     {
-        $queue = new QueueTestHarness();
+        $queue = new QueueWriteTestHarness();
         $queue->init(self::DUMMY_DIR, $this->getFileServiceMock(false));
     }
 
     public function testUrlStorage()
     {
         // Doesn't need full initialisation
-        $queue = new QueueTestHarness();
+        $queue = new QueueWriteTestHarness();
         $queue->setUrl($url = self::DUMMY_URL);
 
         $this->assertEquals($url, $queue->getUrl());
@@ -58,7 +57,7 @@ class QueueWriteTest extends QueueTestBase
      */
     public function testGetUrlFailsWithNoUrl()
     {
-        $queue = new QueueTestHarness();
+        $queue = new QueueWriteTestHarness();
 
         $this->assertEquals(self::DUMMY_URL, $queue->getUrl());
     }
@@ -66,7 +65,7 @@ class QueueWriteTest extends QueueTestBase
     public function testUrlRegexStorage()
     {
         // Doesn't need full initialisation
-        $queue = new QueueTestHarness();
+        $queue = new QueueWriteTestHarness();
 
         // Test the empty condition first
         $this->assertNull($queue->getUrlRegex());
@@ -79,7 +78,7 @@ class QueueWriteTest extends QueueTestBase
 
     public function testRejectFilesStorage()
     {
-        $queue = new QueueTestHarness('', new FileService());
+        $queue = new QueueWriteTestHarness('', new FileService());
 
         // Test the initial condition has a non-null default value
         $this->assertNotNull($queue->getRejectFiles());
@@ -126,6 +125,10 @@ class QueueWriteTest extends QueueTestBase
             queue();
     }
 
+    protected function getQueueMock($fileService = null) {
+        return parent::getQueueMock(QueueWriteTestHarness::class, $fileService);
+    }
+
     protected function getFileServiceMockWithFileExists($fileExists = false)
     {
         $fileService = $this->getFileServiceMock();
@@ -136,14 +139,9 @@ class QueueWriteTest extends QueueTestBase
 
         return $fileService;
     }
-
-    public function tearDown()
-    {
-        Mockery::close();
-    }
 }
 
-class QueueTestHarness extends Queue
+class QueueWriteTestHarness extends Queue
 {
     // Remove the constructor
     public function __construct()

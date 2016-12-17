@@ -7,10 +7,11 @@
 namespace Proximate\Test;
 
 use Proximate\Queue\Read as Queue;
+use Proximate\Service\File as FileService;
 
 class QueueReadTest extends QueueTestBase
 {
-    public function __testProcessor()
+    public function testProcessor()
     {
         // Set up mocks to return a single item
         $fileService = $this->getFileServiceMock();
@@ -45,12 +46,12 @@ class QueueReadTest extends QueueTestBase
         $queue->process(1);
     }
 
-    public function __testProcessorBadEntry()
+    public function testProcessorBadEntry()
     {
         $this->markTestIncomplete();
     }
 
-    public function __testProcessorOnEmptyQueue()
+    public function testProcessorOnEmptyQueue()
     {
         // Set up mocks to return a single item
         $fileService = $this->getFileServiceMock();
@@ -78,5 +79,23 @@ class QueueReadTest extends QueueTestBase
             shouldReceive('sleep')->
             once();
         $queue->process(1);
+    }
+
+    protected function getQueueMock($fileService) {
+        return parent::getQueueMock(QueueReadTestHarness::class, $fileService);
+    }
+}
+
+class QueueReadTestHarness extends Queue
+{
+    // Remove the constructor
+    public function __construct()
+    {
+    }
+
+    // Make this public
+    public function init($queueDir, FileService $fileService)
+    {
+        parent::init($queueDir, $fileService);
     }
 }
