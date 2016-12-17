@@ -9,14 +9,20 @@ use Proximate\Service\File as FileService;
 
 class QueueTest extends PHPUnit_Framework_TestCase
 {
+    const DUMMY_DIR = '/any/dir';
+
     /**
      * Checks that the folder is stored
      */
     public function testConstructorStoresDirectory()
     {
-        $dir = __DIR__;
+        $fileService = Mockery::mock(FileService::class);
+        $fileService->
+            shouldReceive('isDirectory')->
+            andReturn(true);
+
         $queue = new QueueTestHarness();
-        $queue->init($dir, new FileService());
+        $queue->init($dir = self::DUMMY_DIR, $fileService);
 
         $this->assertEquals($dir, $queue->getQueueDir());
     }
@@ -28,9 +34,8 @@ class QueueTest extends PHPUnit_Framework_TestCase
             shouldReceive('isDirectory')->
             andReturn(true);
 
-        $dir = __DIR__;
         $queue = new QueueTestHarness();
-        $queue->init($dir, $fileService);
+        $queue->init(self::DUMMY_DIR, $fileService);
 
         $this->assertTrue(true);
     }
@@ -47,9 +52,8 @@ class QueueTest extends PHPUnit_Framework_TestCase
             shouldReceive('isDirectory')->
             andReturn(false);
 
-        $dir = __DIR__;
         $queue = new QueueTestHarness();
-        $queue->init($dir, $fileService);
+        $queue->init(self::DUMMY_DIR, $fileService);
     }
 
     public function testUrlStorage()
@@ -182,7 +186,7 @@ class QueueTestHarness extends Queue
     }
 
     // Make this public
-    public function init($queueDir, \Proximate\Service\File $fileService)
+    public function init($queueDir, FileService $fileService)
     {
         parent::init($queueDir, $fileService);
     }
