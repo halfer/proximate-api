@@ -10,6 +10,7 @@ use Proximate\Service\File as FileService;
 class QueueTest extends PHPUnit_Framework_TestCase
 {
     const DUMMY_DIR = '/any/dir';
+    const DUMMY_URL = 'http://example.com/';
 
     /**
      * Checks that the folder is stored
@@ -45,7 +46,7 @@ class QueueTest extends PHPUnit_Framework_TestCase
     {
         // Doesn't need full initialisation
         $queue = new QueueTestHarness();
-        $queue->setUrl($url = 'http://example.com/');
+        $queue->setUrl($url = self::DUMMY_URL);
 
         $this->assertEquals($url, $queue->getUrl());
     }
@@ -59,7 +60,7 @@ class QueueTest extends PHPUnit_Framework_TestCase
     {
         $queue = new QueueTestHarness();
 
-        $this->assertEquals('http://example.com/', $queue->getUrl());
+        $this->assertEquals(self::DUMMY_URL, $queue->getUrl());
     }
 
     public function testUrlRegexStorage()
@@ -89,23 +90,40 @@ class QueueTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($reject, $queue->getRejectFiles());
     }
 
+    /**
+     * Checks that a new item is written to a mock FS
+     */
     public function testNewQueueItemSucceeds()
     {
-        $json = '{
-    "url": "http:\/\/example.com",
-    "url_regex": null,
-    "reject_files": "*.png,*.jpg,*.jpeg,*.css,*.js"
-}';
+        $json = $this->getCacheEntry(self::DUMMY_URL);
         $fileService = $this->getFileServiceMockWithFileExists();
         $fileService->
             shouldReceive('filePutContents')->
-            with(__DIR__ . '/a9b9f04336ce0181a08e774e01113b31.ready', $json)->
+            with(self::DUMMY_DIR . '/a6bf1757fff057f266b697df9cf176fd.ready', $json)->
             once()
         ;
 
         $this->getQueueMock($fileService)->
-            setUrl('http://example.com')->
+            setUrl(self::DUMMY_URL)->
             queue();
+    }
+
+    /**
+     * Creates a JSON string representing a cache entry
+     *
+     * @param string $url
+     * @return string
+     */
+    protected function getCacheEntry($url)
+    {
+$json = '{
+    "url": __URL__,
+    "url_regex": null,
+    "reject_files": "*.png,*.jpg,*.jpeg,*.css,*.js"
+}';
+        $out = str_replace('__URL__', json_encode($url), $json);
+
+        return $out;
     }
 
     /**
@@ -113,10 +131,7 @@ class QueueTest extends PHPUnit_Framework_TestCase
      */
     public function testExistingQueueItemFails()
     {
-        $fileService = $this->getFileServiceMockWithFileExists();
-        $fileService->
-            shouldReceive('fileExists')->
-            andReturn(true);
+        $fileService = $this->getFileServiceMockWithFileExists(true);
 
         $queue = $this->getQueueMock($fileService);
         $queue->
@@ -124,7 +139,7 @@ class QueueTest extends PHPUnit_Framework_TestCase
             never();
 
         $queue->
-            setUrl('http://example.com')->
+            setUrl(self::DUMMY_URL)->
             queue();
     }
 
