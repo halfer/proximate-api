@@ -45,6 +45,9 @@ COPY composer.lock /var/www/
 # Install deps using Composer (ignore dev deps)
 RUN cd /var/www && php /tmp/composer.phar install --no-dev
 
+# Create a folder to use as a queue
+RUN mkdir -p /var/proximate/queue
+
 # Configure Supervisor
 COPY conf/supervisord.conf /etc/supervisord.conf
 # -s specify a (null) shell; -D = don't assign a password; -H don't create a home directory
