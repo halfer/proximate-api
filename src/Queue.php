@@ -54,6 +54,9 @@ class Queue
             if ($queueItem = $this->getNextQueueItem())
             {
                 $this->processQueueItem($queueItem);
+            }
+            else
+            {
                 $this->sleep();
             }
         }
@@ -62,6 +65,7 @@ class Queue
     protected function getNextQueueItem()
     {
         // @todo
+        return false;
     }
 
     protected function processQueueItem($queueItem)
