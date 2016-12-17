@@ -122,7 +122,7 @@ class Queue
 
     protected function createQueueEntry()
     {
-        $bytes = file_put_contents(
+        $bytes = $this->filePutContents(
             $this->getQueueEntryPath(),
             json_encode($this->getQueueEntryDetails(), JSON_PRETTY_PRINT)
         );
@@ -253,5 +253,10 @@ class Queue
     protected function isDirectory($filename)
     {
         return is_dir($filename);
+    }
+
+    protected function filePutContents($filename, $data)
+    {
+        return file_put_contents($filename, $data);
     }
 }
