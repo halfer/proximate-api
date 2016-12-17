@@ -13,6 +13,8 @@
 
 namespace Proximate;
 
+use Proximate\Service\File as FileService;
+
 class Queue
 {
     const STATUS_READY = 'ready';
@@ -21,6 +23,7 @@ class Queue
     const STATUS_ERROR = 'error';
 
     protected $queueDir;
+    protected $fileService;
     protected $url;
     protected $urlRegex;
     protected $rejectFiles = '*.png,*.jpg,*.jpeg,*.css,*.js';
@@ -28,18 +31,26 @@ class Queue
     /**
      * Constructor
      *
+     * @param string $queueDir
+     * @param FileService $fileService
+     */
+    public function __construct($queueDir, FileService $fileService)
+    {
+        $this->init($queueDir, $fileService);
+    }
+
+    /**
+     * Mockable version of the c'tor
+     *
      * @todo Swap to a more specific exception
      *
      * @param string $queueDir
+     * @param FileService $fileService
+     * @throws \Exception
      */
-    public function __construct($queueDir)
+    protected function init($queueDir, FileService $fileService)
     {
-        $this->init($queueDir);
-    }
-
-    protected function init($queueDir)
-    {
-        if (!$this->isDirectory($queueDir))
+        if (!$fileService->isDirectory($queueDir))
         {
             throw new \Exception(
                 "The supplied queue directory does not exist"
@@ -47,6 +58,7 @@ class Queue
         }
 
         $this->queueDir = $queueDir;
+        $this->fileService = $fileService;
     }
 
     public function setUrl($url)
@@ -112,7 +124,7 @@ class Queue
      */
     protected function checkEntryExists()
     {
-        if ($this->fileExists($this->getQueueEntryPath()))
+        if ($this->getFileService()->fileExists($this->getQueueEntryPath()))
         {
             throw new \Exception(
                 "This URL is already queued"
@@ -122,7 +134,7 @@ class Queue
 
     protected function createQueueEntry()
     {
-        $bytes = $this->filePutContents(
+        $bytes = $this->getFileService()->filePutContents(
             $this->getQueueEntryPath(),
             json_encode($this->getQueueEntryDetails(), JSON_PRETTY_PRINT)
         );
@@ -245,18 +257,13 @@ class Queue
         return $this->queueDir;
     }
 
-    protected function fileExists($filename)
+    /**
+     * Returns the current file service injected into the queue
+     *
+     * @return FileService
+     */
+    protected function getFileService()
     {
-        return file_exists($filename);
-    }
-
-    protected function isDirectory($filename)
-    {
-        return is_dir($filename);
-    }
-
-    protected function filePutContents($filename, $data)
-    {
-        return file_put_contents($filename, $data);
+        return $this->fileService;
     }
 }
