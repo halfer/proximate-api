@@ -34,7 +34,12 @@ class Queue
      */
     public function __construct($queueDir)
     {
-        if (!is_dir($queueDir))
+        $this->init($queueDir);
+    }
+
+    protected function init($queueDir)
+    {
+        if (!$this->isDirectory($queueDir))
         {
             throw new \Exception(
                 "The supplied queue directory does not exist"
@@ -68,11 +73,21 @@ class Queue
         return $this;
     }
 
+    public function getUrlRegex()
+    {
+        return $this->urlRegex;
+    }
+
     public function setRejectFiles($rejectFiles)
     {
         $this->rejectFiles = $rejectFiles;
 
         return $this;
+    }
+
+    public function getRejectFiles()
+    {
+        return $this->rejectFiles;
     }
 
     /**
@@ -223,8 +238,13 @@ class Queue
         sleep(2);
     }
 
-    protected function getQueueDir()
+    public function getQueueDir()
     {
         return $this->queueDir;
+    }
+
+    protected function isDirectory($dir)
+    {
+        return is_dir($dir);
     }
 }
