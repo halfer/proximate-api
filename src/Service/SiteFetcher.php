@@ -19,7 +19,7 @@ class SiteFetcher
             '';        
 
         // Construct a site fetch command
-        $command = "
+        $raw = "
             wget \\
                 --recursive \\
                 --wait 3 \\
@@ -31,7 +31,30 @@ class SiteFetcher
                 -e http_proxy=127.0.0.1:8082 \\
                 {$url}
         ";
+        $skipLines = $this->trimBlankLines($raw);
+        $command = rtrim($skipLines);
+
         $this->runCommand($command);
+    }
+
+    /**
+     * Removes empty command lines just containing a backslash and whitespace
+     *
+     * @param string $text
+     * @return string
+     */
+    protected function trimBlankLines($text)
+    {
+        return array_reduce(
+            explode("\n", $text),
+            function($output, $line) {
+                if (trim($line) != '\\') {
+                    $output .= $line . "\n";
+                }
+                return $output;
+            },
+            ''
+        );
     }
 
     protected function runCommand($command)
