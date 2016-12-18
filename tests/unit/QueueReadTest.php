@@ -83,10 +83,9 @@ class QueueReadTest extends QueueTestBase
             once()->
             andReturn("Bad JSON");
 
-        // @todo Can we add the site fetcher in here too? (should not be called)
-
         // Set up the queue and process the corrupted item
         $queue = $this->getQueueMock($fileService);
+        $queue->initFetcher($this->getFetcherMockNeverCalled());
         $queue->
             shouldReceive('sleep')->
             never();
@@ -110,10 +109,9 @@ class QueueReadTest extends QueueTestBase
             shouldReceive('rename')->
             never();
 
-        // @todo Can we add the site fetcher in here too? (should not be called)
-
         // Set up the queue and process zero items
         $queue = $this->getQueueMock($fileService);
+        $queue->initFetcher($this->getFetcherMockNeverCalled());
         $queue->
             shouldReceive('sleep')->
             once();
@@ -132,6 +130,16 @@ class QueueReadTest extends QueueTestBase
     protected function getQueueMock($fileService)
     {
         return parent::getQueueMock(QueueReadTestHarness::class, $fileService);
+    }
+
+    protected function getFetcherMockNeverCalled()
+    {
+        $fetchService = \Mockery::mock(FetcherService::class);
+        $fetchService->
+            shouldReceive('execute')->
+            never();
+
+        return $fetchService;
     }
 }
 
