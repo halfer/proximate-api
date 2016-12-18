@@ -66,7 +66,7 @@ class QueueReadTest extends QueueTestBase
     }
 
     /**
-     * @expectedException \Exception
+     * @expectedException \Proximate\Exception\InvalidQueueItem
      */
     public function testProcessorBadEntry()
     {

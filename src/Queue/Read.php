@@ -8,6 +8,7 @@ namespace Proximate\Queue;
 
 use Proximate\Service\File as FileService;
 use Proximate\Service\SiteFetcher as FetcherService;
+use Proximate\Exception\InvalidQueueItem as InvalidQueueItemException;
 
 class Read extends Base
 {
@@ -61,7 +62,7 @@ class Read extends Base
             // If the item does not contain JSON, bork
             if (!$data)
             {
-                throw new \Exception(
+                throw new InvalidQueueItemException(
                     "Invalid queue item found"
                 );
             }

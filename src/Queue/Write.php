@@ -6,6 +6,9 @@
 
 namespace Proximate\Queue;
 
+use Proximate\Exception\AlreadyQueued as AlreadyQueuedException;
+use Proximate\Exception\RequiredParam as RequiredParamException;
+
 class Write extends Base
 {
     const DEFAULT_REJECT_FILES = '*.png,*.jpg,*.jpeg,*.css,*.js';
@@ -21,11 +24,17 @@ class Write extends Base
         return $this;
     }
 
+    /**
+     * Gets the currently set URL string
+     *
+     * @return string
+     * @throws \Exception
+     */
     public function getUrl()
     {
         if (!$this->url)
         {
-            throw new \Exception("No URL set");
+            throw new RequiredParamException("No URL set");
         }
 
         return $this->url;
@@ -58,7 +67,7 @@ class Write extends Base
     /**
      * Creates a queue item for the current URL
      *
-     * @throws \Exception
+     * @throws AlreadyQueuedException
      */
     public function queue()
     {
@@ -71,15 +80,13 @@ class Write extends Base
     /**
      * Checks to see if the current URL is currently queued already
      *
-     * @todo Use a more specific exception
-     *
-     * @throws \Exception
+     * @throws AlreadyQueuedException
      */
     protected function checkEntryExists()
     {
         if ($this->getFileService()->fileExists($this->getQueueEntryPath()))
         {
-            throw new \Exception(
+            throw new AlreadyQueuedException(
                 "This URL is already queued"
             );
         }

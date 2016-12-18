@@ -57,7 +57,7 @@ class QueueWriteTest extends QueueTestBase
     /**
      * Ensure that fetching a URL that is not set results in an error
      *
-     * @expectedException \Exception
+     * @expectedException \Proximate\Exception\RequiredParam
      */
     public function testGetUrlFailsWithNoUrl()
     {
@@ -112,7 +112,7 @@ class QueueWriteTest extends QueueTestBase
     }
 
     /**
-     * @expectedException \Exception
+     * @expectedException Proximate\Exception\AlreadyQueued
      */
     public function testExistingQueueItemFails()
     {
