@@ -2,6 +2,10 @@
 
 /** 
  * Unit tests for writing to the Queue
+ *
+ * @todo The tests testConstructorStoresDirectory, testConstructorAllowsGoodFolder and
+ * testConstructorRejectsBadFolder should be moved to the base so they are run for
+ * the Read tests as well.
  */
 
 namespace Proximate\Test;
@@ -81,10 +85,11 @@ class QueueWriteTest extends QueueTestBase
         $queue = new QueueWriteTestHarness('', new FileService());
 
         // Test the initial condition has a non-null default value
+        // @todo Change this so we check it matches Queue::DEFAULT_REJECT_FILES
         $this->assertNotNull($queue->getRejectFiles());
 
-        // Now try the setter
-        $reject = "*.png,*.jpg,*.jpeg,*.css,*.js";
+        // Now try the setter to something different
+        $reject = "*.js";
         $queue->setRejectFiles($reject);
         $this->assertEquals($reject, $queue->getRejectFiles());
     }

@@ -6,8 +6,24 @@
 
 namespace Proximate\Queue;
 
+use Proximate\Service\File as FileService;
+use Proximate\Service\SiteFetcher as FetcherService;
+
 class Read extends Base
 {
+    protected $fetcherService;
+
+    public function __construct($queueDir, FileService $fileService, FetcherService $fetcherService)
+    {
+        parent::__construct($queueDir, $fileService);
+        $this->initFetcher($fetcherService);
+    }
+
+    protected function initFetcher(FetcherService $fetcherService)
+    {
+        $this->fetcherService = $fetcherService;
+    }
+
     public function process($loop = 50)
     {
         for ($i = 0; $i < $loop; $i++)
@@ -68,20 +84,12 @@ class Read extends Base
 
     protected function fetchSite(array $itemData)
     {
-        // @todo Run a wget on the site
-        $command = "
-            wget \
-                --recursive \
-                --wait 3 \
-                --limit-rate=20K \
-                --delete-after \
-                --reject \"*.png,*.jpg,*.jpeg,*.css,*.js\" \
-                --accept-regex \".*(/about/careers/.*)|(/job/.*)\" \
-                -e use_proxy=yes \
-                -e http_proxy=127.0.0.1:8082 \
-                http://www.nimvelo.com/about/careers/
-        ";
-
+        // Call the site fetcher service here
+        $this->getSiteFetcherService()->execute(
+            $itemData['url'],
+            $itemData['url_regex'],
+            $itemData['reject_files']
+        );
         return true;
     }
 
@@ -96,6 +104,16 @@ class Read extends Base
     protected function sleep()
     {
         sleep(2);
+    }
+
+    /**
+     * Gets the currently configured site fetcher
+     *
+     * @return FetcherService
+     */
+    protected function getSiteFetcherService()
+    {
+        return $this->fetcherService;
     }
 
     /**

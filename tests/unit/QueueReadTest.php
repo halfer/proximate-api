@@ -7,10 +7,20 @@
 namespace Proximate\Test;
 
 use Proximate\Queue\Read as Queue;
+use Proximate\Queue\Write as QueueWrite;
 use Proximate\Service\File as FileService;
+use Proximate\Service\SiteFetcher as FetcherService;
 
 class QueueReadTest extends QueueTestBase
 {
+    /**
+     * Check that the read-specific initFetcher stores the fetcher OK
+     */
+    public function testInitFetcher()
+    {
+        $this->markTestIncomplete();
+    }
+
     public function testProcessor()
     {
         // Set up mocks to return a single item
@@ -35,8 +45,20 @@ class QueueReadTest extends QueueTestBase
             once()
         ;
 
+        // Set up a mock to emulate the fetcher
+        $fetchService = \Mockery::mock(FetcherService::class);
+        $fetchService->
+            shouldReceive('execute')->
+            with(
+                self::DUMMY_URL,
+                null,
+                QueueWrite::DEFAULT_REJECT_FILES
+            )->
+            once();
+
         // Set up the queue and process the "waiting" item
         $queue = $this->getQueueMock($fileService);
+        $queue->initFetcher($fetchService);
         $queue->
             shouldReceive('sleep')->
             never();
@@ -60,6 +82,8 @@ class QueueReadTest extends QueueTestBase
             with($queueItems[0])->
             once()->
             andReturn("Bad JSON");
+
+        // @todo Can we add the site fetcher in here too? (should not be called)
 
         // Set up the queue and process the corrupted item
         $queue = $this->getQueueMock($fileService);
@@ -85,6 +109,8 @@ class QueueReadTest extends QueueTestBase
             // No status changes
             shouldReceive('rename')->
             never();
+
+        // @todo Can we add the site fetcher in here too? (should not be called)
 
         // Set up the queue and process zero items
         $queue = $this->getQueueMock($fileService);

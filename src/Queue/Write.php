@@ -8,9 +8,11 @@ namespace Proximate\Queue;
 
 class Write extends Base
 {
+    const DEFAULT_REJECT_FILES = '*.png,*.jpg,*.jpeg,*.css,*.js';
+
     protected $url;
     protected $urlRegex;
-    protected $rejectFiles = '*.png,*.jpg,*.jpeg,*.css,*.js';
+    protected $rejectFiles = self::DEFAULT_REJECT_FILES;
 
     public function setUrl($url)
     {
