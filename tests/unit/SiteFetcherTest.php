@@ -8,9 +8,11 @@ use Proximate\Service\SiteFetcher;
 
 class SiteFetcherTest extends PHPUnit_Framework_TestCase
 {
+    const DUMMY_URL = 'http://example.com/';
+
     public function testWithUrlOnly()
     {
-        $url = "http://example.com/";
+        $url = self::DUMMY_URL;
         $expectedCommand = "
             wget \
                 --recursive \\
@@ -27,14 +29,40 @@ class SiteFetcherTest extends PHPUnit_Framework_TestCase
 
     public function testWithUrlAndUrlRegex()
     {
-        // @todo This requires some tests
-        $this->markTestIncomplete();
+        $url = self::DUMMY_URL;
+        $regex = "*\.html";
+        $expectedCommand = "
+            wget \
+                --recursive \\
+                --wait 3 \\
+                --limit-rate=20K \\
+                --delete-after \\
+                --accept-regex \"{$regex}\" \\
+                -e use_proxy=yes \\
+                -e http_proxy=127.0.0.1:8082 \\
+                {$url}";
+
+        $siteFetcher = $this->getFetcherService($expectedCommand);
+        $siteFetcher->execute($url, $regex, null);
     }
 
     public function testWithUrlAndRejectFiles()
     {
-        // @todo This requires some tests
-        $this->markTestIncomplete();
+        $url = self::DUMMY_URL;
+        $reject = "*.js,*.jpeg,*.jpg";
+        $expectedCommand = "
+            wget \
+                --recursive \\
+                --wait 3 \\
+                --limit-rate=20K \\
+                --delete-after \\
+                --reject \"{$reject}\" \\
+                -e use_proxy=yes \\
+                -e http_proxy=127.0.0.1:8082 \\
+                {$url}";
+
+        $siteFetcher = $this->getFetcherService($expectedCommand);
+        $siteFetcher->execute($url, null, $reject);
     }
 
     protected function getFetcherService($expectedCommand)
