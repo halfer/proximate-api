@@ -17,6 +17,17 @@ class QueueTestBase extends \PHPUnit_Framework_TestCase
     const DUMMY_HASH = 'a6bf1757fff057f266b697df9cf176fd';
 
     /**
+     * This test runs in both QueueRead and QueueWrite contexts
+     */
+    public function testInitFileService()
+    {
+        $fileService = $this->getFileServiceMock();
+        $queue = $this->getQueueMock($fileService);
+        $queue->init(self::DUMMY_DIR, $fileService);
+        $this->assertEquals($fileService, $queue->getFileService());
+    }
+
+    /**
      * @param string $queueClassName
      * @param FileService $fileService
      * @return Queue|\Mockery\Mock

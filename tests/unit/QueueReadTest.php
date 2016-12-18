@@ -25,17 +25,6 @@ class QueueReadTest extends QueueTestBase
         $this->assertEquals($fetcherService, $queue->getSiteFetcherService());
     }
 
-    /**
-     * @todo This pertains to the Write service as well, can we run this in the base?
-     */
-    public function testInitFileService()
-    {
-        $fileService = $this->getFileServiceMock();
-        $queue = $this->getQueueMock($fileService);
-        $queue->init(self::DUMMY_DIR, $fileService);
-        $this->assertEquals($fileService, $queue->getFileService());
-    }
-
     public function testProcessor()
     {
         // Set up mocks to return a single item
