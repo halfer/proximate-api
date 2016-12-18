@@ -18,8 +18,22 @@ class QueueReadTest extends QueueTestBase
      */
     public function testInitFetcher()
     {
-        // @todo This requires some implementation
-        $this->markTestIncomplete();
+        $fileService = $this->getFileServiceMock();
+        $queue = $this->getQueueMock($fileService);
+        $fetcherService = \Mockery::mock(FetcherService::class);
+        $queue->initFetcher($fetcherService);
+        $this->assertEquals($fetcherService, $queue->getSiteFetcherService());
+    }
+
+    /**
+     * @todo This pertains to the Write service as well, can we run this in the base?
+     */
+    public function testInitFileService()
+    {
+        $fileService = $this->getFileServiceMock();
+        $queue = $this->getQueueMock($fileService);
+        $queue->init(self::DUMMY_DIR, $fileService);
+        $this->assertEquals($fileService, $queue->getFileService());
     }
 
     public function testProcessor()
@@ -128,6 +142,12 @@ class QueueReadTest extends QueueTestBase
             andReturn($queueItems);
     }
 
+    /**
+     * Gets a mock of the system under test
+     *
+     * @param FileService $fileService
+     * @return \Mockery\Mock|QueueReadTestHarness
+     */
     protected function getQueueMock($fileService)
     {
         return parent::getQueueMock(QueueReadTestHarness::class, $fileService);
@@ -155,5 +175,23 @@ class QueueReadTestHarness extends Queue
     public function init($queueDir, FileService $fileService)
     {
         parent::init($queueDir, $fileService);
+    }
+
+    // Make this public
+    public function initFetcher(FetcherService $fetcherService)
+    {
+        return parent::initFetcher($fetcherService);
+    }
+
+    // Make this public
+    public function getFileService()
+    {
+        return parent::getFileService();
+    }
+
+    // Make this public
+    public function getSiteFetcherService()
+    {
+        return parent::getSiteFetcherService();
     }
 }
