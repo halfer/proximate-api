@@ -84,9 +84,8 @@ class QueueWriteTest extends QueueTestBase
     {
         $queue = new QueueWriteTestHarness('', new FileService());
 
-        // Test the initial condition has a non-null default value
-        // @todo Change this so we check it matches Queue::DEFAULT_REJECT_FILES
-        $this->assertNotNull($queue->getRejectFiles());
+        // Test the initial condition has the default value
+        $this->assertEquals(Queue::DEFAULT_REJECT_FILES, $queue->getRejectFiles());
 
         // Now try the setter to something different
         $reject = "*.js";
