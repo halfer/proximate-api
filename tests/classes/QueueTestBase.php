@@ -30,21 +30,6 @@ abstract class QueueTestBase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Ensures that a folder without an error is regarded as good)
-     *
-     * (Runs for both Read and Write queue tests)
-     *
-     * @todo I think this duplicates testConstructorStoresDirectory, shall we remove it?
-     */
-    public function testConstructorAllowsGoodFolder()
-    {
-        $queue = $this->getQueueTestHarness();
-        $queue->init(self::DUMMY_DIR, $this->getFileServiceMock());
-
-        $this->assertTrue(true);
-    }
-
-    /**
      * Emulates a folder not found error
      *
      * (Runs for both Read and Write queue tests)
