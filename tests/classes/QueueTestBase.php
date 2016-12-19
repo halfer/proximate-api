@@ -34,7 +34,7 @@ abstract class QueueTestBase extends \PHPUnit_Framework_TestCase
      *
      * (Runs for both Read and Write queue tests)
      *
-     * @expectedException \Exception
+     * @expectedException \Proximate\Exception\DirectoryNotFound
      */
     public function testConstructorRejectsBadFolder()
     {

@@ -7,6 +7,7 @@
 namespace Proximate\Queue;
 
 use Proximate\Service\File as FileService;
+use Proximate\Exception\DirectoryNotFound as DirectoryNotFoundException;
 
 class Base
 {
@@ -32,17 +33,15 @@ class Base
     /**
      * Mockable version of the c'tor
      *
-     * @todo Swap to a more specific exception
-     *
      * @param string $queueDir
      * @param FileService $fileService
-     * @throws \Exception
+     * @throws DirectoryNotFoundException
      */
     protected function init($queueDir, FileService $fileService)
     {
         if (!$fileService->isDirectory($queueDir))
         {
-            throw new \Exception(
+            throw new DirectoryNotFoundException(
                 "The supplied queue directory does not exist"
             );
         }
