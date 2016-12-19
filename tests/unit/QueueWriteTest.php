@@ -5,7 +5,7 @@
  *
  * @todo The tests testConstructorStoresDirectory, testConstructorAllowsGoodFolder and
  * testConstructorRejectsBadFolder should be moved to the base so they are run for
- * the Read tests as well.
+ * the Read tests as well. <-- in progress
  */
 
 namespace Proximate\Test;

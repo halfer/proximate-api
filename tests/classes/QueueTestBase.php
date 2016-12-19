@@ -17,7 +17,50 @@ abstract class QueueTestBase extends \PHPUnit_Framework_TestCase
     const DUMMY_HASH = 'a6bf1757fff057f266b697df9cf176fd';
 
     /**
-     * This test runs in both QueueRead and QueueWrite contexts
+     * Checks that the folder is stored
+     *
+     * (Runs for both Read and Write queue tests)
+     */
+    public function testConstructorStoresDirectory()
+    {
+        $queue = $this->getQueueTestHarness();
+        $queue->init($dir = self::DUMMY_DIR, $this->getFileServiceMock());
+
+        $this->assertEquals($dir, $queue->getQueueDir());
+    }
+
+    /**
+     * Ensures that a folder without an error is regarded as good)
+     *
+     * (Runs for both Read and Write queue tests)
+     *
+     * @todo I think this duplicates testConstructorStoresDirectory, shall we remove it?
+     */
+    public function testConstructorAllowsGoodFolder()
+    {
+        $queue = $this->getQueueTestHarness();
+        $queue->init(self::DUMMY_DIR, $this->getFileServiceMock());
+
+        $this->assertTrue(true);
+    }
+
+    /**
+     * Emulates a folder not found error
+     *
+     * (Runs for both Read and Write queue tests)
+     *
+     * @expectedException \Exception
+     */
+    public function testConstructorRejectsBadFolder()
+    {
+        $queue = $this->getQueueTestHarness();
+        $queue->init(self::DUMMY_DIR, $this->getFileServiceMock(false));
+    }
+
+    /**
+     * Checks that the file service is stored by the init method
+     *
+     * (Runs for both Read and Write queue tests)
      */
     public function testInitFileService()
     {
