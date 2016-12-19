@@ -41,9 +41,14 @@ $app->get('/list/{page}/[{pagesize}]', function ($request, $response) {
  * Requests that a specific site is cached
  *
  * Adds the item onto the queueing system and returns a unique GUID
+ *
+ * Takes a JSON input document containing:
+ *
+ * [url, url_regex, reject_files]
  */
-$app->post('/cache/{url}', function ($request, $response, $args) {
+$app->post('/cache', function ($request, $response) {
     $controller = new Proximate\Controller\CacheSave($request, $response);
+    $controller->setQueue($queue);
     $controller->execute();
     return $response;
 });

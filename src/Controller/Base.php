@@ -33,9 +33,36 @@ abstract class Base
         return $this;
     }
 
+    /**
+     * Returns the current request
+     *
+     * @return \Slim\Http\Request
+     */
     protected function getRequest()
     {
         return $this->request;
+    }
+
+    /**
+     * Returns the request body
+     *
+     * @return string
+     */
+    protected function getBody()
+    {
+        return $this->getRequest()->getBody();
+    }
+
+    /**
+     * Returns the request body as decoded JSON
+     *
+     * @todo Throw an exception if the body is not JSON
+     *
+     * @return array
+     */
+    protected function getDecodedJsonBody()
+    {
+        return json_decode($this->getBody(), true);
     }
 
     /**
