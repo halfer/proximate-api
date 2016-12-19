@@ -10,7 +10,7 @@ use Mockery;
 use Proximate\Service\File as FileService;
 use Proximate\Queue\Base as Queue;
 
-class QueueTestBase extends \PHPUnit_Framework_TestCase
+abstract class QueueTestBase extends \PHPUnit_Framework_TestCase
 {
     const DUMMY_DIR = '/any/dir';
     const DUMMY_URL = 'http://example.com/';
@@ -51,6 +51,8 @@ class QueueTestBase extends \PHPUnit_Framework_TestCase
 
         return $fileService;
     }
+
+    abstract protected function getQueueTestHarness();
 
     /**
      * Creates a JSON string representing a cache entry

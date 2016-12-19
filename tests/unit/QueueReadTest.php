@@ -131,6 +131,11 @@ class QueueReadTest extends QueueTestBase
             andReturn($queueItems);
     }
 
+    protected function getQueueTestHarness()
+    {
+        return new QueueReadTestHarness();
+    }
+
     /**
      * Gets a mock of the system under test
      *
