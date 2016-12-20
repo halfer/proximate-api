@@ -21,29 +21,14 @@ class CacheSaveTest extends \PHPUnit_Framework_TestCase
     // @todo Fix up this skeleton/rough test implementation
     public function testCacheSaveWithJustUrl()
     {
-        $this->
-            getMockedRequest()->
-            shouldReceive('getBody')->
-            andReturn(
-                json_encode(
-                    ['url' => 'http://example.com', ]
-                )
-            );
-
-        // @todo Check that the url, url_regex and reject_files get the right values
-        $queue = $this->getMockedQueue();
-        $queue->
-            shouldReceive('setUrl')->
-            andReturn($queue)->
-            shouldReceive('setUrlRegex')->
-            andReturn($queue)->
-            shouldReceive('setRejectFiles')->
-            andReturn($queue)->
-            shouldReceive('queue');
+        $url = 'http://example.com';
+        $this->setBodyExpectation(['url' => $url, ]);
+        $this->setQueueExpectation($url, null, null);
 
         $this->
             getMockedResponse()->
-            shouldReceive('withJson');
+            shouldReceive('withJson')->
+            with(['result' => ['ok' => true, ]]);
 
         $this->
             getCacheSaveController()->
@@ -74,6 +59,33 @@ class CacheSaveTest extends \PHPUnit_Framework_TestCase
         $controller->setQueue($this->getMockedQueue());
 
         return $controller;
+    }
+
+    protected function setBodyExpectation(array $params)
+    {
+        $this->
+            getMockedRequest()->
+            shouldReceive('getBody')->
+            andReturn(
+                json_encode($params)
+            );
+    }
+
+    protected function setQueueExpectation($url, $urlRegex, $rejectFiles)
+    {
+        $queue = $this->getMockedQueue();
+        $queue->
+            shouldReceive('setUrl')->
+            with($url)->
+            andReturn($queue)->
+            shouldReceive('setUrlRegex')->
+            with($urlRegex)->
+            andReturn($queue)->
+            shouldReceive('setRejectFiles')->
+            with($rejectFiles)->
+            andReturn($queue)->
+            shouldReceive('queue')->
+            andReturn(true);
     }
 
     /**
