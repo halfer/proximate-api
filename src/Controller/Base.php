@@ -56,13 +56,21 @@ abstract class Base
     /**
      * Returns the request body as decoded JSON
      *
-     * @todo Throw an exception if the body is not JSON
+     * @todo Use a more specific exception
      *
      * @return array
      */
     protected function getDecodedJsonBody()
     {
-        return json_decode($this->getBody(), true);
+        $decoded = json_decode($this->getBody(), true);
+        if ($decoded === null)
+        {
+            throw new \Exception(
+                "The JSON body could not be decoded"
+            );
+        }
+
+        return $decoded;
     }
 
     /**

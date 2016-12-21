@@ -99,8 +99,20 @@ class CacheSaveTest extends \PHPUnit_Framework_TestCase
 
     public function testBadCacheSaveJson()
     {
-        $this->markTestIncomplete();
-        // @todo Finish this
+        $this->setBadBodyExpectation();
+        $this->setQueueExpectation('http://example.com', null, null);
+
+        $this->
+            getMockedResponse()->
+            shouldReceive('withJson')->
+            with(['result' => [
+                'ok' => false,
+                 'error' => 'The JSON body could not be decoded',
+            ]]);
+
+        $this->
+            getCacheSaveController()->
+            execute();
     }
 
     public function testCacheSaveFailed()
@@ -139,6 +151,14 @@ class CacheSaveTest extends \PHPUnit_Framework_TestCase
             andReturn(
                 json_encode($params)
             );
+    }
+
+    protected function setBadBodyExpectation()
+    {
+        $this->
+            getMockedRequest()->
+            shouldReceive('getBody')->
+            andReturn("Hello there");
     }
 
     protected function setQueueExpectation($url, $urlRegex, $rejectFiles, $returnOk = true)
