@@ -7,6 +7,9 @@
 namespace Proximate\Controller;
 use Proximate\Controller\Base;
 use Proximate\Queue\Write as QueueWrite;
+use Proximate\Exception\RequiredParam;
+use Proximate\Exception\RequiredDependency;
+use Proximate\Exception\UnexpectedParam;
 
 class CacheSave extends Base
 {
@@ -37,8 +40,14 @@ class CacheSave extends Base
         return $this->getResponse()->withJson($result);
     }
 
-    // @todo Use specific exceptions, so unexpected exceptions can be
-    // treated more cautiously
+    /**
+     * Checks the input parameters are OK, throws exceptions if not
+     *
+     * @param array $params
+     * @return array
+     * @throws RequiredParam
+     * @throws UnexpectedParam
+     */
     protected function validateRequestParams(array $params)
     {
         $validatedParams = [];
@@ -50,7 +59,7 @@ class CacheSave extends Base
         }
         else
         {
-            throw new \Exception(
+            throw new RequiredParam(
                 "URL not present in request body"
             );
         }
@@ -66,7 +75,7 @@ class CacheSave extends Base
         // Ensure that no other items are permitted
         if ($this->hasNonPermittedKeys($params))
         {
-            throw new \Exception(
+            throw new UnexpectedParam(
                 sprintf(
                     "The only permitted keys are: %s",
                     implode(', ', $this->getPermittedKeys())
@@ -120,13 +129,17 @@ class CacheSave extends Base
         $this->queue = $queue;
     }
 
-    // @todo Use specific exceptions, so unexpected exceptions can be
-    // treated more cautiously
+    /**
+     * Gets the current queue object
+     *
+     * @return QueueWrite
+     * @throws RequiredDependency
+     */
     protected function getQueue()
     {
         if (!$this->queue)
         {
-            throw new \Exception(
+            throw new RequiredDependency(
                 "This controller needs a queue object"
             );
         }

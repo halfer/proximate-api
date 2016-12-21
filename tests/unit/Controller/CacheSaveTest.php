@@ -156,7 +156,8 @@ class CacheSaveTest extends \PHPUnit_Framework_TestCase
             andReturn($queue);
         if ($returnOk)
         {
-            $queue->shouldReceive('queue');
+            $queue->
+                shouldReceive('queue');
         }
         else
         {
