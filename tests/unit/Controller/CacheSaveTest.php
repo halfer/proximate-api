@@ -21,8 +21,9 @@ class CacheSaveTest extends \PHPUnit_Framework_TestCase
     // @todo Fix up this skeleton/rough test implementation
     public function testCacheSaveWithJustUrl()
     {
-        $url = 'http://example.com';
-        $this->setBodyExpectation(['url' => $url, ]);
+        $this->setBodyExpectation([
+            'url' => $url = 'http://example.com',
+        ]);
         $this->setQueueExpectation($url, null, null);
 
         $this->
@@ -37,11 +38,66 @@ class CacheSaveTest extends \PHPUnit_Framework_TestCase
 
     public function testCacheSaveWithAllParameters()
     {
-        $this->markTestIncomplete();
-        // @todo Finish this
+        $this->setBodyExpectation([
+            'url' => $url = 'http://example.com',
+            'url_regex' => $urlRegex = '/section/*.html',
+            'reject_files' => $rejectFiles = '*.png',
+        ]);
+        $this->setQueueExpectation($url, $urlRegex, $rejectFiles);
+
+        $this->
+            getMockedResponse()->
+            shouldReceive('withJson')->
+            with(['result' => ['ok' => true, ]]);
+
+        $this->
+            getCacheSaveController()->
+            execute();
+    }
+
+    public function testMissingCacheSaveParameter()
+    {
+        $this->setBodyExpectation([
+            'url_regex' => $urlRegex = '/section/*.html',
+            'reject_files' => $rejectFiles = '*.png',
+        ]);
+        $this->setQueueExpectation(null, $urlRegex, $rejectFiles);
+
+        $this->
+            getMockedResponse()->
+            shouldReceive('withJson')->
+            with(['result' => [
+                'ok' => false,
+                'error' => 'URL not present in request body',
+            ]]);
+
+        $this->
+            getCacheSaveController()->
+            execute();
     }
 
     public function testBadCacheSaveParameters()
+    {
+        $this->setBodyExpectation([
+            'url' => $url = 'http://example.com',
+            'unidentified_flying_object' => 1,
+        ]);
+        $this->setQueueExpectation($url, null, null);
+
+        $this->
+            getMockedResponse()->
+            shouldReceive('withJson')->
+            with(['result' => [
+                'ok' => false,
+                'error' => 'The only permitted keys are: url, url_regex, reject_files',
+            ]]);
+
+        $this->
+            getCacheSaveController()->
+            execute();
+    }
+
+    public function testBadCacheSaveJson()
     {
         $this->markTestIncomplete();
         // @todo Finish this
@@ -49,8 +105,22 @@ class CacheSaveTest extends \PHPUnit_Framework_TestCase
 
     public function testCacheSaveFailed()
     {
-        $this->markTestIncomplete();
-        // @todo Finish this
+        $this->setBodyExpectation([
+            'url' => $url = 'http://example.com',
+        ]);
+        $this->setQueueExpectation($url, null, null, false);
+
+        $this->
+            getMockedResponse()->
+            shouldReceive('withJson')->
+            with(['result' => [
+                'ok' => false,
+                'error' => 'Emulated error',
+            ]]);
+
+        $this->
+            getCacheSaveController()->
+            execute();
     }
 
     protected function getCacheSaveController()
@@ -71,7 +141,7 @@ class CacheSaveTest extends \PHPUnit_Framework_TestCase
             );
     }
 
-    protected function setQueueExpectation($url, $urlRegex, $rejectFiles)
+    protected function setQueueExpectation($url, $urlRegex, $rejectFiles, $returnOk = true)
     {
         $queue = $this->getMockedQueue();
         $queue->
@@ -83,9 +153,17 @@ class CacheSaveTest extends \PHPUnit_Framework_TestCase
             andReturn($queue)->
             shouldReceive('setRejectFiles')->
             with($rejectFiles)->
-            andReturn($queue)->
-            shouldReceive('queue')->
-            andReturn(true);
+            andReturn($queue);
+        if ($returnOk)
+        {
+            $queue->shouldReceive('queue');
+        }
+        else
+        {
+            $queue->
+                shouldReceive('queue')->
+                andThrow(new \Exception("Emulated error"));
+        }
     }
 
     /**

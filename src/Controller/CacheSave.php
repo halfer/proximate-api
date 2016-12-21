@@ -14,18 +14,31 @@ class CacheSave extends Base
 
     public function execute()
     {
-        $rawParams = $this->getDecodedJsonBody();
-        $validatedParams = $this->validateRequestParams($rawParams);
+        $result = ['result' => []];
 
-        $result = [
-            'result' => [
-                'ok' => $this->doQueue($validatedParams),
-            ]
-        ];
+        // Any of these steps can result in an exception
+        try
+        {
+            $rawParams = $this->getDecodedJsonBody();
+            $validatedParams = $this->validateRequestParams($rawParams);
+            $this->doQueue($validatedParams);
+
+            // Everything was OK
+            $result['result']['ok'] = true;
+        }
+        // @todo Treat non-specific exceptions more cautiously
+        catch (\Exception $e)
+        {
+            // We got a failure
+            $result['result']['ok'] = false;
+            $result['result']['error'] = $e->getMessage();
+        }
 
         return $this->getResponse()->withJson($result);
     }
 
+    // @todo Use specific exceptions, so unexpected exceptions can be
+    // treated more cautiously
     protected function validateRequestParams(array $params)
     {
         $validatedParams = [];
@@ -90,11 +103,11 @@ class CacheSave extends Base
      * Asks the queue service to create a queue item
      *
      * @param array $fetchRequest
-     * @return boolean
+     * @throws \Exception
      */
     protected function doQueue(array $fetchRequest)
     {
-        return $this->
+        $this->
             getQueue()->
             setUrl($fetchRequest['url'])->
             setUrlRegex($fetchRequest['url_regex'])->
@@ -107,6 +120,8 @@ class CacheSave extends Base
         $this->queue = $queue;
     }
 
+    // @todo Use specific exceptions, so unexpected exceptions can be
+    // treated more cautiously
     protected function getQueue()
     {
         if (!$this->queue)
