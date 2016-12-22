@@ -6,6 +6,8 @@
 
 namespace Proximate\Controller;
 
+use Proximate\Exception\BadJson as BadJsonException;
+
 abstract class Base
 {
     protected $request;
@@ -56,8 +58,6 @@ abstract class Base
     /**
      * Returns the request body as decoded JSON
      *
-     * @todo Use a more specific exception
-     *
      * @return array
      */
     protected function getDecodedJsonBody()
@@ -65,7 +65,7 @@ abstract class Base
         $decoded = json_decode($this->getBody(), true);
         if ($decoded === null)
         {
-            throw new \Exception(
+            throw new BadJsonException(
                 "The JSON body could not be decoded"
             );
         }
