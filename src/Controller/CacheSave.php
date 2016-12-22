@@ -5,6 +5,7 @@
  */
 
 namespace Proximate\Controller;
+
 use Proximate\Controller\Base;
 use Proximate\Queue\Write as QueueWrite;
 use Proximate\Exception\RequiredParam;

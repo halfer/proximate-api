@@ -18,18 +18,14 @@ class CacheSaveTest extends \PHPUnit_Framework_TestCase
     protected $response;
     protected $queue;
 
-    // @todo Fix up this skeleton/rough test implementation
     public function testCacheSaveWithJustUrl()
     {
-        $this->setBodyExpectation([
+        $this->setRequestBodyExpectation([
             'url' => $url = 'http://example.com',
         ]);
         $this->setQueueExpectation($url, null, null);
 
-        $this->
-            getMockedResponse()->
-            shouldReceive('withJson')->
-            with(['result' => ['ok' => true, ]]);
+        $this->setJsonResponseExpectation();
 
         $this->
             getCacheSaveController()->
@@ -38,17 +34,14 @@ class CacheSaveTest extends \PHPUnit_Framework_TestCase
 
     public function testCacheSaveWithAllParameters()
     {
-        $this->setBodyExpectation([
+        $this->setRequestBodyExpectation([
             'url' => $url = 'http://example.com',
             'url_regex' => $urlRegex = '/section/*.html',
             'reject_files' => $rejectFiles = '*.png',
         ]);
         $this->setQueueExpectation($url, $urlRegex, $rejectFiles);
 
-        $this->
-            getMockedResponse()->
-            shouldReceive('withJson')->
-            with(['result' => ['ok' => true, ]]);
+        $this->setJsonResponseExpectation();
 
         $this->
             getCacheSaveController()->
@@ -57,19 +50,13 @@ class CacheSaveTest extends \PHPUnit_Framework_TestCase
 
     public function testMissingCacheSaveParameter()
     {
-        $this->setBodyExpectation([
+        $this->setRequestBodyExpectation([
             'url_regex' => $urlRegex = '/section/*.html',
             'reject_files' => $rejectFiles = '*.png',
         ]);
         $this->setQueueExpectation(null, $urlRegex, $rejectFiles);
 
-        $this->
-            getMockedResponse()->
-            shouldReceive('withJson')->
-            with(['result' => [
-                'ok' => false,
-                'error' => 'URL not present in request body',
-            ]]);
+        $this->setJsonResponseExpectation('URL not present in request body');
 
         $this->
             getCacheSaveController()->
@@ -78,19 +65,13 @@ class CacheSaveTest extends \PHPUnit_Framework_TestCase
 
     public function testBadCacheSaveParameters()
     {
-        $this->setBodyExpectation([
+        $this->setRequestBodyExpectation([
             'url' => $url = 'http://example.com',
             'unidentified_flying_object' => 1,
         ]);
         $this->setQueueExpectation($url, null, null);
 
-        $this->
-            getMockedResponse()->
-            shouldReceive('withJson')->
-            with(['result' => [
-                'ok' => false,
-                'error' => 'The only permitted keys are: url, url_regex, reject_files',
-            ]]);
+        $this->setJsonResponseExpectation('The only permitted keys are: url, url_regex, reject_files');
 
         $this->
             getCacheSaveController()->
@@ -102,13 +83,7 @@ class CacheSaveTest extends \PHPUnit_Framework_TestCase
         $this->setBadBodyExpectation();
         $this->setQueueExpectation('http://example.com', null, null);
 
-        $this->
-            getMockedResponse()->
-            shouldReceive('withJson')->
-            with(['result' => [
-                'ok' => false,
-                 'error' => 'The JSON body could not be decoded',
-            ]]);
+        $this->setJsonResponseExpectation('The JSON body could not be decoded');
 
         $this->
             getCacheSaveController()->
@@ -117,18 +92,12 @@ class CacheSaveTest extends \PHPUnit_Framework_TestCase
 
     public function testCacheSaveFailed()
     {
-        $this->setBodyExpectation([
+        $this->setRequestBodyExpectation([
             'url' => $url = 'http://example.com',
         ]);
         $this->setQueueExpectation($url, null, null, false);
 
-        $this->
-            getMockedResponse()->
-            shouldReceive('withJson')->
-            with(['result' => [
-                'ok' => false,
-                'error' => 'Emulated error',
-            ]]);
+        $this->setJsonResponseExpectation('Emulated error');
 
         $this->
             getCacheSaveController()->
@@ -143,7 +112,7 @@ class CacheSaveTest extends \PHPUnit_Framework_TestCase
         return $controller;
     }
 
-    protected function setBodyExpectation(array $params)
+    protected function setRequestBodyExpectation(array $params)
     {
         $this->
             getMockedRequest()->
@@ -185,6 +154,19 @@ class CacheSaveTest extends \PHPUnit_Framework_TestCase
                 shouldReceive('queue')->
                 andThrow(new \Exception("Emulated error"));
         }
+    }
+
+    protected function setJsonResponseExpectation($error = null)
+    {
+        $expectedJson = ['ok' => !$error, ];
+        if ($error)
+        {
+            $expectedJson['error'] = $error;
+        }
+        $this->
+            getMockedResponse()->
+            shouldReceive('withJson')->
+            with(['result' => $expectedJson, ]);
     }
 
     /**
