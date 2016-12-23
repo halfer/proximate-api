@@ -1,11 +1,15 @@
 <?php
 
+use Proximate\Queue\Write as Queue;
+use Proximate\Service\File as FileService;
+
 $root = realpath(__DIR__ . '/..');
 require_once $root . '/vendor/autoload.php';
 require_once $root . '/src/autoload.php';
 
 $app = new Slim\App();
 $curl = new PestJSON('http://proximate-proxy:8081');
+$queue = new Queue('/var/proximate/queue', new FileService());
 
 /**
  * Counts the number of pages stored in the cache
@@ -46,7 +50,7 @@ $app->get('/list/{page}/[{pagesize}]', function ($request, $response) {
  *
  * [url, url_regex, reject_files]
  */
-$app->post('/cache', function ($request, $response) {
+$app->post('/cache', function ($request, $response) use ($queue) {
     $controller = new Proximate\Controller\CacheSave($request, $response);
     $controller->setQueue($queue);
     $controller->execute();
