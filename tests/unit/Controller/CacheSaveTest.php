@@ -11,7 +11,7 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use Proximate\Queue\Write;
 
-class CacheSaveTest extends \PHPUnit_Framework_TestCase
+class CacheSaveTest extends ControllerTestBase
 {
     // @todo Move to a parent class
     protected $request;
