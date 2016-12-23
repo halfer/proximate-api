@@ -27,13 +27,15 @@ class CacheSave extends Base
 
             // Everything was OK
             $result = ['result' => ['ok' => true, ]];
+            $statusCode = 200;
         }
         catch (\Exception $e)
         {
             $result = $this->getErrorResponse($e);
+            $statusCode = 500;
         }
 
-        return $this->getResponse()->withJson($result);
+        return $this->createJsonResponse($result, $statusCode);
     }
 
     /**

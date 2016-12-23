@@ -41,12 +41,12 @@ abstract class ControllerTestBase extends \PHPUnit_Framework_TestCase
         {
             $expectedJson['error'] = $error;
         }
+
+        $outerJson = ['result' => array_merge($expectedJson, $additionalValues), ];
         $this->
             getMockedResponse()->
             shouldReceive('withJson')->
-            with(
-                ['result' => array_merge($expectedJson, $additionalValues), ]
-            );
+            with($outerJson, $expectedJson['ok'] ? 200 : 500);
     }
 
     protected function getGeneralException()

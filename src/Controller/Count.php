@@ -12,7 +12,6 @@ class Count extends Base
     /**
      * Main controller entry point
      *
-     * @todo Specify either 200/500 as response codes
      * @return \Slim\Http\Response
      */
     public function execute()
@@ -25,13 +24,15 @@ class Count extends Base
                     'count' => $this->fetchCount(),
                 ]
             ];
+            $statusCode = 200;
         }
         catch (\Exception $e)
         {
             $result = $this->getErrorResponse($e);
+            $statusCode = 500;
         }
 
-        return $this->getResponse()->withJson($result);
+        return $this->createJsonResponse($result, $statusCode);
     }
 
     protected function fetchCount()

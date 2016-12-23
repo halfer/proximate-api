@@ -99,6 +99,13 @@ abstract class Base
         ];
     }
 
+    protected function createJsonResponse($json, $statusCode)
+    {
+        return $this->
+            getResponse()->
+            withJson($json, $statusCode);
+    }
+
     public function setCurl(\PestJSON $curl)
     {
         $this->curl = $curl;
