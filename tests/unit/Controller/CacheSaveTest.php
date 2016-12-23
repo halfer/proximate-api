@@ -2,12 +2,15 @@
 
 /**
  * Unit tests for the cache entry creation controller
+ *
+ * @todo Define a const for the test URL in this class
  */
 
 namespace Proximate\Test;
 
-use Proximate\Controller\CacheSave;
+use Proximate\Controller\CacheSave as CacheSaveController;
 use Proximate\Queue\Write;
+use Proximate\Exception\AlreadyQueued as AlreadyQueuedException;
 
 class CacheSaveTest extends ControllerTestBase
 {
@@ -85,14 +88,36 @@ class CacheSaveTest extends ControllerTestBase
             execute();
     }
 
-    public function testCacheSaveFailed()
+    /**
+     * Ensures that a queue error of our own is reported fully
+     */
+    public function testCacheSaveAppFailure()
+    {
+        $this->checkCacheSaveFailure(
+           $error = "Emulated error",
+            new AlreadyQueuedException($error)
+        );
+    }
+
+    /**
+     * Ensures that a queue error from outside of our app is reported cautiously
+     */
+    public function testCacheSaveGeneralFailure()
+    {
+        $this->checkCacheSaveFailure(
+            "An error occured",
+            new \Exception("Error that could contain sensitive info")
+        );
+    }
+
+    protected function checkCacheSaveFailure($expectedError, \Exception $exception)
     {
         $this->setRequestBodyExpectation([
             'url' => $url = 'http://example.com',
         ]);
-        $this->setQueueExpectation($url, null, null, false);
+        $this->setQueueExpectation($url, null, null, $exception);
 
-        $this->setJsonResponseExpectation('Emulated error');
+        $this->setJsonResponseExpectation($expectedError);
 
         $this->
             getCacheSaveController()->
@@ -101,7 +126,7 @@ class CacheSaveTest extends ControllerTestBase
 
     protected function getCacheSaveController()
     {
-        $controller = new CacheSave($this->getMockedRequest(), $this->getMockedResponse());
+        $controller = new CacheSaveController($this->getMockedRequest(), $this->getMockedResponse());
         $controller->setQueue($this->getMockedQueue());
 
         return $controller;
@@ -125,7 +150,7 @@ class CacheSaveTest extends ControllerTestBase
             andReturn("Hello there");
     }
 
-    protected function setQueueExpectation($url, $urlRegex, $rejectFiles, $returnOk = true)
+    protected function setQueueExpectation($url, $urlRegex, $rejectFiles, \Exception $exception = null)
     {
         $queue = $this->getMockedQueue();
         $queue->
@@ -138,7 +163,7 @@ class CacheSaveTest extends ControllerTestBase
             shouldReceive('setRejectFiles')->
             with($rejectFiles)->
             andReturn($queue);
-        if ($returnOk)
+        if (!$exception)
         {
             $queue->
                 shouldReceive('queue');
@@ -147,7 +172,7 @@ class CacheSaveTest extends ControllerTestBase
         {
             $queue->
                 shouldReceive('queue')->
-                andThrow(new \Exception("Emulated error"));
+                andThrow($exception);
         }
     }
 
