@@ -8,6 +8,7 @@ namespace Proximate\Queue;
 
 use Proximate\Exception\AlreadyQueued as AlreadyQueuedException;
 use Proximate\Exception\RequiredParam as RequiredParamException;
+use Proximate\Exception\QueueWrite as QueueWriteException;
 
 class Write extends Base
 {
@@ -92,14 +93,21 @@ class Write extends Base
         }
     }
 
+    /**
+     * Attempts to create a queue entry, throws exception if it cannot
+     */
     protected function createQueueEntry()
     {
-        $bytes = $this->getFileService()->filePutContents(
+        $ok = (bool) $this->getFileService()->filePutContents(
             $this->getQueueEntryPath(),
             json_encode($this->getQueueEntryDetails(), JSON_PRETTY_PRINT)
         );
-
-        return (bool) $bytes;
+        if (!$ok)
+        {
+            throw new QueueWriteException(
+                "Writing a new queue entry failed"
+            );
+        }
     }
 
     /**

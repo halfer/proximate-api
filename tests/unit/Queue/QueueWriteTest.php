@@ -94,13 +94,33 @@ class QueueWriteTest extends QueueTestBase
      */
     public function testNewQueueItemSucceeds()
     {
+        $this->checkQueueWrite(false);
+    }
+
+    /**
+     * Checks that a write permission failure results in an exception
+     *
+     * @expectedException \Proximate\Exception\QueueWrite
+     */
+    public function testNewQueueItemWritePermissionIssue()
+    {
+        $this->checkQueueWrite(true);
+    }
+
+    /**
+     * Attempts to write to a mock FS
+     *
+     * @param boolean $writeFail
+     */
+    public function checkQueueWrite($writeFail)
+    {
         $json = $this->getCacheEntry(self::DUMMY_URL);
         $fileService = $this->getFileServiceMockWithFileExists();
         $fileService->
             shouldReceive('filePutContents')->
             with($this->getQueueEntryPath(), $json)->
-            once()
-        ;
+            once()->
+            andReturn($writeFail ? false : strlen($json));
 
         $this->getQueueMock($fileService)->
             setUrl(self::DUMMY_URL)->
