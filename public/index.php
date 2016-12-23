@@ -37,8 +37,7 @@ $app->get('/count/:url', function ($request, $response) {
  */
 $app->get('/list/{page}/[{pagesize}]', function ($request, $response) {
     $controller = new \Proximate\Controller\CacheList($request, $response);
-    $controller->execute();
-    return $response;
+    return $controller->execute();
 });
 
 /**
@@ -53,8 +52,7 @@ $app->get('/list/{page}/[{pagesize}]', function ($request, $response) {
 $app->post('/cache', function ($request, $response) use ($queue) {
     $controller = new Proximate\Controller\CacheSave($request, $response);
     $controller->setQueue($queue);
-    $controller->execute();
-    return $response;
+    return $controller->execute();
 });
 
 /**
@@ -65,8 +63,7 @@ $app->post('/cache', function ($request, $response) use ($queue) {
  */
 $app->get('/status/{guid}', function ($request, $response, $args) {
     $controller = new Proximate\Controller\ItemStatus($request, $response);
-    $controller->execute();
-    return $response;
+    return $controller->execute();
 });
 
 /**
