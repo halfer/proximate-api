@@ -49,6 +49,11 @@ abstract class ControllerTestBase extends \PHPUnit_Framework_TestCase
             );
     }
 
+    protected function getGeneralException()
+    {
+        return new \Exception("Error that could contain sensitive info");
+    }
+
     public function setUp()
     {
         $this->request = \Mockery::mock(Request::class);

@@ -94,7 +94,7 @@ class CacheSaveTest extends ControllerTestBase
     public function testCacheSaveAppFailure()
     {
         $this->checkCacheSaveFailure(
-           $error = "Emulated error",
+            $error = "Emulated error",
             new AlreadyQueuedException($error)
         );
     }
@@ -106,7 +106,7 @@ class CacheSaveTest extends ControllerTestBase
     {
         $this->checkCacheSaveFailure(
             "An error occured",
-            new \Exception("Error that could contain sensitive info")
+            $this->getGeneralException()
         );
     }
 

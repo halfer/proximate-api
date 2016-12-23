@@ -10,6 +10,8 @@ use Proximate\Controller\Count as CountController;
 
 class CountTest extends ControllerTestBase
 {
+    protected $curl;
+
     public function testGoodCountCase()
     {
         $expectedResult = [
@@ -17,27 +19,47 @@ class CountTest extends ControllerTestBase
                 'total' => $expectedCount = 5,
             ]
         ];
-        $curl = $this->getMockedCurl();
-        $curl->
+        $this->getMockedCurl()->
             shouldReceive('get')->
             with('__admin/mappings')->
             andReturn($expectedResult);
 
         $this->setJsonResponseExpectation(null, ['count' => $expectedCount, ]);
 
-        $controller = $this->getCountController();
-        $controller->setCurl($curl);
-        $controller->execute();
+        $this->
+            getCountController()->
+            execute();
     }
 
-    public function testCurlFailsCountCase()
+    /**
+     * Checks that a general error in the curl module is reported cautiously
+     *
+     * (There is no app-level error that can come from the cURL module, since it is third-party)
+     */
+    public function testCurlCountGeneralFailure()
     {
-        $this->markTestIncomplete();
+        $this->checkCacheSaveFailure(
+            "An error occured",
+            $this->getGeneralException()
+        );
+    }
+
+    protected function checkCacheSaveFailure($expectedError, \Exception $exception)
+    {
+        $this->getMockedCurl()->
+            shouldReceive('get')->
+            andThrow($exception);
+        $this->setJsonResponseExpectation($expectedError);
+
+        $this->
+            getCountController()->
+            execute();
     }
 
     protected function getCountController()
     {
         $controller = new CountController($this->getMockedRequest(), $this->getMockedResponse());
+        $controller->setCurl($this->getMockedCurl());
 
         return $controller;
     }
@@ -49,6 +71,12 @@ class CountTest extends ControllerTestBase
      */
     protected function getMockedCurl()
     {
-        return \Mockery::mock(\PestJSON::class);
+        return $this->curl;
+    }
+
+    public function setUp()
+    {
+        parent::setUp();
+        $this->curl = \Mockery::mock(\PestJSON::class);
     }
 }
