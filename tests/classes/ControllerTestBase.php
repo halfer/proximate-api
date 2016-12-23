@@ -34,6 +34,21 @@ abstract class ControllerTestBase extends \PHPUnit_Framework_TestCase
         return $this->response;
     }
 
+    protected function setJsonResponseExpectation($error = null, array $additionalValues = [])
+    {
+        $expectedJson = ['ok' => !$error, ];
+        if ($error)
+        {
+            $expectedJson['error'] = $error;
+        }
+        $this->
+            getMockedResponse()->
+            shouldReceive('withJson')->
+            with(
+                ['result' => array_merge($expectedJson, $additionalValues), ]
+            );
+    }
+
     public function setUp()
     {
         $this->request = \Mockery::mock(Request::class);

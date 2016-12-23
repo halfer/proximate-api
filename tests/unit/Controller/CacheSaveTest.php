@@ -151,19 +151,6 @@ class CacheSaveTest extends ControllerTestBase
         }
     }
 
-    protected function setJsonResponseExpectation($error = null)
-    {
-        $expectedJson = ['ok' => !$error, ];
-        if ($error)
-        {
-            $expectedJson['error'] = $error;
-        }
-        $this->
-            getMockedResponse()->
-            shouldReceive('withJson')->
-            with(['result' => $expectedJson, ]);
-    }
-
     /**
      * Gets the current queue instance
      *

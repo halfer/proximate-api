@@ -11,13 +11,20 @@ class Count extends Base
 {
     public function execute()
     {
-        $result = [
-            'result' => [
+        try
+        {
+            $innerResult = [
+                'ok' => true,
                 'count' => $this->fetchCount(),
-            ]
-        ];
+            ];
+        }
+        // @todo Put more detail in when handling more specific exceptions
+        catch (\Exception $e)
+        {
+            $innerResult = ['ok' => false, ];
+        }
 
-        return $this->getResponse()->withJson($result);
+        return $this->getResponse()->withJson(['result' => $innerResult, ]);
     }
 
     protected function fetchCount()
