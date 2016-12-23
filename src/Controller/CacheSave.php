@@ -8,7 +8,6 @@ namespace Proximate\Controller;
 
 use Proximate\Controller\Base;
 use Proximate\Queue\Write as QueueWrite;
-use Proximate\Exception\App as AppException;
 use Proximate\Exception\RequiredParam;
 use Proximate\Exception\RequiredDependency;
 use Proximate\Exception\UnexpectedParam;
@@ -19,8 +18,6 @@ class CacheSave extends Base
 
     public function execute()
     {
-        $result = ['result' => []];
-
         // Any of these steps can result in an exception
         try
         {
@@ -29,17 +26,11 @@ class CacheSave extends Base
             $this->doQueue($validatedParams);
 
             // Everything was OK
-            $result['result']['ok'] = true;
+            $result = ['result' => ['ok' => true, ]];
         }
         catch (\Exception $e)
         {
-            // We got a failure
-            $result['result']['ok'] = false;
-
-            // Treat non-specific exceptions more cautiously
-            $result['result']['error'] = $e instanceof AppException ?
-                $e->getMessage() :
-                "An error occured";
+            $result = $this->getErrorResponse($e);
         }
 
         return $this->getResponse()->withJson($result);

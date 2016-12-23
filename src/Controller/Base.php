@@ -7,6 +7,7 @@
 namespace Proximate\Controller;
 
 use Proximate\Exception\BadJson as BadJsonException;
+use Proximate\Exception\App as AppException;
 
 abstract class Base
 {
@@ -81,6 +82,21 @@ abstract class Base
     protected function getResponse()
     {
         return $this->response;
+    }
+
+    protected function getErrorResponse(\Exception $exception)
+    {
+        // Treat non-specific exceptions more cautiously
+        $message = $exception instanceof AppException ?
+            $exception->getMessage() :
+            "An error occured";
+
+        return [
+            'result' => [
+                'ok' => false,
+                'error' => $message,
+            ]
+        ];
     }
 
     public function setCurl(\PestJSON $curl)
