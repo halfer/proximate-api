@@ -7,15 +7,10 @@
 namespace Proximate\Test;
 
 use Proximate\Controller\CacheSave;
-use Slim\Http\Request;
-use Slim\Http\Response;
 use Proximate\Queue\Write;
 
 class CacheSaveTest extends ControllerTestBase
 {
-    // @todo Move to a parent class
-    protected $request;
-    protected $response;
     protected $queue;
 
     public function testCacheSaveWithJustUrl()
@@ -170,26 +165,6 @@ class CacheSaveTest extends ControllerTestBase
     }
 
     /**
-     * Gets the current request instance
-     *
-     * @return Request|\Mockery\Mock
-     */
-    protected function getMockedRequest()
-    {
-        return $this->request;
-    }
-
-    /**
-     * Gets the current response instance
-     *
-     * @return Response|\Mockery\Mock
-     */
-    protected function getMockedResponse()
-    {
-        return $this->response;
-    }
-
-    /**
      * Gets the current queue instance
      *
      * @return Write|\Mockery\Mock
@@ -199,17 +174,9 @@ class CacheSaveTest extends ControllerTestBase
         return $this->queue;
     }
 
-    // @todo Move to a parent class
     public function setUp()
     {
-        $this->request = \Mockery::mock(Request::class);
-        $this->response = \Mockery::mock(Response::class);
+        parent::setUp();
         $this->queue = \Mockery::mock(Write::class);
-    }
-
-    // @todo Move to a parent class
-    public function tearDown()
-    {
-        \Mockery::close();
     }
 }
