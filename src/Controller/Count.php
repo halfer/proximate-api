@@ -9,6 +9,12 @@ use Proximate\Controller\Base;
 
 class Count extends Base
 {
+    /**
+     * Main controller entry point
+     *
+     * @todo Specify either 200/500 as response codes
+     * @return \Slim\Http\Response
+     */
     public function execute()
     {
         try
