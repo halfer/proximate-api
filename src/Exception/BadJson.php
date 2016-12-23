@@ -6,6 +6,6 @@
 
 namespace Proximate\Exception;
 
-class BadJson extends \Exception
+class BadJson extends App
 {
 }

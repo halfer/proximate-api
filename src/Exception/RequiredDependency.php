@@ -6,6 +6,6 @@
 
 namespace Proximate\Exception;
 
-class RequiredDependency extends \Exception
+class RequiredDependency extends App
 {
 }

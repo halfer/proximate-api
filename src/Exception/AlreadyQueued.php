@@ -6,6 +6,6 @@
 
 namespace Proximate\Exception;
 
-class AlreadyQueued extends \Exception
+class AlreadyQueued extends App
 {
 }

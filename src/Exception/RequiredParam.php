@@ -6,6 +6,6 @@
 
 namespace Proximate\Exception;
 
-class RequiredParam extends \Exception
+class RequiredParam extends App
 {
 }

@@ -6,6 +6,6 @@
 
 namespace Proximate\Exception;
 
-class InvalidQueueItem extends \Exception
+class InvalidQueueItem extends App
 {
 }

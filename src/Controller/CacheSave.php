@@ -8,6 +8,7 @@ namespace Proximate\Controller;
 
 use Proximate\Controller\Base;
 use Proximate\Queue\Write as QueueWrite;
+use Proximate\Exception\App as AppException;
 use Proximate\Exception\RequiredParam;
 use Proximate\Exception\RequiredDependency;
 use Proximate\Exception\UnexpectedParam;
@@ -30,12 +31,15 @@ class CacheSave extends Base
             // Everything was OK
             $result['result']['ok'] = true;
         }
-        // @todo Treat non-specific exceptions more cautiously
         catch (\Exception $e)
         {
             // We got a failure
             $result['result']['ok'] = false;
-            $result['result']['error'] = $e->getMessage();
+
+            // Treat non-specific exceptions more cautiously
+            $result['result']['error'] = $e instanceof AppException ?
+                $e->getMessage() :
+                "An error occured";
         }
 
         return $this->getResponse()->withJson($result);

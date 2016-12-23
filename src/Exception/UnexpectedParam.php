@@ -6,6 +6,6 @@
 
 namespace Proximate\Exception;
 
-class UnexpectedParam extends \Exception
+class UnexpectedParam extends App
 {
 }

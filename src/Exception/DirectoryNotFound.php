@@ -6,6 +6,6 @@
 
 namespace Proximate\Exception;
 
-class DirectoryNotFound extends \Exception
+class DirectoryNotFound extends App
 {
 }
