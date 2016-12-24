@@ -14,7 +14,8 @@ class Base
     const STATUS_READY = 'ready';
     const STATUS_DOING = 'doing';
     const STATUS_DONE = 'done';
-    const STATUS_ERROR = 'error';
+    const STATUS_INVALID = 'invalid'; // Bad JSON
+    const STATUS_ERROR = 'error'; // Fetch failed
 
     protected $queueDir;
     protected $fileService;

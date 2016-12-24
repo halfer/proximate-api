@@ -69,7 +69,7 @@ class QueueReadTest extends QueueTestBase
     }
 
     /**
-     * @expectedException \Proximate\Exception\InvalidQueueItem
+     * Checks that an invalid entry is renamed
      */
     public function testProcessorBadEntry()
     {
@@ -86,10 +86,11 @@ class QueueReadTest extends QueueTestBase
             once()->
             andReturn("Bad JSON");
 
-        // @todo Add rename expectations here once an exception is no longer raised
+        // Check that the rename is called in the right way
+        $this->setOneRenameExpectation($fileService, Queue::STATUS_READY, Queue::STATUS_INVALID);
 
         // Set up the queue and process the corrupted item
-        $this->processOneItem($fileService, $this->getFetcherMockNeverCalled());
+        $this->processOneItem($fileService, $this->getFetcherMockNeverCalled(), 1);
     }
 
     public function testProcessorOnEmptyQueue()
@@ -118,13 +119,13 @@ class QueueReadTest extends QueueTestBase
         $queue->process(1);
     }
 
-    protected function processOneItem(FileService $fileService, FetcherService $fetcherService)
+    protected function processOneItem(FileService $fileService, FetcherService $fetcherService, $sleepCount = 0)
     {
         $queue = $this->getQueueMock($fileService);
         $queue->initFetcher($fetcherService);
         $queue->
             shouldReceive('sleep')->
-            never();
+            times($sleepCount);
         $queue->process(1);
     }
 
@@ -162,12 +163,15 @@ class QueueReadTest extends QueueTestBase
 
     protected function setRenameExpectations(FileService $fileService, $endStatus)
     {
+        $this->setOneRenameExpectation($fileService, Queue::STATUS_READY, Queue::STATUS_DOING);
+        $this->setOneRenameExpectation($fileService, Queue::STATUS_DOING, $endStatus);
+    }
+
+    protected function setOneRenameExpectation(FileService $fileService, $startStatus, $endStatus)
+    {
         $fileService->
             shouldReceive('rename')->
-            with($this->getQueueEntryPath(), $this->getQueueEntryPath(Queue::STATUS_DOING))->
-            once()->
-            shouldReceive('rename')->
-            with($this->getQueueEntryPath(Queue::STATUS_DOING), $this->getQueueEntryPath($endStatus))->
+            with($this->getQueueEntryPath($startStatus), $this->getQueueEntryPath($endStatus))->
             once();
     }
 

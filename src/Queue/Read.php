@@ -8,7 +8,6 @@ namespace Proximate\Queue;
 
 use Proximate\Service\File as FileService;
 use Proximate\Service\SiteFetcher as FetcherService;
-use Proximate\Exception\InvalidQueueItem as InvalidQueueItemException;
 
 class Read extends Base
 {
@@ -33,7 +32,6 @@ class Read extends Base
         }
     }
 
-    // @todo Wrap a try-catch over this, then repair broken tests
     protected function singleIteration()
     {
         if ($itemData = $this->getNextQueueItem())
@@ -48,6 +46,8 @@ class Read extends Base
 
     /**
      * Returns the data for the next ready item, if one is available
+     *
+     * Fails silently if an entry is invalid (renames it out of the way)
      *
      * @todo Validate the item contains the right keys
      *
@@ -65,12 +65,16 @@ class Read extends Base
             $json = $fileService->fileGetContents($file);
             $data = json_decode($json, true);
 
-            // If the item does not contain JSON, bork
+            // If the item does not contain JSON, rename it
             if (!$data)
             {
-                throw new InvalidQueueItemException(
-                    "Invalid queue item found"
+                // Derive the invalid name first
+                $newName = preg_replace(
+                    '#\.' . self::STATUS_READY . '$#',
+                    '.' . self::STATUS_INVALID,
+                    $file
                 );
+                $fileService->rename($file, $newName);
             }
         }
 
