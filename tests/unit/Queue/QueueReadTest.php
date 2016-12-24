@@ -10,6 +10,7 @@ use Proximate\Queue\Read as Queue;
 use Proximate\Queue\Write as QueueWrite;
 use Proximate\Service\File as FileService;
 use Proximate\Service\SiteFetcher as FetcherService;
+use Proximate\Exception\SiteFetch as SiteFetchException;
 
 class QueueReadTest extends QueueTestBase
 {
@@ -27,20 +28,9 @@ class QueueReadTest extends QueueTestBase
 
     public function testProcessor()
     {
-        // Set up mocks to return a single item
-        $fileService = $this->getFileServiceMock();
-        $queueItems = [$this->getQueueEntryPath(), ];
+        $fileService = $this->getFileServiceMockWithOneEntry();
 
-        $this->setGlobExpectation($fileService, $queueItems);
-        $fileService->
-
-            // Read the only queue item
-            shouldReceive('fileGetContents')->
-            with($queueItems[0])->
-            once()->
-            andReturn($this->getCacheEntry(self::DUMMY_URL));
-
-        // Status changes
+        // Specify expected status changes
         $this->setRenameExpectations($fileService, Queue::STATUS_DONE);
 
         // Set up a mock to emulate the fetcher
@@ -68,7 +58,24 @@ class QueueReadTest extends QueueTestBase
      */
     public function testProcessorWithFetchFail()
     {
-        // @todo
+        $fileService = $this->getFileServiceMockWithOneEntry();
+
+        // Specify expected status changes
+        $this->setRenameExpectations($fileService, Queue::STATUS_ERROR);
+
+        // Set up a mock to emulate the fetcher
+        $fetchService = \Mockery::mock(FetcherService::class);
+        $fetchService->
+            shouldReceive('execute')->
+            andThrow(new SiteFetchException());
+
+        // Set up the queue and process the "waiting" item
+        $queue = $this->getQueueMock($fileService);
+        $queue->initFetcher($fetchService);
+        $queue->
+            shouldReceive('sleep')->
+            never();
+        $queue->process(1);
     }
 
     /**
@@ -89,7 +96,7 @@ class QueueReadTest extends QueueTestBase
             once()->
             andReturn("Bad JSON");
 
-        // @todo Add rename expectations here
+        // @todo Add rename expectations here once an exception is no longer raised
 
         // Set up the queue and process the corrupted item
         $queue = $this->getQueueMock($fileService);
@@ -124,6 +131,34 @@ class QueueReadTest extends QueueTestBase
             shouldReceive('sleep')->
             once();
         $queue->process(1);
+    }
+
+    protected function processOneItem(FetcherService $fetcherService)
+    {
+        // @todo Refactoring here
+    }
+
+    /**
+     * Gets a mocked class for the file service
+     *
+     * @return \Mockery\Mock|FileService
+     */
+    protected function getFileServiceMockWithOneEntry()
+    {
+        // Set up mocks to return a single item
+        $fileService = $this->getFileServiceMock();
+        $queueItems = [$this->getQueueEntryPath(), ];
+
+        $this->setGlobExpectation($fileService, $queueItems);
+        $fileService->
+
+            // Read the only queue item
+            shouldReceive('fileGetContents')->
+            with($queueItems[0])->
+            once()->
+            andReturn($this->getCacheEntry(self::DUMMY_URL));
+
+        return $fileService;
     }
 
     protected function setGlobExpectation(FileService $fileService, array $queueItems)

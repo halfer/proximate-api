@@ -29,14 +29,20 @@ class Read extends Base
     {
         for ($i = 0; $i < $loop; $i++)
         {
-            if ($itemData = $this->getNextQueueItem())
-            {
-                $this->processQueueItem($itemData);
-            }
-            else
-            {
-                $this->sleep();
-            }
+            $this->singleIteration();
+        }
+    }
+
+    // @todo Wrap a try-catch over this, then repair broken tests
+    protected function singleIteration()
+    {
+        if ($itemData = $this->getNextQueueItem())
+        {
+            $this->processQueueItem($itemData);
+        }
+        else
+        {
+            $this->sleep();
         }
     }
 
@@ -71,16 +77,27 @@ class Read extends Base
         return $data;
     }
 
+    /**
+     * @todo In the case of error it would be nice to send the error to changeItemStatus,
+     * which would write it into the JSON queue item if possible
+     * @param array $itemData
+     */
     protected function processQueueItem(array $itemData)
     {
         $url = $itemData['url'];
         $this->changeItemStatus($url, self::STATUS_READY, self::STATUS_DOING);
-        $ok = $this->fetchSite($itemData);
-        $this->changeItemStatus(
-            $url,
-            self::STATUS_DOING,
-            $ok ? self::STATUS_DONE : self::STATUS_ERROR
-        );
+
+        try
+        {
+            $this->fetchSite($itemData);
+            $status = self::STATUS_DONE;
+        }
+        catch (\Exception $e)
+        {
+            $status = self::STATUS_ERROR;
+        }
+
+        $this->changeItemStatus($url, self::STATUS_DOING, $status);
     }
 
     protected function fetchSite(array $itemData)
@@ -91,7 +108,6 @@ class Read extends Base
             $itemData['url_regex'],
             $itemData['reject_files']
         );
-        return true;
     }
 
     protected function changeItemStatus($url, $oldStatus, $newStatus)

@@ -70,6 +70,12 @@ abstract class QueueTestBase extends \PHPUnit_Framework_TestCase
         return $queue;
     }
 
+    /**
+     * Gets a mock class for the file service
+     *
+     * @param boolean $isDirectory
+     * @return \Mockery\Mock|FileService
+     */
     protected function getFileServiceMock($isDirectory = true)
     {
         $fileService = Mockery::mock(FileService::class);
