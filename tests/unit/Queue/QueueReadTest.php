@@ -45,12 +45,7 @@ class QueueReadTest extends QueueTestBase
             once();
 
         // Set up the queue and process the "waiting" item
-        $queue = $this->getQueueMock($fileService);
-        $queue->initFetcher($fetchService);
-        $queue->
-            shouldReceive('sleep')->
-            never();
-        $queue->process(1);
+        $this->processOneItem($fileService, $fetchService);
     }
 
     /**
@@ -70,12 +65,7 @@ class QueueReadTest extends QueueTestBase
             andThrow(new SiteFetchException());
 
         // Set up the queue and process the "waiting" item
-        $queue = $this->getQueueMock($fileService);
-        $queue->initFetcher($fetchService);
-        $queue->
-            shouldReceive('sleep')->
-            never();
-        $queue->process(1);
+        $this->processOneItem($fileService, $fetchService);
     }
 
     /**
@@ -99,12 +89,7 @@ class QueueReadTest extends QueueTestBase
         // @todo Add rename expectations here once an exception is no longer raised
 
         // Set up the queue and process the corrupted item
-        $queue = $this->getQueueMock($fileService);
-        $queue->initFetcher($this->getFetcherMockNeverCalled());
-        $queue->
-            shouldReceive('sleep')->
-            never();
-        $queue->process(1);
+        $this->processOneItem($fileService, $this->getFetcherMockNeverCalled());
     }
 
     public function testProcessorOnEmptyQueue()
@@ -133,9 +118,14 @@ class QueueReadTest extends QueueTestBase
         $queue->process(1);
     }
 
-    protected function processOneItem(FetcherService $fetcherService)
+    protected function processOneItem(FileService $fileService, FetcherService $fetcherService)
     {
-        // @todo Refactoring here
+        $queue = $this->getQueueMock($fileService);
+        $queue->initFetcher($fetcherService);
+        $queue->
+            shouldReceive('sleep')->
+            never();
+        $queue->process(1);
     }
 
     /**
