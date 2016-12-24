@@ -6,5 +6,6 @@ JSON=`php -r "echo json_encode(['url' => 'http://www.nimvelo.com/about/careers/'
 echo "Input doc: $JSON"
 curl \
 	--data $JSON \
+	--verbose \
 	http://localhost:8080/cache
 echo
