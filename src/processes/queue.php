@@ -2,6 +2,8 @@
 
 /**
  * Launches the queue, will be restarted by Supervisor when it finishes
+ *
+ * @todo Might be worth sending the proxy address in via an env var, and reading it here?
  */
 
 use Proximate\Service\File;
@@ -14,6 +16,6 @@ require_once $root . '/src/autoload.php';
 $queue = new Proximate\Queue\Read(
     '/var/proximate/queue',
     new File(),
-    new SiteFetcher()
+    new SiteFetcher('proximate-proxy:8081')
 );
 $queue->process();

@@ -9,6 +9,7 @@ use Proximate\Service\SiteFetcher;
 class SiteFetcherTest extends PHPUnit_Framework_TestCase
 {
     const DUMMY_URL = 'http://example.com/';
+    const DUMMY_PROXY = '127.0.0.1:8082';
 
     public function testWithUrlOnly()
     {
@@ -85,6 +86,7 @@ class SiteFetcherTest extends PHPUnit_Framework_TestCase
         $siteFetcher = Mockery::mock(SiteFetcher::class)->
             makePartial()->
             shouldAllowMockingProtectedMethods();
+        $siteFetcher->setProxy(self::DUMMY_PROXY);
         $siteFetcher->
             shouldReceive('runCommand')->
             with($expectedCommand)->

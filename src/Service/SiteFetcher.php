@@ -10,6 +10,13 @@ use Proximate\Exception\SiteFetch as SiteFetchException;
 
 class SiteFetcher
 {
+    protected $proxy;
+
+    public function __construct($proxy)
+    {
+        $this->setProxy($proxy);
+    }
+
     public function execute($url, $urlRegex, $rejectFiles)
     {
         // Here are some optional parameters
@@ -30,7 +37,7 @@ class SiteFetcher
                 {$rejectFilesCmd} \\
                 {$urlRegexCmd} \\
                 -e use_proxy=yes \\
-                -e http_proxy=127.0.0.1:8082 \\
+                -e http_proxy={$this->proxy} \\
                 {$url}
         ";
         $skipLines = $this->trimBlankLines($raw);
@@ -43,6 +50,16 @@ class SiteFetcher
                 "There was a problem with the site fetch call"
             );
         }
+    }
+
+    /**
+     * Useful for testing (when the constructor is not called)
+     *
+     * @param string $proxy
+     */
+    public function setProxy($proxy)
+    {
+        $this->proxy = $proxy;
     }
 
     /**
