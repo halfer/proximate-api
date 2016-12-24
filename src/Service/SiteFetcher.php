@@ -6,6 +6,8 @@
 
 namespace Proximate\Service;
 
+use Proximate\Exception\SiteFetch as SiteFetchException;
+
 class SiteFetcher
 {
     public function execute($url, $urlRegex, $rejectFiles)
@@ -34,7 +36,13 @@ class SiteFetcher
         $skipLines = $this->trimBlankLines($raw);
         $command = rtrim($skipLines);
 
-        $this->runCommand($command);
+        $ok = $this->runCommand($command);
+        if (!$ok)
+        {
+            throw new SiteFetchException(
+                "There was a problem with the site fetch call"
+            );
+        }
     }
 
     /**
@@ -59,6 +67,9 @@ class SiteFetcher
 
     protected function runCommand($command)
     {
-        system($command);
+        $return = null;
+        system($command, $return);
+
+        return $return === 0;
     }
 }

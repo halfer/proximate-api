@@ -12,6 +12,21 @@ class SiteFetcherTest extends PHPUnit_Framework_TestCase
 
     public function testWithUrlOnly()
     {
+        $this->checkWithUrlOnly(true);
+    }
+
+    /**
+     * Ensures that a failure can be detected
+     *
+     * @expectedException Proximate\Exception\SiteFetch
+     */
+    public function testWithError()
+    {
+        $this->checkWithUrlOnly(false);
+    }
+
+    protected function checkWithUrlOnly($ok)
+    {
         $url = self::DUMMY_URL;
         $expectedCommand = "
             wget \
@@ -23,7 +38,7 @@ class SiteFetcherTest extends PHPUnit_Framework_TestCase
                 -e http_proxy=127.0.0.1:8082 \\
                 {$url}";
 
-        $siteFetcher = $this->getFetcherService($expectedCommand);
+        $siteFetcher = $this->getFetcherService($expectedCommand, $ok);
         $siteFetcher->execute($url, null, null);
     }
 
@@ -65,7 +80,7 @@ class SiteFetcherTest extends PHPUnit_Framework_TestCase
         $siteFetcher->execute($url, null, $reject);
     }
 
-    protected function getFetcherService($expectedCommand)
+    protected function getFetcherService($expectedCommand, $ok = true)
     {
         $siteFetcher = Mockery::mock(SiteFetcher::class)->
             makePartial()->
@@ -74,6 +89,7 @@ class SiteFetcherTest extends PHPUnit_Framework_TestCase
             shouldReceive('runCommand')->
             with($expectedCommand)->
             once()->
+            andReturn($ok)->
             // This prevents unexpected output actually running the command :)
             shouldReceive('runCommand')->
             withAnyArgs()->
