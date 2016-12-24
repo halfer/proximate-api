@@ -38,16 +38,10 @@ class QueueReadTest extends QueueTestBase
             shouldReceive('fileGetContents')->
             with($queueItems[0])->
             once()->
-            andReturn($this->getCacheEntry(self::DUMMY_URL))->
+            andReturn($this->getCacheEntry(self::DUMMY_URL));
 
-            // Status changes
-            shouldReceive('rename')->
-            with($this->getQueueEntryPath(), $this->getQueueEntryPath(Queue::STATUS_DOING))->
-            once()->
-            shouldReceive('rename')->
-            with($this->getQueueEntryPath(Queue::STATUS_DOING), $this->getQueueEntryPath(Queue::STATUS_DONE))->
-            once()
-        ;
+        // Status changes
+        $this->setRenameExpectations($fileService, Queue::STATUS_DONE);
 
         // Set up a mock to emulate the fetcher
         $fetchService = \Mockery::mock(FetcherService::class);
@@ -70,6 +64,14 @@ class QueueReadTest extends QueueTestBase
     }
 
     /**
+     * Ensures that a failed fetch results in a status change to error
+     */
+    public function testProcessorWithFetchFail()
+    {
+        // @todo
+    }
+
+    /**
      * @expectedException \Proximate\Exception\InvalidQueueItem
      */
     public function testProcessorBadEntry()
@@ -86,6 +88,8 @@ class QueueReadTest extends QueueTestBase
             with($queueItems[0])->
             once()->
             andReturn("Bad JSON");
+
+        // @todo Add rename expectations here
 
         // Set up the queue and process the corrupted item
         $queue = $this->getQueueMock($fileService);
@@ -129,6 +133,17 @@ class QueueReadTest extends QueueTestBase
             shouldReceive('glob')->
             with($globPattern)->
             andReturn($queueItems);
+    }
+
+    protected function setRenameExpectations(FileService $fileService, $endStatus)
+    {
+        $fileService->
+            shouldReceive('rename')->
+            with($this->getQueueEntryPath(), $this->getQueueEntryPath(Queue::STATUS_DOING))->
+            once()->
+            shouldReceive('rename')->
+            with($this->getQueueEntryPath(Queue::STATUS_DOING), $this->getQueueEntryPath($endStatus))->
+            once();
     }
 
     protected function getQueueTestHarness()
