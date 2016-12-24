@@ -18,7 +18,7 @@ class SiteFetcher
             '';
         $urlRegexCmd = $urlRegex ?
             "--accept-regex \"{$urlRegex}\"" :
-            '';        
+            '';
 
         // Construct a site fetch command
         $raw = "
