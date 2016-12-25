@@ -11,8 +11,8 @@ FROM alpine:3.4
 # Do a system update
 RUN apk update
 
-# Install PHP
-RUN apk --update add php5
+# Install PHP and the non-BusyBox wget
+RUN apk --update add php5 wget
 
 # Taken from the "alpine-supervisord-docker" repo
 ENV PYTHON_VERSION=2.7.12-r0
