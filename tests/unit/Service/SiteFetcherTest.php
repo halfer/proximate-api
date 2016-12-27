@@ -4,9 +4,11 @@
  * Tests for the wget service class
  */
 
+namespace Proximate\Test;
+
 use Proximate\Service\SiteFetcher;
 
-class SiteFetcherTest extends PHPUnit_Framework_TestCase
+class SiteFetcherTest extends \PHPUnit_Framework_TestCase
 {
     const DUMMY_URL = 'http://example.com/';
     const DUMMY_PROXY = '127.0.0.1:8082';
@@ -83,7 +85,7 @@ class SiteFetcherTest extends PHPUnit_Framework_TestCase
 
     protected function getFetcherService($expectedCommand, $ok = true)
     {
-        $siteFetcher = Mockery::mock(SiteFetcher::class)->
+        $siteFetcher = \Mockery::mock(SiteFetcher::class)->
             makePartial()->
             shouldAllowMockingProtectedMethods();
         $siteFetcher->setProxy(self::DUMMY_PROXY);
@@ -102,6 +104,6 @@ class SiteFetcherTest extends PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        Mockery::close();
+        \Mockery::close();
     }
 }
