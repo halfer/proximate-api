@@ -12,7 +12,6 @@ class ProxyResetTest extends \PHPUnit_Framework_TestCase
 {
     use CurlTrait;
 
-    const DUMMY_PROXY_URL = 'http://localhost:1234/start';
     const DUMMY_RECORD_URL = 'http://example.com/hello';
 
     public function testSuccessfulResetCall()
@@ -21,7 +20,7 @@ class ProxyResetTest extends \PHPUnit_Framework_TestCase
             getMockedCurl()->
             shouldReceive('post')->
             with(
-                self::DUMMY_PROXY_URL,
+                '/start',
                 ['url' => self::DUMMY_RECORD_URL, ]
             );
         $this->
@@ -62,9 +61,6 @@ class ProxyResetTest extends \PHPUnit_Framework_TestCase
 
     protected function getProxyResetService()
     {
-        return new ProxyResetService(
-            $this->getMockedCurl(),
-            self::DUMMY_PROXY_URL
-        );
+        return new ProxyResetService($this->getMockedCurl());
     }
 }

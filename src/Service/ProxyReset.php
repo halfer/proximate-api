@@ -16,18 +16,15 @@ use Proximate\Exception\RequiredParam;
 class ProxyReset
 {
     protected $curl;
-    protected $resetUrl;
 
     /**
      * Creates the proxy reset service
      *
-     * @param \Pest $curl The curl module to use
-     * @param string $resetUrl The full endpoint to hit to register a reset
+     * @param \Pest $curl The curl module to use (containing a URL base)
      */
-    public function __construct(\Pest $curl, $resetUrl)
+    public function __construct(\Pest $curl)
     {
         $this->curl = $curl;
-        $this->resetUrl = $resetUrl;
     }
 
     /**
@@ -44,7 +41,7 @@ class ProxyReset
             );
         }
 
-        $this->getCurl()->post($this->resetUrl, ['url' => $url, ]);
+        $this->getCurl()->post('/start', ['url' => $url, ]);
     }
 
     /**
