@@ -11,12 +11,19 @@
 namespace Proximate\Service;
 
 use Proximate\Exception\RequiredDependency;
+use Proximate\Exception\RequiredParam;
 
 class ProxyReset
 {
     protected $curl;
     protected $resetUrl;
 
+    /**
+     * Creates the proxy reset service
+     *
+     * @param \Pest $curl The curl module to use
+     * @param string $resetUrl The full endpoint to hit to register a reset
+     */
     public function __construct(\Pest $curl, $resetUrl)
     {
         $this->curl = $curl;
@@ -26,12 +33,17 @@ class ProxyReset
     /**
      * The new URL for the proxy to record on
      *
-     * @todo Throw a catchable error if the URL is empty
-     *
      * @param string $url
      */
     public function execute($url)
     {
+        if (!$url)
+        {
+            throw new RequiredParam(
+                "An URL parameter is required to reset the proxy"
+            );
+        }
+
         $this->getCurl()->post($this->resetUrl, ['url' => $url, ]);
     }
 

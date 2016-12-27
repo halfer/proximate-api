@@ -12,6 +12,11 @@ trait CurlTrait
 {
     protected $curl;
 
+    /**
+     * Gets the current curl instance
+     *
+     * @return \PestJSON|\Mockery\Mock
+     */
     protected function getMockedCurl()
     {
         return $this->curl;
