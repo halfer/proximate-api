@@ -15,14 +15,14 @@ use Proximate\Exception\SiteFetch as SiteFetchException;
 class QueueReadTest extends QueueTestBase
 {
     /**
-     * Check that the read-specific initFetcher stores the fetcher OK
+     * Check that the read-specific setter stores the fetcher OK
      */
-    public function testInitFetcher()
+    public function testSetFetcher()
     {
         $fileService = $this->getFileServiceMock();
         $queue = $this->getQueueMock($fileService);
         $fetcherService = \Mockery::mock(FetcherService::class);
-        $queue->initFetcher($fetcherService);
+        $queue->setFetcher($fetcherService);
         $this->assertEquals($fetcherService, $queue->getSiteFetcherService());
     }
 
@@ -69,6 +69,15 @@ class QueueReadTest extends QueueTestBase
     }
 
     /**
+     * Ensures that a proxy reset call failure results in a status change to error
+     */
+    public function testProcessorWithProxyResetFail()
+    {
+        // @todo New unit test
+        $this->markTestIncomplete();
+    }
+
+    /**
      * Checks that an invalid entry is renamed
      */
     public function testProcessorBadEntry()
@@ -112,7 +121,7 @@ class QueueReadTest extends QueueTestBase
 
         // Set up the queue and process zero items
         $queue = $this->getQueueMock($fileService);
-        $queue->initFetcher($this->getFetcherMockNeverCalled());
+        $queue->setFetcher($this->getFetcherMockNeverCalled());
         $queue->
             shouldReceive('sleep')->
             once();
@@ -122,7 +131,7 @@ class QueueReadTest extends QueueTestBase
     protected function processOneItem(FileService $fileService, FetcherService $fetcherService, $sleepCount = 0)
     {
         $queue = $this->getQueueMock($fileService);
-        $queue->initFetcher($fetcherService);
+        $queue->setFetcher($fetcherService);
         $queue->
             shouldReceive('sleep')->
             times($sleepCount);
@@ -213,12 +222,6 @@ class QueueReadTestHarness extends Queue
     public function init($queueDir, FileService $fileService)
     {
         parent::init($queueDir, $fileService);
-    }
-
-    // Make this public
-    public function initFetcher(FetcherService $fetcherService)
-    {
-        return parent::initFetcher($fetcherService);
     }
 
     // Make this public

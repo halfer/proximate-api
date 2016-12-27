@@ -6,22 +6,27 @@
 
 namespace Proximate\Queue;
 
-use Proximate\Service\File as FileService;
 use Proximate\Service\SiteFetcher as FetcherService;
+use Proximate\Service\ProxyReset as ProxyResetService;
+use Proximate\Exception\RequiredDependency as RequiredDependencyException;
 
 class Read extends Base
 {
     protected $fetcherService;
+    protected $proxyResetService;
 
-    public function __construct($queueDir, FileService $fileService, FetcherService $fetcherService)
-    {
-        parent::__construct($queueDir, $fileService);
-        $this->initFetcher($fetcherService);
-    }
-
-    protected function initFetcher(FetcherService $fetcherService)
+    public function setFetcher(FetcherService $fetcherService)
     {
         $this->fetcherService = $fetcherService;
+
+        return $this;
+    }
+
+    public function setProxyResetter(ProxyResetService $proxyResetService)
+    {
+        $this->proxyResetService = $proxyResetService;
+
+        return $this;
     }
 
     public function process($loop = 50)
@@ -93,6 +98,7 @@ class Read extends Base
 
         try
         {
+            $this->resetProxy($url);
             $this->fetchSite($itemData);
             $status = self::STATUS_DONE;
         }
@@ -102,6 +108,12 @@ class Read extends Base
         }
 
         $this->changeItemStatus($url, self::STATUS_DOING, $status);
+    }
+
+    protected function resetProxy($url)
+    {
+        // @todo Get the proxy resetter here
+        // maybe a wait to ensure it has finished?
     }
 
     protected function fetchSite(array $itemData)
@@ -130,11 +142,37 @@ class Read extends Base
     /**
      * Gets the currently configured site fetcher
      *
+     * @throws RequiredDependencyException
      * @return FetcherService
      */
     protected function getSiteFetcherService()
     {
+        if (!$this->fetcherService)
+        {
+            throw new RequiredDependencyException(
+                "The queue read module needs a site fetcher to operate"
+            );
+        }
+
         return $this->fetcherService;
+    }
+
+    /**
+     * Gets the currently configured proxy resetter
+     *
+     * @throws RequiredDependencyException
+     * @return ProxyResetService
+     */
+    protected function getProxyResetterService()
+    {
+        if (!$this->proxyResetService)
+        {
+            throw new RequiredDependencyException(
+                "The queue read module needs a proxy resetter to operate"
+            );
+        }
+
+        return $this->proxyResetService;
     }
 
     /**

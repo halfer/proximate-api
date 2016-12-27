@@ -15,7 +15,8 @@ require_once $root . '/src/autoload.php';
 
 $queue = new Proximate\Queue\Read(
     '/var/proximate/queue',
-    new File(),
-    new SiteFetcher('proximate-proxy:8081')
+    new File()
 );
-$queue->process();
+$queue->
+    setFetcher(new SiteFetcher('proximate-proxy:8081'))->
+    process();
