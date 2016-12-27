@@ -10,7 +10,7 @@ use Proximate\Controller\Count as CountController;
 
 class CountTest extends ControllerTestBase
 {
-    protected $curl;
+    use CurlTrait;
 
     public function testGoodCountCase()
     {
@@ -62,21 +62,5 @@ class CountTest extends ControllerTestBase
         $controller->setCurl($this->getMockedCurl());
 
         return $controller;
-    }
-
-    /**
-     * Gets a mock of the cURL instance
-     *
-     * @return \PestJSON|Mockery\Mock
-     */
-    protected function getMockedCurl()
-    {
-        return $this->curl;
-    }
-
-    public function setUp()
-    {
-        parent::setUp();
-        $this->curl = \Mockery::mock(\PestJSON::class);
     }
 }

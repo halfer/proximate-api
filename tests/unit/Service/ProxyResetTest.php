@@ -4,8 +4,12 @@
  * Unit tests for the proxy reset endpoint
  */
 
-class ProxyResetTest extends PHPUnit_Framework_TestCase
+namespace Proximate\Test;
+
+class ProxyResetTest extends \PHPUnit_Framework_TestCase
 {
+    use CurlTrait;
+
     public function testSuccessfulResetCall()
     {
         $this->markTestIncomplete();
