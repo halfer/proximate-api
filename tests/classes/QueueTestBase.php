@@ -50,7 +50,7 @@ abstract class QueueTestBase extends \PHPUnit_Framework_TestCase
     public function testInitFileService()
     {
         $fileService = $this->getFileServiceMock();
-        $queue = $this->getQueueMock($fileService);
+        $queue = $this->getQueueTestHarness($fileService);
         $queue->init(self::DUMMY_DIR, $fileService);
         $this->assertEquals($fileService, $queue->getFileService());
     }

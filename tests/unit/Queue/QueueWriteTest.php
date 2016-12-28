@@ -122,7 +122,7 @@ class QueueWriteTest extends QueueTestBase
             once()->
             andReturn($writeFail ? false : strlen($json));
 
-        $this->getQueueMock($fileService)->
+        $this->getQueueWriteMock($fileService)->
             setUrl(self::DUMMY_URL)->
             queue();
     }
@@ -135,7 +135,7 @@ class QueueWriteTest extends QueueTestBase
         // Will fail because a queue item exists already
         $fileService = $this->getFileServiceMockWithFileExists(true);
 
-        $queue = $this->getQueueMock($fileService);
+        $queue = $this->getQueueWriteMock($fileService);
         $queue->
             shouldReceive('createQueueEntry')->
             never();
@@ -150,7 +150,7 @@ class QueueWriteTest extends QueueTestBase
         return new QueueWriteTestHarness();
     }
 
-    protected function getQueueMock($fileService = null)
+    protected function getQueueWriteMock($fileService = null)
     {
         return parent::getQueueMock(QueueWriteTestHarness::class, $fileService);
     }
@@ -178,5 +178,11 @@ class QueueWriteTestHarness extends Queue
     public function init($queueDir, FileService $fileService)
     {
         parent::init($queueDir, $fileService);
+    }
+
+    // Make this public
+    public function getFileService()
+    {
+        return parent::getFileService();
     }
 }
