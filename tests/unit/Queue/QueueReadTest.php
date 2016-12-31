@@ -15,7 +15,6 @@ use Proximate\Exception\SiteFetch as SiteFetchException;
 class QueueReadTest extends QueueTestBase
 {
     protected $fetcherService;
-    protected $fileService; # Move to parent?
     protected $resetService;
 
     /**
@@ -23,8 +22,9 @@ class QueueReadTest extends QueueTestBase
      */
     public function testSetFetcher()
     {
-        $fileService = $this->getFileServiceMock();
-        $queue = $this->getQueueReadMock($fileService);
+        $this->getFileServiceMock();
+
+        $queue = $this->getQueueReadMock();
         $fetcherService = $this->getFetcherService();
         $queue->setFetcher($fetcherService);
         $this->assertEquals($fetcherService, $queue->getSiteFetcherService());
@@ -32,10 +32,10 @@ class QueueReadTest extends QueueTestBase
 
     public function testProcessor()
     {
-        $this->fileService = $this->getFileServiceMockWithOneEntry();
+        $this->initFileServiceMockWithOneEntry();
 
         // Specify expected status changes
-        $this->setRenameExpectations($this->fileService, Queue::STATUS_DONE);
+        $this->setRenameExpectations(Queue::STATUS_DONE);
 
         // Set up a mock to emulate the fetcher
         $this->fetcherService->
@@ -56,10 +56,10 @@ class QueueReadTest extends QueueTestBase
      */
     public function testProcessorWithFetchFail()
     {
-        $fileService = $this->getFileServiceMockWithOneEntry();
+        $this->initFileServiceMockWithOneEntry();
 
         // Specify expected status changes
-        $this->setRenameExpectations($fileService, Queue::STATUS_ERROR);
+        $this->setRenameExpectations(Queue::STATUS_ERROR);
 
         // Set up a mock to emulate the fetcher
         $fetchService = \Mockery::mock(FetcherService::class);
@@ -89,7 +89,7 @@ class QueueReadTest extends QueueTestBase
         $fileService = $this->getFileServiceMock();
         $queueItems = [$this->getQueueEntryPath(), ];
 
-        $this->setGlobExpectation($fileService, $queueItems);
+        $this->setGlobExpectation($queueItems);
         $fileService->
 
             // Read the only queue item
@@ -99,7 +99,7 @@ class QueueReadTest extends QueueTestBase
             andReturn("Bad JSON");
 
         // Check that the rename is called in the right way
-        $this->setOneRenameExpectation($fileService, Queue::STATUS_READY, Queue::STATUS_INVALID);
+        $this->setOneRenameExpectation(Queue::STATUS_READY, Queue::STATUS_INVALID);
 
         // Set up the queue and process the corrupted item
         $this->processOneItem(1);
@@ -111,7 +111,7 @@ class QueueReadTest extends QueueTestBase
         $fileService = $this->getFileServiceMock();
         $queueItems = [];
 
-        $this->setGlobExpectation($fileService, $queueItems);
+        $this->setGlobExpectation($queueItems);
         $fileService->
 
             // Should not read anything
@@ -122,9 +122,11 @@ class QueueReadTest extends QueueTestBase
             shouldReceive('rename')->
             never();
 
+        $this->initFetcherMockNeverCalled();
+
         // Set up the queue and process zero items
-        $queue = $this->getQueueReadMock($fileService);
-        $queue->setFetcher($this->getFetcherMockNeverCalled());
+        $queue = $this->getQueueReadMock();
+        $queue->setFetcher($this->getFetcherService());
         $queue->
             shouldReceive('sleep')->
             once();
@@ -133,7 +135,7 @@ class QueueReadTest extends QueueTestBase
 
     protected function processOneItem($sleepCount = 0)
     {
-        $queue = $this->getQueueReadMock($this->getFileService());
+        $queue = $this->getQueueReadMock();
         $queue->setFetcher($this->getFetcherService());
         $queue->
             shouldReceive('sleep')->
@@ -146,13 +148,13 @@ class QueueReadTest extends QueueTestBase
      *
      * @return \Mockery\Mock|FileService
      */
-    protected function getFileServiceMockWithOneEntry()
+    protected function initFileServiceMockWithOneEntry()
     {
         // Set up mocks to return a single item
         $fileService = $this->getFileServiceMock();
         $queueItems = [$this->getQueueEntryPath(), ];
 
-        $this->setGlobExpectation($fileService, $queueItems);
+        $this->setGlobExpectation($queueItems);
         $fileService->
 
             // Read the only queue item
@@ -164,24 +166,26 @@ class QueueReadTest extends QueueTestBase
         return $fileService;
     }
 
-    protected function setGlobExpectation(FileService $fileService, array $queueItems)
+    protected function setGlobExpectation(array $queueItems)
     {
         $globPattern = self::DUMMY_DIR . '/*.' . Queue::STATUS_READY;
-        $fileService->
+        $this->
+            getFileService()->
             shouldReceive('glob')->
             with($globPattern)->
             andReturn($queueItems);
     }
 
-    protected function setRenameExpectations(FileService $fileService, $endStatus)
+    protected function setRenameExpectations($endStatus)
     {
-        $this->setOneRenameExpectation($fileService, Queue::STATUS_READY, Queue::STATUS_DOING);
-        $this->setOneRenameExpectation($fileService, Queue::STATUS_DOING, $endStatus);
+        $this->setOneRenameExpectation(Queue::STATUS_READY, Queue::STATUS_DOING);
+        $this->setOneRenameExpectation(Queue::STATUS_DOING, $endStatus);
     }
 
-    protected function setOneRenameExpectation(FileService $fileService, $startStatus, $endStatus)
+    protected function setOneRenameExpectation($startStatus, $endStatus)
     {
-        $fileService->
+        $this->
+            getFileService()->
             shouldReceive('rename')->
             with($this->getQueueEntryPath($startStatus), $this->getQueueEntryPath($endStatus))->
             once();
@@ -195,29 +199,30 @@ class QueueReadTest extends QueueTestBase
     /**
      * Gets a mock of the system under test
      *
-     * @param FileService $fileService
+     * @todo Rename as "createQueueReadMock"
+     *
      * @return \Mockery\Mock|QueueReadTestHarness
      */
-    protected function getQueueReadMock($fileService)
+    protected function getQueueReadMock()
     {
-        return parent::getQueueMock(QueueReadTestHarness::class, $fileService);
+        $queue = parent::getQueueMock(QueueReadTestHarness::class, $this->getFileService());
+        $queue->setFetcher($this->getFetcherService());
+
+        return $queue;
     }
 
-    protected function getFetcherMockNeverCalled()
+    protected function initFetcherMockNeverCalled()
     {
-        // Change this to use the classwide fetcher?
-        $fetchService = \Mockery::mock(FetcherService::class);
-        $fetchService->
+        $this->
+            getFetcherService()->
             shouldReceive('execute')->
             never();
-
-        return $fetchService;
     }
 
     protected function setUp()
     {
         $this->fetcherService = \Mockery::mock(FetcherService::class);
-        $this->fileService = \Mockery::mock(FileService::class);
+        parent::setUp();
     }
 
     protected function getFetcherService()

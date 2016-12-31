@@ -16,6 +16,13 @@ abstract class QueueTestBase extends \PHPUnit_Framework_TestCase
     const DUMMY_URL = 'http://example.com/';
     const DUMMY_HASH = 'a6bf1757fff057f266b697df9cf176fd';
 
+    protected $fileService;
+
+    protected function setUp()
+    {
+        $this->fileService = \Mockery::mock(FileService::class);
+    }
+
     /**
      * Checks that the folder is stored
      *
@@ -56,6 +63,8 @@ abstract class QueueTestBase extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @todo What circs do we create a non-mock FS? We don't want to do that, ever
+     *
      * @param string $queueClassName
      * @param FileService $fileService
      * @return Queue|\Mockery\Mock
@@ -78,7 +87,6 @@ abstract class QueueTestBase extends \PHPUnit_Framework_TestCase
      */
     protected function getFileServiceMock($isDirectory = true)
     {
-        #$fileService = Mockery::mock(FileService::class);
         $this->
             fileService->
             shouldReceive('isDirectory')->

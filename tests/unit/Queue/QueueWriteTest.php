@@ -150,6 +150,14 @@ class QueueWriteTest extends QueueTestBase
         return new QueueWriteTestHarness();
     }
 
+    /**
+     * Gets a mock of the system under test
+     *
+     * @todo Rename as "createQueueWriteMock"
+     * @todo Can we make $fileService mandatory to start with
+     *
+     * @return \Mockery\Mock|QueueReadTestHarness
+     */
     protected function getQueueWriteMock($fileService = null)
     {
         return parent::getQueueMock(QueueWriteTestHarness::class, $fileService);
@@ -164,12 +172,6 @@ class QueueWriteTest extends QueueTestBase
             andReturn($fileExists);
 
         return $fileService;
-    }
-
-    protected function setUp()
-    {
-        $this->fetcherService = \Mockery::mock(FetcherService::class);
-        $this->fileService = \Mockery::mock(FileService::class);
     }
 }
 
