@@ -115,14 +115,15 @@ class QueueWriteTest extends QueueTestBase
     public function checkQueueWrite($writeFail)
     {
         $json = $this->getCacheEntry(self::DUMMY_URL);
-        $fileService = $this->getFileServiceMockWithFileExists();
-        $fileService->
+        $this->initFileServiceMockWithFileExists(false);
+        $this->
+            getFileService()->
             shouldReceive('filePutContents')->
             with($this->getQueueEntryPath(), $json)->
             once()->
             andReturn($writeFail ? false : strlen($json));
 
-        $this->getQueueWriteMock($fileService)->
+        $this->getQueueWriteMock()->
             setUrl(self::DUMMY_URL)->
             queue();
     }
@@ -133,9 +134,9 @@ class QueueWriteTest extends QueueTestBase
     public function testExistingQueueItemFails()
     {
         // Will fail because a queue item exists already
-        $fileService = $this->getFileServiceMockWithFileExists(true);
+        $this->initFileServiceMockWithFileExists(true);
 
-        $queue = $this->getQueueWriteMock($fileService);
+        $queue = $this->getQueueWriteMock();
         $queue->
             shouldReceive('createQueueEntry')->
             never();
@@ -154,24 +155,27 @@ class QueueWriteTest extends QueueTestBase
      * Gets a mock of the system under test
      *
      * @todo Rename as "createQueueWriteMock"
-     * @todo Can we make $fileService mandatory to start with
      *
      * @return \Mockery\Mock|QueueReadTestHarness
      */
-    protected function getQueueWriteMock($fileService = null)
+    protected function getQueueWriteMock()
     {
-        return parent::getQueueMock(QueueWriteTestHarness::class, $fileService);
+        return parent::getQueueMock(QueueWriteTestHarness::class, $this->getFileService());
     }
 
-    protected function getFileServiceMockWithFileExists($fileExists = false)
+    /**
+     * Sets up the file service with a fileExists() expectation
+     *
+     * @param boolean $fileExists
+     * @return FileService
+     */
+    protected function initFileServiceMockWithFileExists($fileExists)
     {
         $fileService = $this->getFileServiceMock();
         $fileService->
             shouldReceive('fileExists')->
             once()->
             andReturn($fileExists);
-
-        return $fileService;
     }
 }
 

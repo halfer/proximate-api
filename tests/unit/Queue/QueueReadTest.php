@@ -24,7 +24,7 @@ class QueueReadTest extends QueueTestBase
     {
         $this->getFileServiceMock();
 
-        $queue = $this->getQueueReadMock();
+        $queue = $this->createQueueReadMock();
         $fetcherService = $this->getFetcherService();
         $queue->setFetcher($fetcherService);
         $this->assertEquals($fetcherService, $queue->getSiteFetcherService());
@@ -125,7 +125,7 @@ class QueueReadTest extends QueueTestBase
         $this->initFetcherMockNeverCalled();
 
         // Set up the queue and process zero items
-        $queue = $this->getQueueReadMock();
+        $queue = $this->createQueueReadMock();
         $queue->setFetcher($this->getFetcherService());
         $queue->
             shouldReceive('sleep')->
@@ -135,7 +135,7 @@ class QueueReadTest extends QueueTestBase
 
     protected function processOneItem($sleepCount = 0)
     {
-        $queue = $this->getQueueReadMock();
+        $queue = $this->createQueueReadMock();
         $queue->setFetcher($this->getFetcherService());
         $queue->
             shouldReceive('sleep')->
@@ -199,11 +199,9 @@ class QueueReadTest extends QueueTestBase
     /**
      * Gets a mock of the system under test
      *
-     * @todo Rename as "createQueueReadMock"
-     *
      * @return \Mockery\Mock|QueueReadTestHarness
      */
-    protected function getQueueReadMock()
+    protected function createQueueReadMock()
     {
         $queue = parent::getQueueMock(QueueReadTestHarness::class, $this->getFileService());
         $queue->setFetcher($this->getFetcherService());
@@ -233,16 +231,6 @@ class QueueReadTest extends QueueTestBase
         }
 
         return $this->fetcherService;
-    }
-
-    protected function getFileService()
-    {
-        if (!$this->fileService)
-        {
-            throw new \Exception();
-        }
-
-        return $this->fileService;
     }
 }
 

@@ -79,8 +79,22 @@ abstract class QueueTestBase extends \PHPUnit_Framework_TestCase
         return $queue;
     }
 
+    // @todo Rename to getFileServiceMock?
+    protected function getFileService()
+    {
+        if (!$this->fileService)
+        {
+            throw new \Exception();
+        }
+
+        return $this->fileService;
+    }
+
     /**
      * Gets a mock class for the file service
+     *
+     * @todo Rename this to distinguish it from getFileServiceMock, something like
+     * getFileServiceMockWithIsDirectory
      *
      * @param boolean $isDirectory
      * @return \Mockery\Mock|FileService
