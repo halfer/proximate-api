@@ -63,18 +63,15 @@ abstract class QueueTestBase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @todo What circs do we create a non-mock FS? We don't want to do that, ever
-     *
      * @param string $queueClassName
-     * @param FileService $fileService
      * @return Queue|\Mockery\Mock
      */
-    protected function getQueueMock($queueClassName, $fileService = null)
+    protected function getQueueMock($queueClassName)
     {
         $queue = Mockery::mock($queueClassName)->
             shouldAllowMockingProtectedMethods()->
             makePartial();
-        $queue->init(self::DUMMY_DIR, $fileService ?: new FileService());
+        $queue->init(self::DUMMY_DIR, $this->getFileService());
 
         return $queue;
     }

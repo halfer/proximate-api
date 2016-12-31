@@ -203,7 +203,7 @@ class QueueReadTest extends QueueTestBase
      */
     protected function createQueueReadMock()
     {
-        $queue = parent::getQueueMock(QueueReadTestHarness::class, $this->getFileService());
+        $queue = parent::getQueueMock(QueueReadTestHarness::class);
         $queue->setFetcher($this->getFetcherService());
 
         return $queue;
