@@ -71,13 +71,12 @@ abstract class QueueTestBase extends \PHPUnit_Framework_TestCase
         $queue = Mockery::mock($queueClassName)->
             shouldAllowMockingProtectedMethods()->
             makePartial();
-        $queue->init(self::DUMMY_DIR, $this->getFileService());
+        $queue->init(self::DUMMY_DIR, $this->getFileServiceMock());
 
         return $queue;
     }
 
-    // @todo Rename to getFileServiceMock?
-    protected function getFileService()
+    protected function getFileServiceMock()
     {
         if (!$this->fileService)
         {
@@ -96,11 +95,11 @@ abstract class QueueTestBase extends \PHPUnit_Framework_TestCase
     protected function getFileServiceMockWithBasicExpectations($isDirectory = true)
     {
         $this->
-            getFileService()->
+            getFileServiceMock()->
             shouldReceive('isDirectory')->
             andReturn($isDirectory);
 
-        return $this->getFileService();
+        return $this->getFileServiceMock();
     }
 
     abstract protected function getQueueTestHarness();

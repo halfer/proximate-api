@@ -117,7 +117,7 @@ class QueueWriteTest extends QueueTestBase
         $json = $this->getCacheEntry(self::DUMMY_URL);
         $this->initFileServiceMockWithFileExists(false);
         $this->
-            getFileService()->
+            getFileServiceMock()->
             shouldReceive('filePutContents')->
             with($this->getQueueEntryPath(), $json)->
             once()->

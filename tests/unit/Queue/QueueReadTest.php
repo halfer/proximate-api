@@ -25,7 +25,7 @@ class QueueReadTest extends QueueTestBase
         $this->getFileServiceMockWithBasicExpectations();
 
         $queue = $this->createQueueReadMock();
-        $fetcherService = $this->getFetcherService();
+        $fetcherService = $this->getFetcherServiceMock();
         $this->assertEquals($fetcherService, $queue->getSiteFetcherService());
     }
 
@@ -159,7 +159,7 @@ class QueueReadTest extends QueueTestBase
     {
         $globPattern = self::DUMMY_DIR . '/*.' . Queue::STATUS_READY;
         $this->
-            getFileService()->
+            getFileServiceMock()->
             shouldReceive('glob')->
             with($globPattern)->
             andReturn($queueItems);
@@ -174,7 +174,7 @@ class QueueReadTest extends QueueTestBase
     protected function setOneRenameExpectation($startStatus, $endStatus)
     {
         $this->
-            getFileService()->
+            getFileServiceMock()->
             shouldReceive('rename')->
             with($this->getQueueEntryPath($startStatus), $this->getQueueEntryPath($endStatus))->
             once();
@@ -193,7 +193,7 @@ class QueueReadTest extends QueueTestBase
     protected function createQueueReadMock()
     {
         $queue = parent::getQueueMock(QueueReadTestHarness::class);
-        $queue->setFetcher($this->getFetcherService());
+        $queue->setFetcher($this->getFetcherServiceMock());
 
         return $queue;
     }
@@ -201,7 +201,7 @@ class QueueReadTest extends QueueTestBase
     protected function initFetcherMockNeverCalled()
     {
         $this->
-            getFetcherService()->
+            getFetcherServiceMock()->
             shouldReceive('execute')->
             never();
     }
@@ -212,7 +212,7 @@ class QueueReadTest extends QueueTestBase
         parent::setUp();
     }
 
-    protected function getFetcherService()
+    protected function getFetcherServiceMock()
     {
         if (!$this->fetcherService)
         {
