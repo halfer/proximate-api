@@ -26,7 +26,6 @@ class QueueReadTest extends QueueTestBase
 
         $queue = $this->createQueueReadMock();
         $fetcherService = $this->getFetcherService();
-        $queue->setFetcher($fetcherService);
         $this->assertEquals($fetcherService, $queue->getSiteFetcherService());
     }
 
@@ -125,18 +124,12 @@ class QueueReadTest extends QueueTestBase
         $this->initFetcherMockNeverCalled();
 
         // Set up the queue and process zero items
-        $queue = $this->createQueueReadMock();
-        $queue->setFetcher($this->getFetcherService());
-        $queue->
-            shouldReceive('sleep')->
-            once();
-        $queue->process(1);
+        $this->processOneItem(1);
     }
 
     protected function processOneItem($sleepCount = 0)
     {
         $queue = $this->createQueueReadMock();
-        $queue->setFetcher($this->getFetcherService());
         $queue->
             shouldReceive('sleep')->
             times($sleepCount);
