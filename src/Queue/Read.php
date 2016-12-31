@@ -117,6 +117,20 @@ class Read extends Base
      */
     protected function resetProxy($url)
     {
+        $this->getProxyResetterService()->execute(
+            $this->getDomainForUrl($url)
+        );
+        $this->resetProxySleep();
+    }
+
+    /**
+     * Gets the base domain for the specified URL
+     *
+     * @param string $url
+     * @return string
+     */
+    protected function getDomainForUrl($url)
+    {
         // Get the base domain from the URL
         $scheme = parse_url($url, PHP_URL_SCHEME);
         $host = parse_url($url, PHP_URL_HOST);
@@ -130,10 +144,7 @@ class Read extends Base
             }
         }
 
-        return; // FIXME
-
-        $this->getProxyResetterService()->execute($domain);
-        $this->resetProxySleep();
+        return $domain;
     }
 
     protected function resetProxySleep()

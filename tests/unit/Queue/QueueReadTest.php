@@ -10,6 +10,7 @@ use Proximate\Queue\Read as Queue;
 use Proximate\Queue\Write as QueueWrite;
 use Proximate\Service\File as FileService;
 use Proximate\Service\SiteFetcher as FetcherService;
+use Proximate\Service\ProxyReset as ProxyResetService;
 use Proximate\Exception\SiteFetch as SiteFetchException;
 
 class QueueReadTest extends QueueTestBase
@@ -37,13 +38,20 @@ class QueueReadTest extends QueueTestBase
         $this->setRenameExpectations(Queue::STATUS_DONE);
 
         // Set up a mock to emulate the fetcher
-        $this->fetcherService->
+        $this->
+            getFetcherServiceMock()->
             shouldReceive('execute')->
             with(
                 self::DUMMY_URL,
                 null,
                 QueueWrite::DEFAULT_REJECT_FILES
             )->
+            once();
+
+        // Mock out some methods on the proxy resetter
+        $this->
+            getResetServiceMock()->
+            shouldReceive('execute')->
             once();
 
         // Set up the queue and process the "waiting" item
@@ -193,7 +201,9 @@ class QueueReadTest extends QueueTestBase
     protected function createQueueReadMock()
     {
         $queue = parent::getQueueMock(QueueReadTestHarness::class);
+        /* @var $queue Queue */
         $queue->setFetcher($this->getFetcherServiceMock());
+        $queue->setProxyResetter($this->getResetServiceMock());
 
         return $queue;
     }
@@ -209,6 +219,7 @@ class QueueReadTest extends QueueTestBase
     protected function setUp()
     {
         $this->fetcherService = \Mockery::mock(FetcherService::class);
+        $this->resetService = \Mockery::mock(ProxyResetService::class);
         parent::setUp();
     }
 
@@ -220,6 +231,16 @@ class QueueReadTest extends QueueTestBase
         }
 
         return $this->fetcherService;
+    }
+
+    protected function getResetServiceMock()
+    {
+        if (!$this->resetService)
+        {
+            throw new \Exception();
+        }
+
+        return $this->resetService;
     }
 }
 
