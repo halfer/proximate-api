@@ -17,7 +17,7 @@ class QueueWriteTest extends QueueTestBase
     public function testConstructorStoresDirectory()
     {
         $queue = $this->getQueueTestHarness();
-        $queue->init($dir = self::DUMMY_DIR, $this->getFileServiceMock());
+        $queue->init($dir = self::DUMMY_DIR, $this->getFileServiceMockWithBasicExpectations());
 
         $this->assertEquals($dir, $queue->getQueueDir());
     }
@@ -25,7 +25,7 @@ class QueueWriteTest extends QueueTestBase
     public function testConstructorAllowsGoodFolder()
     {
         $queue = $this->getQueueTestHarness();
-        $queue->init(self::DUMMY_DIR, $this->getFileServiceMock());
+        $queue->init(self::DUMMY_DIR, $this->getFileServiceMockWithBasicExpectations());
 
         $this->assertTrue(true);
     }
@@ -38,7 +38,7 @@ class QueueWriteTest extends QueueTestBase
     public function testConstructorRejectsBadFolder()
     {
         $queue = $this->getQueueTestHarness();
-        $queue->init(self::DUMMY_DIR, $this->getFileServiceMock(false));
+        $queue->init(self::DUMMY_DIR, $this->getFileServiceMockWithBasicExpectations(false));
     }
 
     public function testUrlStorage()
@@ -171,8 +171,8 @@ class QueueWriteTest extends QueueTestBase
      */
     protected function initFileServiceMockWithFileExists($fileExists)
     {
-        $fileService = $this->getFileServiceMock();
-        $fileService->
+        $this->
+            getFileServiceMockWithBasicExpectations()->
             shouldReceive('fileExists')->
             once()->
             andReturn($fileExists);

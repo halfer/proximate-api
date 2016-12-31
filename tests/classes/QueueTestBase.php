@@ -31,7 +31,7 @@ abstract class QueueTestBase extends \PHPUnit_Framework_TestCase
     public function testConstructorStoresDirectory()
     {
         $queue = $this->getQueueTestHarness();
-        $queue->init($dir = self::DUMMY_DIR, $this->getFileServiceMock());
+        $queue->init($dir = self::DUMMY_DIR, $this->getFileServiceMockWithBasicExpectations());
 
         $this->assertEquals($dir, $queue->getQueueDir());
     }
@@ -46,7 +46,7 @@ abstract class QueueTestBase extends \PHPUnit_Framework_TestCase
     public function testConstructorRejectsBadFolder()
     {
         $queue = $this->getQueueTestHarness();
-        $queue->init(self::DUMMY_DIR, $this->getFileServiceMock(false));
+        $queue->init(self::DUMMY_DIR, $this->getFileServiceMockWithBasicExpectations(false));
     }
 
     /**
@@ -56,7 +56,7 @@ abstract class QueueTestBase extends \PHPUnit_Framework_TestCase
      */
     public function testInitFileService()
     {
-        $fileService = $this->getFileServiceMock();
+        $fileService = $this->getFileServiceMockWithBasicExpectations();
         $queue = $this->getQueueTestHarness($fileService);
         $queue->init(self::DUMMY_DIR, $fileService);
         $this->assertEquals($fileService, $queue->getFileService());
@@ -90,20 +90,17 @@ abstract class QueueTestBase extends \PHPUnit_Framework_TestCase
     /**
      * Gets a mock class for the file service
      *
-     * @todo Rename this to distinguish it from getFileServiceMock, something like
-     * getFileServiceMockWithIsDirectory
-     *
      * @param boolean $isDirectory
      * @return \Mockery\Mock|FileService
      */
-    protected function getFileServiceMock($isDirectory = true)
+    protected function getFileServiceMockWithBasicExpectations($isDirectory = true)
     {
         $this->
-            fileService->
+            getFileService()->
             shouldReceive('isDirectory')->
             andReturn($isDirectory);
 
-        return $this->fileService;
+        return $this->getFileService();
     }
 
     abstract protected function getQueueTestHarness();

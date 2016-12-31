@@ -22,7 +22,7 @@ class QueueReadTest extends QueueTestBase
      */
     public function testSetFetcher()
     {
-        $this->getFileServiceMock();
+        $this->getFileServiceMockWithBasicExpectations();
 
         $queue = $this->createQueueReadMock();
         $fetcherService = $this->getFetcherService();
@@ -85,11 +85,11 @@ class QueueReadTest extends QueueTestBase
     public function testProcessorBadEntry()
     {
         // Set up mocks to return a single item
-        $fileService = $this->getFileServiceMock();
         $queueItems = [$this->getQueueEntryPath(), ];
 
         $this->setGlobExpectation($queueItems);
-        $fileService->
+        $this->
+            getFileServiceMockWithBasicExpectations()->
 
             // Read the only queue item
             shouldReceive('fileGetContents')->
@@ -107,11 +107,11 @@ class QueueReadTest extends QueueTestBase
     public function testProcessorOnEmptyQueue()
     {
         // Set up mocks to return a single item
-        $fileService = $this->getFileServiceMock();
         $queueItems = [];
 
         $this->setGlobExpectation($queueItems);
-        $fileService->
+        $this->
+            getFileServiceMockWithBasicExpectations()->
 
             // Should not read anything
             shouldReceive('fileGetContents')->
@@ -137,26 +137,22 @@ class QueueReadTest extends QueueTestBase
     }
 
     /**
-     * Gets a mocked class for the file service
-     *
-     * @return \Mockery\Mock|FileService
+     * Sets up a mocked class for the file service
      */
     protected function initFileServiceMockWithOneEntry()
     {
         // Set up mocks to return a single item
-        $fileService = $this->getFileServiceMock();
         $queueItems = [$this->getQueueEntryPath(), ];
 
         $this->setGlobExpectation($queueItems);
-        $fileService->
+        $this->
+            getFileServiceMockWithBasicExpectations()->
 
             // Read the only queue item
             shouldReceive('fileGetContents')->
             with($queueItems[0])->
             once()->
             andReturn($this->getCacheEntry(self::DUMMY_URL));
-
-        return $fileService;
     }
 
     protected function setGlobExpectation(array $queueItems)
