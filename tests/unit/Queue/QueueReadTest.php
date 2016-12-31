@@ -14,6 +14,10 @@ use Proximate\Exception\SiteFetch as SiteFetchException;
 
 class QueueReadTest extends QueueTestBase
 {
+    protected $fetcherService;
+    protected $fileService; # Move to parent?
+    protected $resetService;
+
     /**
      * Check that the read-specific setter stores the fetcher OK
      */
@@ -21,21 +25,20 @@ class QueueReadTest extends QueueTestBase
     {
         $fileService = $this->getFileServiceMock();
         $queue = $this->getQueueReadMock($fileService);
-        $fetcherService = \Mockery::mock(FetcherService::class);
+        $fetcherService = $this->getFetcherService();
         $queue->setFetcher($fetcherService);
         $this->assertEquals($fetcherService, $queue->getSiteFetcherService());
     }
 
     public function testProcessor()
     {
-        $fileService = $this->getFileServiceMockWithOneEntry();
+        $this->fileService = $this->getFileServiceMockWithOneEntry();
 
         // Specify expected status changes
-        $this->setRenameExpectations($fileService, Queue::STATUS_DONE);
+        $this->setRenameExpectations($this->fileService, Queue::STATUS_DONE);
 
         // Set up a mock to emulate the fetcher
-        $fetchService = \Mockery::mock(FetcherService::class);
-        $fetchService->
+        $this->fetcherService->
             shouldReceive('execute')->
             with(
                 self::DUMMY_URL,
@@ -45,7 +48,7 @@ class QueueReadTest extends QueueTestBase
             once();
 
         // Set up the queue and process the "waiting" item
-        $this->processOneItem($fileService, $fetchService);
+        $this->processOneItem();
     }
 
     /**
@@ -65,7 +68,7 @@ class QueueReadTest extends QueueTestBase
             andThrow(new SiteFetchException());
 
         // Set up the queue and process the "waiting" item
-        $this->processOneItem($fileService, $fetchService);
+        $this->processOneItem();
     }
 
     /**
@@ -99,7 +102,7 @@ class QueueReadTest extends QueueTestBase
         $this->setOneRenameExpectation($fileService, Queue::STATUS_READY, Queue::STATUS_INVALID);
 
         // Set up the queue and process the corrupted item
-        $this->processOneItem($fileService, $this->getFetcherMockNeverCalled(), 1);
+        $this->processOneItem(1);
     }
 
     public function testProcessorOnEmptyQueue()
@@ -128,10 +131,10 @@ class QueueReadTest extends QueueTestBase
         $queue->process(1);
     }
 
-    protected function processOneItem(FileService $fileService, FetcherService $fetcherService, $sleepCount = 0)
+    protected function processOneItem($sleepCount = 0)
     {
-        $queue = $this->getQueueReadMock($fileService);
-        $queue->setFetcher($fetcherService);
+        $queue = $this->getQueueReadMock($this->getFileService());
+        $queue->setFetcher($this->getFetcherService());
         $queue->
             shouldReceive('sleep')->
             times($sleepCount);
@@ -202,12 +205,39 @@ class QueueReadTest extends QueueTestBase
 
     protected function getFetcherMockNeverCalled()
     {
+        // Change this to use the classwide fetcher?
         $fetchService = \Mockery::mock(FetcherService::class);
         $fetchService->
             shouldReceive('execute')->
             never();
 
         return $fetchService;
+    }
+
+    protected function setUp()
+    {
+        $this->fetcherService = \Mockery::mock(FetcherService::class);
+        $this->fileService = \Mockery::mock(FileService::class);
+    }
+
+    protected function getFetcherService()
+    {
+        if (!$this->fetcherService)
+        {
+            throw new \Exception();
+        }
+
+        return $this->fetcherService;
+    }
+
+    protected function getFileService()
+    {
+        if (!$this->fileService)
+        {
+            throw new \Exception();
+        }
+
+        return $this->fileService;
     }
 }
 

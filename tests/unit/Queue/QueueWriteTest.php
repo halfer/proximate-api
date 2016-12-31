@@ -165,6 +165,12 @@ class QueueWriteTest extends QueueTestBase
 
         return $fileService;
     }
+
+    protected function setUp()
+    {
+        $this->fetcherService = \Mockery::mock(FetcherService::class);
+        $this->fileService = \Mockery::mock(FileService::class);
+    }
 }
 
 class QueueWriteTestHarness extends Queue
