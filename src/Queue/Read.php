@@ -110,10 +110,35 @@ class Read extends Base
         $this->changeItemStatus($url, self::STATUS_DOING, $status);
     }
 
+    /**
+     * Restarts the proxy recorder, asking it to record at this URL
+     *
+     * @param string $url
+     */
     protected function resetProxy($url)
     {
-        // @todo Get the proxy resetter here
-        // maybe a wait to ensure it has finished?
+        // Get the base domain from the URL
+        $scheme = parse_url($url, PHP_URL_SCHEME);
+        $host = parse_url($url, PHP_URL_HOST);
+
+        if ($scheme && $host)
+        {
+            $domain = $scheme . '://' . $host;
+            if ($port = parse_url($url, PHP_URL_PORT))
+            {
+                $domain .= ':' . $port;
+            }
+        }
+
+        return; // FIXME
+
+        $this->getProxyResetterService()->execute($domain);
+        $this->resetProxySleep();
+    }
+
+    protected function resetProxySleep()
+    {
+        sleep(5);
     }
 
     protected function fetchSite(array $itemData)
