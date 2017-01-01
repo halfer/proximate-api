@@ -90,9 +90,9 @@ class QueueReadTest extends QueueTestBase
         // Specify expected status changes
         $this->setRenameExpectations(Queue::STATUS_ERROR);
 
-        // Set up a mock to emulate the fetcher
-        $fetchService = \Mockery::mock(FetcherService::class);
-        $fetchService->
+        // Set up the fetcher mock to emulate a failure
+        $this->
+            getFetcherServiceMock()->
             shouldReceive('execute')->
             andThrow(new SiteFetchException());
 
@@ -105,8 +105,19 @@ class QueueReadTest extends QueueTestBase
      */
     public function testProcessorWithProxyResetFail()
     {
-        // @todo New unit test
-        $this->markTestIncomplete();
+        $this->initFileServiceMockWithOneEntry();
+
+        // Specify expected status changes
+        $this->setRenameExpectations(Queue::STATUS_ERROR);
+
+        // Set up the fetcher mock to emulate a failure
+        $this->
+            getResetServiceMock()->
+            shouldReceive('execute')->
+            andThrow(new \Pest_Exception());
+
+        // Set up the queue and process the "waiting" item
+        $this->processOneItem();
     }
 
     /**
