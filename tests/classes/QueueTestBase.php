@@ -80,7 +80,9 @@ abstract class QueueTestBase extends \PHPUnit_Framework_TestCase
     {
         if (!$this->fileService)
         {
-            throw new \Exception();
+            throw new \Exception(
+                "This call needs a file service mock to have been set up"
+            );
         }
 
         return $this->fileService;

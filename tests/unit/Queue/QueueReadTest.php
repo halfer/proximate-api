@@ -249,7 +249,9 @@ class QueueReadTest extends QueueTestBase
     {
         if (!$this->fetcherService)
         {
-            throw new \Exception();
+            throw new \Exception(
+                "This call needs a fetcher service mock to have been set up"
+            );
         }
 
         return $this->fetcherService;
@@ -259,7 +261,9 @@ class QueueReadTest extends QueueTestBase
     {
         if (!$this->resetService)
         {
-            throw new \Exception();
+            throw new \Exception(
+                "This call needs a reset service mock to have been set up"
+            );
         }
 
         return $this->resetService;
