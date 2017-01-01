@@ -120,7 +120,6 @@ class Read extends Base
         $this->getProxyResetterService()->execute(
             $this->getDomainForUrl($url)
         );
-        $this->resetProxySleep();
     }
 
     /**
@@ -145,11 +144,6 @@ class Read extends Base
         }
 
         return $domain;
-    }
-
-    protected function resetProxySleep()
-    {
-        sleep(5);
     }
 
     protected function fetchSite(array $itemData)

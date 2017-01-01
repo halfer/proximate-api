@@ -15,6 +15,8 @@ trait CurlTrait
     /**
      * Gets the current curl instance
      *
+     * @todo Rename this to getCurlMock for consistency
+     *
      * @return \PestJSON|\Mockery\Mock
      */
     protected function getMockedCurl()
@@ -27,5 +29,4 @@ trait CurlTrait
         parent::setUp();
         $this->curl = \Mockery::mock(\PestJSON::class);
     }
-
 }

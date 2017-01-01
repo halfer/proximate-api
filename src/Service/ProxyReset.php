@@ -1,11 +1,13 @@
 <?php
 
-/** 
+/**
  * Service to hit the proxy reset endpoint
  *
  * The reset endpoint generally looks like:
  *
  * https://container:8083/start?url=http://example.com
+ *
+ * The parameter should be URL encoded, to ensure any special characters do not cause problems
  */
 
 namespace Proximate\Service;
@@ -23,6 +25,11 @@ class ProxyReset
      * @param \Pest $curl The curl module to use (containing a URL base)
      */
     public function __construct(\Pest $curl)
+    {
+        $this->init($curl);
+    }
+
+    public function init(\Pest $curl)
     {
         $this->curl = $curl;
     }
@@ -42,6 +49,13 @@ class ProxyReset
         }
 
         $this->getCurl()->post('/start', ['url' => $url, ]);
+
+        $this->sleep();
+    }
+
+    protected function sleep()
+    {
+        sleep(5);
     }
 
     /**

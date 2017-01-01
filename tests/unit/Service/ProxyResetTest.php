@@ -61,6 +61,13 @@ class ProxyResetTest extends \PHPUnit_Framework_TestCase
 
     protected function getProxyResetService()
     {
-        return new ProxyResetService($this->getMockedCurl());
+        $mock = \Mockery::mock(ProxyResetService::class)->
+            makePartial();
+        $mock->
+            shouldAllowMockingProtectedMethods()->
+            shouldReceive('sleep');
+        $mock->init($this->getMockedCurl());
+
+        return $mock;
     }
 }
