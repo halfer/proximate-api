@@ -123,7 +123,7 @@ class QueueWriteTest extends QueueTestBase
             once()->
             andReturn($writeFail ? false : strlen($json));
 
-        $this->getQueueWriteMock()->
+        $this->createQueueWriteMock()->
             setUrl(self::DUMMY_URL)->
             queue();
     }
@@ -136,7 +136,7 @@ class QueueWriteTest extends QueueTestBase
         // Will fail because a queue item exists already
         $this->initFileServiceMockWithFileExists(true);
 
-        $queue = $this->getQueueWriteMock();
+        $queue = $this->createQueueWriteMock();
         $queue->
             shouldReceive('createQueueEntry')->
             never();
@@ -154,11 +154,9 @@ class QueueWriteTest extends QueueTestBase
     /**
      * Gets a mock of the system under test
      *
-     * @todo Rename as "createQueueWriteMock"
-     *
      * @return \Mockery\Mock|QueueReadTestHarness
      */
-    protected function getQueueWriteMock()
+    protected function createQueueWriteMock()
     {
         return parent::getQueueMock(QueueWriteTestHarness::class);
     }
