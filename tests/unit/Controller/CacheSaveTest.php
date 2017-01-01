@@ -2,8 +2,6 @@
 
 /**
  * Unit tests for the cache entry creation controller
- *
- * @todo Define a const for the test URL in this class
  */
 
 namespace Proximate\Test;
@@ -14,12 +12,14 @@ use Proximate\Exception\AlreadyQueued as AlreadyQueuedException;
 
 class CacheSaveTest extends ControllerTestBase
 {
+    const EXAMPLE_URL = 'http://example.com';
+
     protected $queue;
 
     public function testCacheSaveWithJustUrl()
     {
         $this->setRequestBodyExpectation([
-            'url' => $url = 'http://example.com',
+            'url' => $url = self::EXAMPLE_URL,
         ]);
         $this->setQueueExpectation($url, null, null);
 
@@ -33,7 +33,7 @@ class CacheSaveTest extends ControllerTestBase
     public function testCacheSaveWithAllParameters()
     {
         $this->setRequestBodyExpectation([
-            'url' => $url = 'http://example.com',
+            'url' => $url = self::EXAMPLE_URL,
             'url_regex' => $urlRegex = '/section/*.html',
             'reject_files' => $rejectFiles = '*.png',
         ]);
@@ -64,7 +64,7 @@ class CacheSaveTest extends ControllerTestBase
     public function testBadCacheSaveParameters()
     {
         $this->setRequestBodyExpectation([
-            'url' => $url = 'http://example.com',
+            'url' => $url = self::EXAMPLE_URL,
             'unidentified_flying_object' => 1,
         ]);
         $this->setQueueExpectation($url, null, null);
@@ -79,7 +79,7 @@ class CacheSaveTest extends ControllerTestBase
     public function testBadCacheSaveJson()
     {
         $this->setBadBodyExpectation();
-        $this->setQueueExpectation('http://example.com', null, null);
+        $this->setQueueExpectation(self::EXAMPLE_URL, null, null);
 
         $this->setJsonResponseExpectation('The JSON body could not be decoded');
 
@@ -113,7 +113,7 @@ class CacheSaveTest extends ControllerTestBase
     protected function checkCacheSaveFailure($expectedError, \Exception $exception)
     {
         $this->setRequestBodyExpectation([
-            'url' => $url = 'http://example.com',
+            'url' => $url = self::EXAMPLE_URL,
         ]);
         $this->setQueueExpectation($url, null, null, $exception);
 
