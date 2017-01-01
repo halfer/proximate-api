@@ -59,6 +59,28 @@ class QueueReadTest extends QueueTestBase
     }
 
     /**
+     * @dataProvider testUrlToDomainTranslationDataProvider
+     * @param string $url
+     * @param string $expectedDomain
+     */
+    public function testUrlToDomainTranslation($url, $expectedDomain)
+    {
+        $this->getFileServiceMockWithBasicExpectations();
+
+        $queue = $this->createQueueReadMock();
+        $domain = $queue->getDomainForUrl($url);
+        $this->assertEquals($expectedDomain, $domain);
+    }
+
+    public function testUrlToDomainTranslationDataProvider()
+    {
+        return [
+            ['http://example.com/dir', 'http://example.com', ],
+            ['http://example.com:8080/dir', 'http://example.com:8080', ]
+        ];
+    }
+
+    /**
      * Ensures that a failed fetch results in a status change to error
      */
     public function testProcessorWithFetchFail()

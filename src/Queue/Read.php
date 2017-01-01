@@ -125,10 +125,12 @@ class Read extends Base
     /**
      * Gets the base domain for the specified URL
      *
+     * Made public so it is easier to test :)
+     *
      * @param string $url
      * @return string
      */
-    protected function getDomainForUrl($url)
+    public function getDomainForUrl($url)
     {
         // Get the base domain from the URL
         $scheme = parse_url($url, PHP_URL_SCHEME);
