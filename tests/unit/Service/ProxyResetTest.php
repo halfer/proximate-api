@@ -19,10 +19,7 @@ class ProxyResetTest extends \PHPUnit_Framework_TestCase
         $this->
             getCurlMock()->
             shouldReceive('post')->
-            with(
-                '/start',
-                ['url' => self::DUMMY_RECORD_URL, ]
-            );
+            with('/start?url=' . urlencode(self::DUMMY_RECORD_URL), []);
         $this->
             getProxyResetService()->
             execute(self::DUMMY_RECORD_URL);

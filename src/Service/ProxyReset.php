@@ -37,6 +37,8 @@ class ProxyReset
     /**
      * The new URL for the proxy to record on
      *
+     * @todo Check the JSON response and fail if it indicates a problem
+     *
      * @param string $url
      */
     public function execute($url)
@@ -48,9 +50,12 @@ class ProxyReset
             );
         }
 
-        $this->getCurl()->post('/start', ['url' => $url, ]);
+        $responseBody = $this->getCurl()->post('/start?url=' . urlencode($url), []);
 
+        // Wait for the bounced server to settle
         $this->sleep();
+
+        return $responseBody;
     }
 
     protected function sleep()
