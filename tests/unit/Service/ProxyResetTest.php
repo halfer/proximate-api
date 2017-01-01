@@ -17,7 +17,7 @@ class ProxyResetTest extends \PHPUnit_Framework_TestCase
     public function testSuccessfulResetCall()
     {
         $this->
-            getMockedCurl()->
+            getCurlMock()->
             shouldReceive('post')->
             with(
                 '/start',
@@ -36,7 +36,7 @@ class ProxyResetTest extends \PHPUnit_Framework_TestCase
     public function testMissingUrlResetCall()
     {
         $this->
-            getMockedCurl()->
+            getCurlMock()->
             shouldReceive('post');
         $this->
             getProxyResetService()->
@@ -51,7 +51,7 @@ class ProxyResetTest extends \PHPUnit_Framework_TestCase
     public function testCurlErrorResetCall()
     {
         $this->
-            getMockedCurl()->
+            getCurlMock()->
             shouldReceive('post')->
             andThrow(new \Pest_Exception('Bork bork!'));
         $this->
@@ -66,7 +66,7 @@ class ProxyResetTest extends \PHPUnit_Framework_TestCase
         $mock->
             shouldAllowMockingProtectedMethods()->
             shouldReceive('sleep');
-        $mock->init($this->getMockedCurl());
+        $mock->init($this->getCurlMock());
 
         return $mock;
     }

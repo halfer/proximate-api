@@ -15,11 +15,9 @@ trait CurlTrait
     /**
      * Gets the current curl instance
      *
-     * @todo Rename this to getCurlMock for consistency
-     *
      * @return \PestJSON|\Mockery\Mock
      */
-    protected function getMockedCurl()
+    protected function getCurlMock()
     {
         return $this->curl;
     }

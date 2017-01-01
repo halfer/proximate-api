@@ -19,7 +19,7 @@ class CountTest extends ControllerTestBase
                 'total' => $expectedCount = 5,
             ]
         ];
-        $this->getMockedCurl()->
+        $this->getCurlMock()->
             shouldReceive('get')->
             with('__admin/mappings')->
             andReturn($expectedResult);
@@ -46,7 +46,7 @@ class CountTest extends ControllerTestBase
 
     protected function checkCacheSaveFailure($expectedError, \Exception $exception)
     {
-        $this->getMockedCurl()->
+        $this->getCurlMock()->
             shouldReceive('get')->
             andThrow($exception);
         $this->setJsonResponseExpectation($expectedError);
@@ -59,7 +59,7 @@ class CountTest extends ControllerTestBase
     protected function getCountController()
     {
         $controller = new CountController($this->getMockedRequest(), $this->getMockedResponse());
-        $controller->setCurl($this->getMockedCurl());
+        $controller->setCurl($this->getCurlMock());
 
         return $controller;
     }
