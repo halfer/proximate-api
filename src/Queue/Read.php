@@ -104,6 +104,7 @@ class Read extends Base
         }
         catch (\Exception $e)
         {
+            $this->setItemErrorMessage($url, self::STATUS_DOING, $e->getMessage());
             $status = self::STATUS_ERROR;
         }
 
@@ -164,6 +165,16 @@ class Read extends Base
             $this->getQueueEntryPathForUrl($url, $oldStatus),
             $this->getQueueEntryPathForUrl($url, $newStatus)
         );
+    }
+
+    protected function setItemErrorMessage($url, $status, $message)
+    {
+        $file = $this->getQueueEntryPathForUrl($url, $status);
+        $jsonIn = $this->getFileService()->fileGetContents($file);
+        $data = json_decode($jsonIn, true);
+        $data['error'] = $message;
+        $jsonOut = json_encode($data);
+        $this->getFileService()->filePutContents($file, $jsonOut);
     }
 
     protected function sleep()

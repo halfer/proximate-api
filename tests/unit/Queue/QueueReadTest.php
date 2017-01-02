@@ -87,8 +87,9 @@ class QueueReadTest extends QueueTestBase
     {
         $this->initFileServiceMockWithOneEntry();
 
-        // Specify expected status changes
+        // Specify expected status and error message changes
         $this->setRenameExpectations(Queue::STATUS_ERROR);
+        $this->setAddErrorExpectation();
 
         // Set up the fetcher mock to emulate a failure
         $this->
@@ -107,8 +108,9 @@ class QueueReadTest extends QueueTestBase
     {
         $this->initFileServiceMockWithOneEntry();
 
-        // Specify expected status changes
+        // Specify expected status and error message changes
         $this->setRenameExpectations(Queue::STATUS_ERROR);
+        $this->setAddErrorExpectation();
 
         // Set up the fetcher mock to emulate a failure
         $this->
@@ -218,6 +220,17 @@ class QueueReadTest extends QueueTestBase
             getFileServiceMock()->
             shouldReceive('rename')->
             with($this->getQueueEntryPath($startStatus), $this->getQueueEntryPath($endStatus))->
+            once();
+    }
+
+    protected function setAddErrorExpectation()
+    {
+        $this->
+            getFileServiceMock()->
+            shouldReceive('fileGetContents')->
+            once()->
+            andReturn(json_encode([]))->
+            shouldReceive('filePutContents')->
             once();
     }
 
