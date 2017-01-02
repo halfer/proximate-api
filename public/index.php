@@ -22,12 +22,12 @@ $app->get('/count', function ($request, $response) use ($curl) {
 
 /**
  * Counts the number of pages for a specific domain in the cache
- *
- * This information is available from GET "/__admin/mappings"
  */
-$app->get('/count/:url', function ($request, $response) {
-    $response->write("Count total pages at this URL base");
-    return $response;
+$app->get('/count/{url}', function ($request, $response, $args) use ($curl) {
+    $controller = new Proximate\Controller\CountUrl($request, $response);
+    $controller->setCurl($curl);
+    $controller->setUrl($args['url']);
+    return $controller->execute();
 });
 
 /**
