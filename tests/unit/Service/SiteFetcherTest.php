@@ -31,15 +31,7 @@ class SiteFetcherTest extends \PHPUnit_Framework_TestCase
     protected function checkWithUrlOnly($ok)
     {
         $url = self::DUMMY_URL;
-        $expectedCommand = "
-            wget \
-                --output-file /tmp/wget.log \\
-                --directory-prefix=/tmp/wget/ \\
-                --recursive \\
-                --wait 3 \\
-                --limit-rate=20K \\
-                --delete-after \\
-                --no-directories \\
+        $expectedCommand = $this->getCommandPrefix() . "
                 -e use_proxy=yes \\
                 -e http_proxy=127.0.0.1:8082 \\
                 {$url}";
@@ -52,15 +44,7 @@ class SiteFetcherTest extends \PHPUnit_Framework_TestCase
     {
         $url = self::DUMMY_URL;
         $regex = "*\.html";
-        $expectedCommand = "
-            wget \
-                --output-file /tmp/wget.log \\
-                --directory-prefix=/tmp/wget/ \\
-                --recursive \\
-                --wait 3 \\
-                --limit-rate=20K \\
-                --delete-after \\
-                --no-directories \\
+        $expectedCommand = $this->getCommandPrefix() . "
                 --accept-regex \"{$regex}\" \\
                 -e use_proxy=yes \\
                 -e http_proxy=127.0.0.1:8082 \\
@@ -74,15 +58,7 @@ class SiteFetcherTest extends \PHPUnit_Framework_TestCase
     {
         $url = self::DUMMY_URL;
         $reject = "*.js,*.jpeg,*.jpg";
-        $expectedCommand = "
-            wget \
-                --output-file /tmp/wget.log \\
-                --directory-prefix=/tmp/wget/ \\
-                --recursive \\
-                --wait 3 \\
-                --limit-rate=20K \\
-                --delete-after \\
-                --no-directories \\
+        $expectedCommand = $this->getCommandPrefix() . "
                 --reject \"{$reject}\" \\
                 -e use_proxy=yes \\
                 -e http_proxy=127.0.0.1:8082 \\
@@ -90,6 +66,19 @@ class SiteFetcherTest extends \PHPUnit_Framework_TestCase
 
         $siteFetcher = $this->getFetcherService($expectedCommand);
         $siteFetcher->execute($url, null, $reject);
+    }
+
+    public function getCommandPrefix()
+    {
+        return "
+            wget \
+                --output-file /tmp/wget.log \\
+                --directory-prefix=/tmp/wget/ \\
+                --recursive \\
+                --wait 3 \\
+                --limit-rate=20K \\
+                --delete-after \\
+                --no-directories \\";
     }
 
     protected function getFetcherService($expectedCommand, $ok = true)
