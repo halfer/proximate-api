@@ -34,6 +34,7 @@ class SiteFetcherTest extends \PHPUnit_Framework_TestCase
         $expectedCommand = "
             wget \
                 --output-file /tmp/wget.log \\
+                --directory-prefix=/tmp/wget/ \\
                 --recursive \\
                 --wait 3 \\
                 --limit-rate=20K \\
@@ -53,6 +54,7 @@ class SiteFetcherTest extends \PHPUnit_Framework_TestCase
         $expectedCommand = "
             wget \
                 --output-file /tmp/wget.log \\
+                --directory-prefix=/tmp/wget/ \\
                 --recursive \\
                 --wait 3 \\
                 --limit-rate=20K \\
@@ -73,6 +75,7 @@ class SiteFetcherTest extends \PHPUnit_Framework_TestCase
         $expectedCommand = "
             wget \
                 --output-file /tmp/wget.log \\
+                --directory-prefix=/tmp/wget/ \\
                 --recursive \\
                 --wait 3 \\
                 --limit-rate=20K \\

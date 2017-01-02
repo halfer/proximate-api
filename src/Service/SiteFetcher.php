@@ -28,11 +28,15 @@ class SiteFetcher
             "--accept-regex \"{$urlRegex}\"" :
             '';
 
-        // Construct a site fetch command. The output-file switch ensures the
-        // log output is capturable
+        // Construct a site fetch command.
+        //
+        // output-file: redirects verbose log output. Use /dev/stdout to capture it in PHP
+        // directory-prefix: redirect file operations to a writeable location
+        // delete-after: the saved files will be deleted when wget finishes
         $raw = "
             wget \\
                 --output-file /tmp/wget.log \\
+                --directory-prefix=/tmp/wget/ \\
                 --recursive \\
                 --wait 3 \\
                 --limit-rate=20K \\
