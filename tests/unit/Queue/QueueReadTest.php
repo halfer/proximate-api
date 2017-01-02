@@ -49,10 +49,7 @@ class QueueReadTest extends QueueTestBase
             once();
 
         // Mock out some methods on the proxy resetter
-        $this->
-            getResetServiceMock()->
-            shouldReceive('execute')->
-            once();
+        $this->setResetServiceExpection();
 
         // Set up the queue and process the "waiting" item
         $this->processOneItem();
@@ -91,11 +88,14 @@ class QueueReadTest extends QueueTestBase
         $this->setRenameExpectations(Queue::STATUS_ERROR);
         $this->setAddErrorExpectation();
 
+        // We'll call the reset service normally first
+        $this->setResetServiceExpection();
+
         // Set up the fetcher mock to emulate a failure
         $this->
             getFetcherServiceMock()->
             shouldReceive('execute')->
-            andThrow(new SiteFetchException());
+            andThrow(new SiteFetchException('Throw an exception via testProcessorWithFetchFail'));
 
         // Set up the queue and process the "waiting" item
         $this->processOneItem();
@@ -116,7 +116,7 @@ class QueueReadTest extends QueueTestBase
         $this->
             getResetServiceMock()->
             shouldReceive('execute')->
-            andThrow(new \Pest_Exception());
+            andThrow(new \Pest_Exception('Throw an exception via testProcessorWithProxyResetFail'));
 
         // Set up the queue and process the "waiting" item
         $this->processOneItem();
@@ -231,6 +231,14 @@ class QueueReadTest extends QueueTestBase
             once()->
             andReturn(json_encode([]))->
             shouldReceive('filePutContents')->
+            once();
+    }
+
+    protected function setResetServiceExpection()
+    {
+        $this->
+            getResetServiceMock()->
+            shouldReceive('execute')->
             once();
     }
 
