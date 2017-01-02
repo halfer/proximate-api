@@ -12,7 +12,7 @@ class Routing
     protected $curl;
     protected $queue;
 
-    public function __construct(Slim\App $app)
+    public function __construct(\Slim\App $app)
     {
         $this->app = $app;
     }
@@ -38,7 +38,7 @@ class Routing
  * Counts the number of pages stored in the cache
  */
         $app->get('/count', function ($request, $response) use ($curl) {
-            $controller = new Proximate\Controller\Count($request, $response);
+            $controller = new \Proximate\Controller\Count($request, $response);
             $controller->setCurl($curl);
             return $controller->execute();
         });
@@ -47,7 +47,7 @@ class Routing
          * Counts the number of pages for a specific domain in the cache
          */
         $app->get('/count/{url}', function ($request, $response, $args) use ($curl) {
-            $controller = new Proximate\Controller\CountUrl($request, $response);
+            $controller = new \Proximate\Controller\CountUrl($request, $response);
             $controller->setCurl($curl);
             $controller->setUrl($args['url']);
             return $controller->execute();
@@ -73,7 +73,7 @@ class Routing
          * [url, url_regex, reject_files]
          */
         $app->post('/cache', function ($request, $response) use ($queue) {
-            $controller = new Proximate\Controller\CacheSave($request, $response);
+            $controller = new \Proximate\Controller\CacheSave($request, $response);
             $controller->setQueue($queue);
             return $controller->execute();
         });
@@ -85,7 +85,7 @@ class Routing
          * be separately cached.
          */
         $app->get('/status/{guid}', function ($request, $response, $args) {
-            $controller = new Proximate\Controller\ItemStatus($request, $response);
+            $controller = new \Proximate\Controller\ItemStatus($request, $response);
             return $controller->execute();
         });
 
