@@ -33,6 +33,7 @@ class SiteFetcherTest extends \PHPUnit_Framework_TestCase
         $url = self::DUMMY_URL;
         $expectedCommand = "
             wget \
+                --output-file /tmp/wget.log \\
                 --recursive \\
                 --wait 3 \\
                 --limit-rate=20K \\
@@ -51,6 +52,7 @@ class SiteFetcherTest extends \PHPUnit_Framework_TestCase
         $regex = "*\.html";
         $expectedCommand = "
             wget \
+                --output-file /tmp/wget.log \\
                 --recursive \\
                 --wait 3 \\
                 --limit-rate=20K \\
@@ -70,6 +72,7 @@ class SiteFetcherTest extends \PHPUnit_Framework_TestCase
         $reject = "*.js,*.jpeg,*.jpg";
         $expectedCommand = "
             wget \
+                --output-file /tmp/wget.log \\
                 --recursive \\
                 --wait 3 \\
                 --limit-rate=20K \\

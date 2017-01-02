@@ -11,6 +11,7 @@ use Proximate\Exception\SiteFetch as SiteFetchException;
 class SiteFetcher
 {
     protected $proxy;
+    protected $lastLog;
 
     public function __construct($proxy)
     {
@@ -27,9 +28,11 @@ class SiteFetcher
             "--accept-regex \"{$urlRegex}\"" :
             '';
 
-        // Construct a site fetch command
+        // Construct a site fetch command. The output-file switch ensures the
+        // log output is capturable
         $raw = "
             wget \\
+                --output-file /tmp/wget.log \\
                 --recursive \\
                 --wait 3 \\
                 --limit-rate=20K \\
@@ -82,11 +85,24 @@ class SiteFetcher
         );
     }
 
+    /**
+     * Runs a system command
+     *
+     * Note that the log output needs to be sent to /dev/stdout for the output logger to work
+     *
+     * @param string $command
+     * @return boolean
+     */
     protected function runCommand($command)
     {
-        $return = null;
-        system($command, $return);
+        $this->lastLog = $return = null;
+        exec($command, $this->lastLog, $return);
 
         return $return === 0;
+    }
+
+    public function getLastLog()
+    {
+        return $this->lastLog;
     }
 }
