@@ -60,7 +60,7 @@ COPY src /var/www/src
 COPY public /var/www/public
 
 # Create scratch area for wget
-RUN mkdir /tmp/wget
+RUN mkdir /tmp/wget && chown proximate /tmp/wget
 
 # The port is:
 #

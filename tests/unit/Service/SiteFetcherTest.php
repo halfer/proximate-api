@@ -39,6 +39,7 @@ class SiteFetcherTest extends \PHPUnit_Framework_TestCase
                 --wait 3 \\
                 --limit-rate=20K \\
                 --delete-after \\
+                --no-directories \\
                 -e use_proxy=yes \\
                 -e http_proxy=127.0.0.1:8082 \\
                 {$url}";
@@ -59,6 +60,7 @@ class SiteFetcherTest extends \PHPUnit_Framework_TestCase
                 --wait 3 \\
                 --limit-rate=20K \\
                 --delete-after \\
+                --no-directories \\
                 --accept-regex \"{$regex}\" \\
                 -e use_proxy=yes \\
                 -e http_proxy=127.0.0.1:8082 \\
@@ -80,6 +82,7 @@ class SiteFetcherTest extends \PHPUnit_Framework_TestCase
                 --wait 3 \\
                 --limit-rate=20K \\
                 --delete-after \\
+                --no-directories \\
                 --reject \"{$reject}\" \\
                 -e use_proxy=yes \\
                 -e http_proxy=127.0.0.1:8082 \\

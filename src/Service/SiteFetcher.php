@@ -33,6 +33,7 @@ class SiteFetcher
         // output-file: redirects verbose log output. Use /dev/stdout to capture it in PHP
         // directory-prefix: redirect file operations to a writeable location
         // delete-after: the saved files will be deleted when wget finishes
+        // no-directories: turns off the hierarchical directory-based save format
         $raw = "
             wget \\
                 --output-file /tmp/wget.log \\
@@ -41,6 +42,7 @@ class SiteFetcher
                 --wait 3 \\
                 --limit-rate=20K \\
                 --delete-after \\
+                --no-directories \\
                 {$rejectFilesCmd} \\
                 {$urlRegexCmd} \\
                 -e use_proxy=yes \\
