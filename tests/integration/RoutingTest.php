@@ -22,7 +22,7 @@ class RoutingTest extends TestCase
     public function testCountRouting()
     {
         $page = $this->pageVisit(self::BASE_URL . '/count');
-        $this->assertEquals([], $this->getJson($page));
+        $this->assertEquals(['action' => 'getCountController', ], $this->getJson($page));
     }
 
     /**
@@ -33,35 +33,89 @@ class RoutingTest extends TestCase
     {
         $url = 'http://www.example.com/';
         $page = $this->pageVisit(self::BASE_URL . '/count/' . urlencode($url));
-        $this->assertEquals(['url' => $url, ], $this->getJson($page));
+        $this->assertEquals(
+            ['action' => 'getCountUrlController', 'url' => $url, ],
+            $this->getJson($page)
+        );
 
-    }
-
-    public function testCacheListRouting()
-    {
-        $this->markTestIncomplete();
     }
 
     /**
-     * @todo Convert this to pageVisit so any 404 gremlins are trapped
+     * @driver simple
+     *
+     * @todo Add tests for page and size (with defaults as appropriate)
+     */
+    public function testCacheListRouting()
+    {
+        $page = $this->pageVisit(self::BASE_URL . '/list');
+        $this->assertEquals(
+            ['action' => 'getCacheListController', ],
+            $this->getJson($page)
+        );
+    }
+
+    /**
+     * @driver simple
+     *
+     * @todo Add tests for page and size (with defaults as appropriate)
+     */
+    public function testCacheListRoutingWithPage()
+    {
+        $page = $this->pageVisit(self::BASE_URL . '/list/1');
+        $this->assertEquals(
+            ['action' => 'getCacheListController', ],
+            $this->getJson($page)
+        );
+    }
+
+    /**
+     * @driver simple
+     *
+     * @todo Add tests for page and size (with defaults as appropriate)
+     */
+    public function testCacheListRoutingWithPageAndSize()
+    {
+        $page = $this->pageVisit(self::BASE_URL . '/list/1/10');
+        $this->assertEquals(
+            ['action' => 'getCacheListController', ],
+            $this->getJson($page)
+        );
+    }
+
+    /**
      * @driver simple
      */
     public function testCacheSave()
     {
-        /* @var $driver \Openbuildings\Spiderling\Driver_Simple */
-        $driver = $this->driver()->post(self::BASE_URL . '/cache');
-        $page = $driver->page();
-        $this->assertEquals(['queue' => 'Proximate\Queue\Write', ], $this->getJson($page));
+        $page = $this->pageVisit(self::BASE_URL . '/cache', 'POST');
+        $this->assertEquals(
+            ['queue' => 'Proximate\Queue\Write', 'action' => 'getCacheSaveController', ],
+            $this->getJson($page)
+        );
     }
 
+    /**
+     * @driver simple
+     */
     public function testItemStatusRouting()
     {
-        $this->markTestIncomplete();
+        $page = $this->pageVisit(self::BASE_URL . '/status/1');
+        $this->assertEquals(
+            ['action' => 'getItemStatusController', ],
+            $this->getJson($page)
+        );
     }
 
-    public function testItemDeleteRouting()
+    /**
+     * @driver simple
+     */
+    public function __testItemDeleteRouting()
     {
-        $this->markTestIncomplete();
+        $page = $this->pageVisit(self::BASE_URL . '/cache/1', 'DELETE');
+        $this->assertEquals(
+            ['action' => 'getItemStatusController', ],
+            $this->getJson($page)
+        );
     }
 
     protected function getJson(Page $page)
@@ -72,11 +126,17 @@ class RoutingTest extends TestCase
         return $data;
     }
 
-    protected function pageVisit($uri)
+    /**
+     * Attempts a visit wrapped up in a try-catch block
+     *
+     * @param string $uri
+     * @return Page
+     */
+    protected function pageVisit($uri, $method = 'GET')
     {
         try
         {
-            $page = $this->visit($uri);
+            $page = $this->driver()->request($method, $uri)->page();
         }
         catch (Exception_Curl $e)
         {

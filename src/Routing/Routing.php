@@ -59,7 +59,7 @@ class Routing
          *
          * This can use GET "/__admin/mappings" from the WireMock playback instance
          */
-        $app->get('/list/{page}/[{pagesize}]', function ($request, $response) use ($routing) {
+        $app->get('/list[/{page}[/{pagesize}]]', function ($request, $response) use ($routing) {
             $controller = $routing->getCacheListController($request, $response);
             return $controller->execute();
         });
@@ -96,8 +96,8 @@ class Routing
          * This can use DELETE "/__admin/mappings/{stubMappingId}" from the WireMock playback instance
          */
         $app->delete('/cache/{url}', function ($request, $response, $args) use ($routing) {
-            $response->write("Delete the specified page");
-            return $response;
+            $controller = $routing->getItemDeleteController($request, $response);
+            return $controller->execute();
         });
     }
 
@@ -128,6 +128,6 @@ class Routing
 
     protected function getItemDeleteController($request, $response)
     {
-        // FIXME
+        return new \Proximate\Controller\ItemDelete($request, $response);
     }
 }

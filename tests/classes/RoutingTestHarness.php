@@ -13,27 +13,27 @@ class RoutingTestHarness extends Routing
 {
     protected function getCountController($request, $response)
     {
-        return new FakeController($request, $response);
+        return (new FakeController($request, $response))->setAction(__FUNCTION__);
     }
 
     protected function getCountUrlController($request, $response)
     {
-        return new FakeController($request, $response);
+        return (new FakeController($request, $response))->setAction(__FUNCTION__);
     }
 
     protected function getCacheListController($request, $response)
     {
-        return new FakeController($request, $response);
+        return (new FakeController($request, $response))->setAction(__FUNCTION__);
     }
 
     protected function getCacheSaveController($request, $response)
     {
-        return new FakeController($request, $response);
+        return (new FakeController($request, $response))->setAction(__FUNCTION__);
     }
 
     protected function getItemStatusController($request, $response)
     {
-        return new FakeController($request, $response);
+        return (new FakeController($request, $response))->setAction(__FUNCTION__);
     }
 
     protected function getItemDeleteController($request, $response)
@@ -62,5 +62,12 @@ class FakeController extends BaseController
     public function setQueue($queue)
     {
         $this->data['queue'] = get_class($queue);
+    }
+
+    public function setAction($action)
+    {
+        $this->data['action'] = $action;
+
+        return $this;
     }
 }
