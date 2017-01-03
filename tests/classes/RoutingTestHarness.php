@@ -70,4 +70,14 @@ class FakeController extends BaseController
 
         return $this;
     }
+
+    public function setPage($page)
+    {
+        $this->data['page'] = $page;
+    }
+
+    public function setPageSize($pageSize)
+    {
+        $this->data['pagesize'] = $pageSize;
+    }
 }

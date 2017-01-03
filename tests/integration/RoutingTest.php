@@ -42,42 +42,36 @@ class RoutingTest extends TestCase
 
     /**
      * @driver simple
-     *
-     * @todo Add tests for page and size (with defaults as appropriate)
      */
     public function testCacheListRouting()
     {
         $page = $this->pageVisit(self::BASE_URL . '/list');
         $this->assertEquals(
-            ['action' => 'getCacheListController', ],
+            ['action' => 'getCacheListController', 'page' => 1, 'pagesize' => 10, ],
             $this->getJson($page)
         );
     }
 
     /**
      * @driver simple
-     *
-     * @todo Add tests for page and size (with defaults as appropriate)
      */
     public function testCacheListRoutingWithPage()
     {
-        $page = $this->pageVisit(self::BASE_URL . '/list/1');
+        $page = $this->pageVisit(self::BASE_URL . '/list/3');
         $this->assertEquals(
-            ['action' => 'getCacheListController', ],
+            ['action' => 'getCacheListController', 'page' => 3, 'pagesize' => 10, ],
             $this->getJson($page)
         );
     }
 
     /**
      * @driver simple
-     *
-     * @todo Add tests for page and size (with defaults as appropriate)
      */
     public function testCacheListRoutingWithPageAndSize()
     {
-        $page = $this->pageVisit(self::BASE_URL . '/list/1/10');
+        $page = $this->pageVisit(self::BASE_URL . '/list/4/15');
         $this->assertEquals(
-            ['action' => 'getCacheListController', ],
+            ['action' => 'getCacheListController', 'page' => 4, 'pagesize' => 15, ],
             $this->getJson($page)
         );
     }
@@ -96,6 +90,8 @@ class RoutingTest extends TestCase
 
     /**
      * @driver simple
+     *
+     * @todo Test that the item is passed correctly
      */
     public function testItemStatusRouting()
     {
@@ -108,6 +104,8 @@ class RoutingTest extends TestCase
 
     /**
      * @driver simple
+     *
+     * @todo Test that the item is passed correctly
      */
     public function __testItemDeleteRouting()
     {
