@@ -12,6 +12,8 @@ use Openbuildings\Spiderling\Exception_Curl;
 
 class RoutingTest extends TestCase
 {
+    const DUMMY_URL = 'http://www.example.com/';
+
     // Currently using the script name to get around a dot bug in the PHP web server
     #const BASE_URL = 'http://localhost:10000';
     const BASE_URL = 'http://localhost:10000/index.php';
@@ -31,7 +33,7 @@ class RoutingTest extends TestCase
      */
     public function testCountUrlRouting()
     {
-        $url = 'http://www.example.com/';
+        $url = self::DUMMY_URL;
         $page = $this->pageVisit(self::BASE_URL . '/count/' . urlencode($url));
         $this->assertEquals(
             ['action' => 'getCountUrlController', 'url' => $url, ],
@@ -57,9 +59,10 @@ class RoutingTest extends TestCase
      */
     public function testCacheListRoutingWithPage()
     {
-        $page = $this->pageVisit(self::BASE_URL . '/list/3');
+        $pageNo = 3;
+        $page = $this->pageVisit(self::BASE_URL . "/list/$pageNo");
         $this->assertEquals(
-            ['action' => 'getCacheListController', 'page' => 3, 'pagesize' => 10, ],
+            ['action' => 'getCacheListController', 'page' => $pageNo, 'pagesize' => 10, ],
             $this->getJson($page)
         );
     }
@@ -69,9 +72,11 @@ class RoutingTest extends TestCase
      */
     public function testCacheListRoutingWithPageAndSize()
     {
-        $page = $this->pageVisit(self::BASE_URL . '/list/4/15');
+        $pageNo = 4;
+        $pageSize = 15;
+        $page = $this->pageVisit(self::BASE_URL . "/list/$pageNo/$pageSize");
         $this->assertEquals(
-            ['action' => 'getCacheListController', 'page' => 4, 'pagesize' => 15, ],
+            ['action' => 'getCacheListController', 'page' => $pageNo, 'pagesize' => $pageSize, ],
             $this->getJson($page)
         );
     }
@@ -90,28 +95,26 @@ class RoutingTest extends TestCase
 
     /**
      * @driver simple
-     *
-     * @todo Test that the item is passed correctly
      */
     public function testItemStatusRouting()
     {
-        $page = $this->pageVisit(self::BASE_URL . '/status/1');
+        $guid = 1;
+        $page = $this->pageVisit(self::BASE_URL . "/status/$guid");
         $this->assertEquals(
-            ['action' => 'getItemStatusController', ],
+            ['action' => 'getItemStatusController', 'guid' => $guid, ],
             $this->getJson($page)
         );
     }
 
     /**
      * @driver simple
-     *
-     * @todo Test that the item is passed correctly
      */
-    public function __testItemDeleteRouting()
+    public function testItemDeleteRouting()
     {
-        $page = $this->pageVisit(self::BASE_URL . '/cache/1', 'DELETE');
+        $url = self::DUMMY_URL;
+        $page = $this->pageVisit(self::BASE_URL . '/cache/' . urlencode($url), 'DELETE');
         $this->assertEquals(
-            ['action' => 'getItemStatusController', ],
+            ['action' => 'getItemDeleteController', 'url' => $url, ],
             $this->getJson($page)
         );
     }

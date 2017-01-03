@@ -89,6 +89,7 @@ class Routing
          */
         $app->get('/status/{guid}', function ($request, $response, $args) use ($routing) {
             $controller = $routing->getItemStatusController($request, $response);
+            $controller->setGuid($args['guid']);
             return $controller->execute();
         });
 
@@ -99,6 +100,7 @@ class Routing
          */
         $app->delete('/cache/{url}', function ($request, $response, $args) use ($routing) {
             $controller = $routing->getItemDeleteController($request, $response);
+            $controller->setUrl($args['url']);
             return $controller->execute();
         });
     }

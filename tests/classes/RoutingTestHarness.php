@@ -38,7 +38,7 @@ class RoutingTestHarness extends Routing
 
     protected function getItemDeleteController($request, $response)
     {
-        // FIXME
+        return (new FakeController($request, $response))->setAction(__FUNCTION__);
     }
 }
 
@@ -79,5 +79,10 @@ class FakeController extends BaseController
     public function setPageSize($pageSize)
     {
         $this->data['pagesize'] = $pageSize;
+    }
+
+    public function setGuid($guid)
+    {
+        $this->data['guid'] = $guid;
     }
 }

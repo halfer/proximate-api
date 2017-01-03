@@ -17,4 +17,9 @@ class ItemStatus extends Base
             getResponse()->
             write("Determines the status of the specified item");
     }
+
+    public function setGuid($guid)
+    {
+        // todo
+    }
 }
