@@ -9,4 +9,10 @@
             <directory>./tests/integration/</directory>
         </testsuite>
     </testsuites>
+	<listeners>
+		<listener
+			class="\Proximate\Test\TestListener"
+			file="tests/classes/TestListener.php"
+		/>
+	</listeners>
 </phpunit>
