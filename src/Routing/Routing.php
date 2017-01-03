@@ -33,12 +33,13 @@ class Routing
         $app = $this->app;
         $curl = $this->curl;
         $queue = $this->queue;
+        $routing = $this;
 
         /**
  * Counts the number of pages stored in the cache
  */
-        $app->get('/count', function ($request, $response) use ($curl) {
-            $controller = new \Proximate\Controller\Count($request, $response);
+        $app->get('/count', function ($request, $response) use ($curl, $routing) {
+            $controller = $routing->getCountController($request, $response);
             $controller->setCurl($curl);
             return $controller->execute();
         });
@@ -46,8 +47,8 @@ class Routing
         /**
          * Counts the number of pages for a specific domain in the cache
          */
-        $app->get('/count/{url}', function ($request, $response, $args) use ($curl) {
-            $controller = new \Proximate\Controller\CountUrl($request, $response);
+        $app->get('/count/{url}', function ($request, $response, $args) use ($curl, $routing) {
+            $controller = $routing->getCountUrlController($request, $response);
             $controller->setCurl($curl);
             $controller->setUrl($args['url']);
             return $controller->execute();
@@ -58,8 +59,8 @@ class Routing
          *
          * This can use GET "/__admin/mappings" from the WireMock playback instance
          */
-        $app->get('/list/{page}/[{pagesize}]', function ($request, $response) {
-            $controller = new \Proximate\Controller\CacheList($request, $response);
+        $app->get('/list/{page}/[{pagesize}]', function ($request, $response) use ($routing) {
+            $controller = $routing->getCacheListController($request, $response);
             return $controller->execute();
         });
 
@@ -72,8 +73,8 @@ class Routing
          *
          * [url, url_regex, reject_files]
          */
-        $app->post('/cache', function ($request, $response) use ($queue) {
-            $controller = new \Proximate\Controller\CacheSave($request, $response);
+        $app->post('/cache', function ($request, $response) use ($queue, $routing) {
+            $controller = $routing->getCacheSaveController($request, $response);
             $controller->setQueue($queue);
             return $controller->execute();
         });
@@ -84,8 +85,8 @@ class Routing
          * @todo I think I should just use the URL rather than a GUID, since duplicates won't
          * be separately cached.
          */
-        $app->get('/status/{guid}', function ($request, $response, $args) {
-            $controller = new \Proximate\Controller\ItemStatus($request, $response);
+        $app->get('/status/{guid}', function ($request, $response, $args) use ($routing) {
+            $controller = $routing->getItemStatusController($request, $response);
             return $controller->execute();
         });
 
@@ -94,9 +95,39 @@ class Routing
          *
          * This can use DELETE "/__admin/mappings/{stubMappingId}" from the WireMock playback instance
          */
-        $app->delete('/cache/{url}', function ($request, $response, $args) {
+        $app->delete('/cache/{url}', function ($request, $response, $args) use ($routing) {
             $response->write("Delete the specified page");
             return $response;
         });
+    }
+
+    protected function getCountController($request, $response)
+    {
+        return new \Proximate\Controller\Count($request, $response);
+    }
+
+    protected function getCountUrlController($request, $response)
+    {
+        return new \Proximate\Controller\CountUrl($request, $response);
+    }
+
+    protected function getCacheListController($request, $response)
+    {
+        return new \Proximate\Controller\CacheList($request, $response);
+    }
+
+    protected function getCacheSaveController($request, $response)
+    {
+        return new \Proximate\Controller\CacheSave($request, $response);
+    }
+
+    protected function getItemStatusController($request, $response)
+    {
+        return new \Proximate\Controller\ItemStatus($request, $response);
+    }
+
+    protected function getItemDeleteController($request, $response)
+    {
+        // FIXME
     }
 }
