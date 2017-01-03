@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "fb3798ee17fcb05fbb456ca02061585f",
-    "content-hash": "1b1c3fa3a315a8449bf2c7933d0e6a78",
+    "hash": "909ec5b864299bd4b6308204a7d5be5b",
+    "content-hash": "a6f72dbbb6d8c83d0d35bc02ac2b5829",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -342,6 +342,53 @@
             "time": "2015-06-14 21:17:01"
         },
         {
+            "name": "halfer/spiderling-utils",
+            "version": "v0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/halfer/spiderling-utils.git",
+                "reference": "545fe4d64972b51e140f5c60e7240fb96beb2882"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/halfer/spiderling-utils/zipball/545fe4d64972b51e140f5c60e7240fb96beb2882",
+                "reference": "545fe4d64972b51e140f5c60e7240fb96beb2882",
+                "shasum": ""
+            },
+            "require": {
+                "openbuildings/phpunit-spiderling": "0.1.*",
+                "php": ">=5.3,<8.0-DEV"
+            },
+            "require-dev": {
+                "jakoch/phantomjs-installer": "2.1.1-p06",
+                "phpunit/phpunit": "4.8.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "halfer\\": "src/library/"
+                }
+            },
+            "scripts": {
+                "post-install-cmd": [
+                    "PhantomInstaller\\Installer::installPhantomJS"
+                ],
+                "post-update-cmd": [
+                    "PhantomInstaller\\Installer::installPhantomJS"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "A PHPUnit/Spiderling utility to use Phantom in a headless test environment",
+            "homepage": "https://github.com/halfer/spiderling-utils.git",
+            "support": {
+                "source": "https://github.com/halfer/spiderling-utils/tree/v0.1",
+                "issues": "https://github.com/halfer/spiderling-utils/issues"
+            },
+            "time": "2016-09-29 18:45:38"
+        },
+        {
             "name": "hamcrest/hamcrest-php",
             "version": "v1.2.2",
             "source": {
@@ -450,6 +497,129 @@
                 "testing"
             ],
             "time": "2016-09-30 12:09:40"
+        },
+        {
+            "name": "openbuildings/environment-backup",
+            "version": "0.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/OpenBuildings/environment-backup.git",
+                "reference": "db94e7c77fa9d35b48a5e40218d335f1891d805e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/OpenBuildings/environment-backup/zipball/db94e7c77fa9d35b48a5e40218d335f1891d805e",
+                "reference": "db94e7c77fa9d35b48a5e40218d335f1891d805e",
+                "shasum": ""
+            },
+            "require-dev": {
+                "openbuildings/kohana-test-bootstrap": "^0.2",
+                "phpunit/phpunit": "^4.0, <4.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Openbuildings\\EnvironmentBackup\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Ivan Kerin",
+                    "email": "ivan@openbuildings.com",
+                    "role": "Author"
+                }
+            ],
+            "description": "Backup/restore environment variables: globals, static vars, configs",
+            "time": "2016-10-01 12:08:40"
+        },
+        {
+            "name": "openbuildings/phpunit-spiderling",
+            "version": "0.1.13",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/OpenBuildings/phpunit-spiderling.git",
+                "reference": "f3c607cfaee67b9a6682436ee4d440e6d40755c9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/OpenBuildings/phpunit-spiderling/zipball/f3c607cfaee67b9a6682436ee4d440e6d40755c9",
+                "reference": "f3c607cfaee67b9a6682436ee4d440e6d40755c9",
+                "shasum": ""
+            },
+            "require": {
+                "openbuildings/environment-backup": "0.1.*",
+                "openbuildings/spiderling": "0.2.*"
+            },
+            "require-dev": {
+                "openbuildings/kohana-test-bootsrap": "0.1.*",
+                "se/selenium-server-standalone": "^2.43"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Openbuildings\\PHPUnitSpiderling\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Ivan Kerin",
+                    "email": "ivan@openbuildings.com",
+                    "role": "Author"
+                }
+            ],
+            "description": "Use openbuildings/spiderling in phpunit tests",
+            "time": "2016-07-19 08:21:28"
+        },
+        {
+            "name": "openbuildings/spiderling",
+            "version": "0.2.25",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/OpenBuildings/spiderling.git",
+                "reference": "f31e21ce10cdd232c83e20da9ff4ca4a15fe66ff"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/OpenBuildings/spiderling/zipball/f31e21ce10cdd232c83e20da9ff4ca4a15fe66ff",
+                "reference": "f31e21ce10cdd232c83e20da9ff4ca4a15fe66ff",
+                "shasum": ""
+            },
+            "require": {
+                "openbuildings/environment-backup": "~0.1.1",
+                "symfony/css-selector": "^2.3|^3.0"
+            },
+            "require-dev": {
+                "openbuildings/kohana-test-bootstrap": "^0.2",
+                "phpunit/phpunit": "^4.0|^5.0",
+                "se/selenium-server-standalone": "2.40"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Openbuildings\\Spiderling\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Ivan Kerin",
+                    "email": "ivan@openbuildings.com",
+                    "role": "Author"
+                }
+            ],
+            "description": "Crawl the web with kohana, phantomjs or selenium",
+            "time": "2016-08-27 12:57:50"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -1402,6 +1572,59 @@
             "description": "Library that helps with managing the version number of Git-hosted PHP projects",
             "homepage": "https://github.com/sebastianbergmann/version",
             "time": "2015-06-21 13:59:46"
+        },
+        {
+            "name": "symfony/css-selector",
+            "version": "v3.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/css-selector.git",
+                "reference": "e1241f275814827c411d922ba8e64cf2a00b2994"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/css-selector/zipball/e1241f275814827c411d922ba8e64cf2a00b2994",
+                "reference": "e1241f275814827c411d922ba8e64cf2a00b2994",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.2-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\CssSelector\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jean-François Simon",
+                    "email": "jeanfrancois.simon@sensiolabs.com"
+                },
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony CssSelector Component",
+            "homepage": "https://symfony.com",
+            "time": "2016-11-03 08:11:03"
         },
         {
             "name": "symfony/yaml",
