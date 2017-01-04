@@ -4,5 +4,5 @@
 
 curl \
 	--verbose \
-	http://localhost:8080/404
+	http://localhost:8080/index.php/404
 echo

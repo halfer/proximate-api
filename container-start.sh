@@ -1,1 +1,1 @@
-php -S ${HOSTNAME}:8080 /var/www/public/index.php
+php -S ${HOSTNAME}:8080 -t /var/www/public

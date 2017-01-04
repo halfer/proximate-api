@@ -7,5 +7,5 @@ echo "Input doc: $JSON"
 curl \
 	--data $JSON \
 	--verbose \
-	http://localhost:8080/cache
+	http://localhost:8080/index.php/cache
 echo

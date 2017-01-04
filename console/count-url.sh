@@ -4,10 +4,10 @@
 
 curl \
 	--verbose \
-	http://localhost:8080/count/http%3A%2F%2Fwww.nimvelo.com%2F
+	http://localhost:8080/index.php/count/http%3A%2F%2Fwww.nimvelo.com%2F
 echo
 
 curl \
 	--verbose \
-	http://localhost:8080/count/http%3A%2F%2Fwww.google.com%2F
+	http://localhost:8080/index.php/count/http%3A%2F%2Fwww.google.com%2F
 echo

@@ -4,5 +4,5 @@
 
 curl \
 	--verbose \
-	http://localhost:8080/count
+	http://localhost:8080/index.php/count
 echo
