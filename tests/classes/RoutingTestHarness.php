@@ -2,6 +2,9 @@
 
 /**
  * Test harness for routing, instantiates fake controllers
+ *
+ * @todo Replace the fake controllers with controllers that extend the original and
+ * override the execute() method, These do not check that the setters work correctly.
  */
 
 namespace Proximate\Test;

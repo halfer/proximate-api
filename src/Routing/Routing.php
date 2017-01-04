@@ -59,8 +59,9 @@ class Routing
          *
          * This can use GET "/__admin/mappings" from the WireMock playback instance
          */
-        $app->get('/list[/{page}[/{pagesize}]]', function ($request, $response, $args) use ($routing) {
+        $app->get('/list[/{page}[/{pagesize}]]', function ($request, $response, $args) use ($curl, $routing) {
             $controller = $routing->getCacheListController($request, $response);
+            $controller->setCurl($curl);
             $controller->setPage(isset($args['page']) ? $args['page'] : 1);
             $controller->setPageSize(isset($args['pagesize']) ? $args['pagesize'] : 10);
             return $controller->execute();
