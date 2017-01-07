@@ -36,9 +36,9 @@ class CacheList extends Base
     protected function fetchList()
     {
         // @todo This needs parsing a bit to get just the important info
-        $requests = $this->getCurl()->get('__admin/requests');
+        $requests = $this->getCurl()->get('__admin/mappings');
 
-        return $requests;
+        return isset($requests['mappings']) ? $requests['mappings'] : null;
     }
 
     public function setPage($page)
