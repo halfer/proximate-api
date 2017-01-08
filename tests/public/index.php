@@ -14,12 +14,14 @@ require_once $root . '/src/autoload.php';
 require_once $root . '/tests/bootstrap.php';
 
 $app = new Slim\App();
-$curl = new PestJSON('http://proximate-proxy:8081');
+$curlRecorder = new PestJSON('http://proximate-proxy:8081');
+$curlPlayback = new PestJSON('http://proximate-proxy:8082');
 $queue = new Queue('.', new FileService());
 
 // Set up routing object
 $routing = new RoutingTestHarness($app);
-$routing->setCurl($curl);
+$routing->setRecorderCurl($curlRecorder);
+$routing->setPlaybackCurl($curlPlayback);
 $routing->setQueue($queue);
 $routing->execute();
 

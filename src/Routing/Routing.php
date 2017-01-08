@@ -9,7 +9,8 @@ namespace Proximate\Routing;
 class Routing
 {
     protected $app;
-    protected $curl;
+    protected $curlRecorder;
+    protected $curlPlayback;
     protected $queue;
 
     public function __construct(\Slim\App $app)
@@ -17,9 +18,14 @@ class Routing
         $this->app = $app;
     }
 
-    public function setCurl(\PestJSON $curl)
+    public function setRecorderCurl(\PestJSON $curl)
     {
-        $this->curl = $curl;
+        $this->curlRecorder = $curl;
+    }
+
+    public function setPlaybackCurl(\PestJSON $curl)
+    {
+        $this->curlPlayback = $curl;
     }
 
     public function setQueue(\Proximate\Queue\Write $queue)
@@ -31,25 +37,26 @@ class Routing
     {
         // Set up the dependencies
         $app = $this->app;
-        $curl = $this->curl;
+        $curlRecorder = $this->curlRecorder;
+        #$curlPlayback = $this->curlPlayback;
         $queue = $this->queue;
         $routing = $this;
 
         /**
  * Counts the number of pages stored in the cache
  */
-        $app->get('/count', function ($request, $response) use ($curl, $routing) {
+        $app->get('/count', function ($request, $response) use ($curlRecorder, $routing) {
             $controller = $routing->getCountController($request, $response);
-            $controller->setCurl($curl);
+            $controller->setCurl($curlRecorder);
             return $controller->execute();
         });
 
         /**
          * Counts the number of pages for a specific domain in the cache
          */
-        $app->get('/count/{url}', function ($request, $response, $args) use ($curl, $routing) {
+        $app->get('/count/{url}', function ($request, $response, $args) use ($curlRecorder, $routing) {
             $controller = $routing->getCountUrlController($request, $response);
-            $controller->setCurl($curl);
+            $controller->setCurl($curlRecorder);
             $controller->setUrl($args['url']);
             return $controller->execute();
         });
@@ -59,9 +66,9 @@ class Routing
          *
          * This can use GET "/__admin/mappings" from the WireMock playback instance
          */
-        $app->get('/list[/{page}[/{pagesize}]]', function ($request, $response, $args) use ($curl, $routing) {
+        $app->get('/list[/{page}[/{pagesize}]]', function ($request, $response, $args) use ($curlRecorder, $routing) {
             $controller = $routing->getCacheListController($request, $response);
-            $controller->setCurl($curl);
+            $controller->setCurl($curlRecorder);
             $controller->setPage(isset($args['page']) ? $args['page'] : 1);
             $controller->setPageSize(isset($args['pagesize']) ? $args['pagesize'] : 10);
             return $controller->execute();
