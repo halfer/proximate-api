@@ -38,9 +38,11 @@ class Routing
         // Set up the dependencies
         $app = $this->app;
         $curlRecorder = $this->curlRecorder;
-        #$curlPlayback = $this->curlPlayback;
+        $curlPlayback = $this->curlPlayback;
         $queue = $this->queue;
         $routing = $this;
+
+        // @todo Most of the ungrouped endpoints need wrapping in play/record groups
 
         /**
  * Counts the number of pages stored in the cache
@@ -61,17 +63,16 @@ class Routing
             return $controller->execute();
         });
 
-        /**
-         * List the pages in the cache, given a page and a page size
-         *
-         * This can use GET "/__admin/mappings" from the WireMock playback instance
-         */
-        $app->get('/list[/{page}[/{pagesize}]]', function ($request, $response, $args) use ($curlRecorder, $routing) {
-            $controller = $routing->getCacheListController($request, $response);
-            $controller->setCurl($curlRecorder);
-            $controller->setPage(isset($args['page']) ? $args['page'] : 1);
-            $controller->setPageSize(isset($args['pagesize']) ? $args['pagesize'] : 10);
-            return $controller->execute();
+        $app->group('/play', function() use ($app, $curlPlayback, $routing) {
+            $app->get('/list[/{page}[/{pagesize}]]', function ($request, $response, $args) use ($curlPlayback, $routing) {
+                return $routing->executeList($request, $response, $args, $curlPlayback);
+            });
+        });
+
+        $app->group('/record', function() use ($app, $curlRecorder, $routing) {
+            $app->get('/list[/{page}[/{pagesize}]]', function ($request, $response, $args) use ($curlRecorder, $routing) {
+                return $routing->executeList($request, $response, $args, $curlRecorder);
+            });
         });
 
         /**
@@ -111,6 +112,21 @@ class Routing
             $controller->setUrl($args['url']);
             return $controller->execute();
         });
+    }
+
+    /**
+     * List the pages in the cache, given a page and a page size
+     *
+     * This can use GET "/__admin/mappings" from the WireMock playback instance
+     */
+    protected function executeList($request, $response, $args, $curl)
+    {
+        $controller = $this->getCacheListController($request, $response);
+        $controller->setCurl($curl);
+        $controller->setPage(isset($args['page']) ? $args['page'] : 1);
+        $controller->setPageSize(isset($args['pagesize']) ? $args['pagesize'] : 10);
+
+        return $controller->execute();
     }
 
     protected function getCountController($request, $response)

@@ -44,10 +44,13 @@ class RoutingTest extends TestCase
 
     /**
      * @driver simple
+     *
+     * @todo Use a dataprovider to supply testCacheListRouting/testCacheListRoutingWithPage/testCacheListRoutingWithPageAndSize
+     * with URLs for play/record
      */
     public function testCacheListRouting()
     {
-        $page = $this->pageVisit(self::BASE_URL . '/list');
+        $page = $this->pageVisit(self::BASE_URL . '/record/list');
         $this->assertEquals(
             ['action' => 'getCacheListController', 'page' => 1, 'pagesize' => 10, ],
             $this->getJson($page)
@@ -60,7 +63,7 @@ class RoutingTest extends TestCase
     public function testCacheListRoutingWithPage()
     {
         $pageNo = 3;
-        $page = $this->pageVisit(self::BASE_URL . "/list/$pageNo");
+        $page = $this->pageVisit(self::BASE_URL . "/record/list/$pageNo");
         $this->assertEquals(
             ['action' => 'getCacheListController', 'page' => $pageNo, 'pagesize' => 10, ],
             $this->getJson($page)
@@ -74,7 +77,7 @@ class RoutingTest extends TestCase
     {
         $pageNo = 4;
         $pageSize = 15;
-        $page = $this->pageVisit(self::BASE_URL . "/list/$pageNo/$pageSize");
+        $page = $this->pageVisit(self::BASE_URL . "/record/list/$pageNo/$pageSize");
         $this->assertEquals(
             ['action' => 'getCacheListController', 'page' => $pageNo, 'pagesize' => $pageSize, ],
             $this->getJson($page)
