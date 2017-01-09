@@ -9,8 +9,15 @@ services:
     - "8080:8080"
     links:
     - proximate-proxy
+    volumes:
+    - proximate-volume:/remote/cache
 
   # This does not need external ports defined, since it is for internal use only
   proximate-proxy:
     image: proximate-proxy
     container_name: "proxy_instance"
+    volumes:
+    - proximate-volume:/remote/cache
+
+volumes:
+  proximate-volume:
