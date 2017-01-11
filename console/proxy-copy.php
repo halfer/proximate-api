@@ -5,6 +5,8 @@
  *
  * Modifies the mappings files to include a header Host filter
  *
+ * @todo Move this logic into a service
+ * @todo Write some unit tests around this
  * @todo Keep a track of files written, as there is a possibility of filename clash
  */
 
@@ -68,25 +70,46 @@ function copyMappings($urlFolder)
     $mappingsFiles = glob(getMappingsFolder($urlFolder) . '/*');
     foreach ($mappingsFiles as $mappingFile)
     {
-        copyMapping($mappingFile);
+        copyMapping($urlFolder, $mappingFile);
     }
 }
 
 /**
  * Copies a single JSON mapping file and adds a header
  *
- * @todo Fix the example.com URL with a real one
  * @param string $mappingFile
  */
-function copyMapping($mappingFile)
+function copyMapping($urlFolder, $mappingFile)
 {
+    // Read the data from the mapping file
     $json = file_get_contents($mappingFile);
     $data = json_decode($json, true);
 
     // Add in a host header
-    $data['request']['headers'] = ['Host' => 'http://www.example.com/',];
+    $data['request']['headers'] = ['Host' => getSiteDomain($urlFolder), ];
 
     $leafName = md5($data) . '.json';
     $jsonAgain = json_encode($data, JSON_PRETTY_PRINT);
     file_put_contents('/remote/cache/playback/mappings/' . $leafName, $jsonAgain);
+}
+
+/**
+ * Reads the domain file give a domain folder
+ *
+ * @todo Swap the general exception for something more specific
+ *
+ * @param string $urlFolder
+ * @throws \Exception
+ */
+function getSiteDomain($urlFolder)
+{
+    $domainFile = $urlFolder . '/domain.txt';
+    if (!file_exists($domainFile))
+    {
+        throw new \Exception(
+            "Site domain not found"
+        );
+    }
+
+    return file_get_contents($domainFile);
 }
