@@ -42,7 +42,12 @@ class Routing
         $queue = $this->queue;
         $routing = $this;
 
-        // @todo Most of the ungrouped endpoints need wrapping in play/record groups
+        // Originally the plan was to offer play and record features of everything, but
+        // since the record instance of WireMock will only be pointing to one subdomain's
+        // folder, this isn't very useful. Maybe a synopsis endpoint for which sites have been
+        // scraped and should be available in the player?
+        //
+        // @todo Redesign endpoints a bit
 
         /**
  * Counts the number of pages stored in the cache
