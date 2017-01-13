@@ -88,7 +88,7 @@ function copyMapping($urlFolder, $mappingFile)
     // Add in a host header
     $data['request']['headers'] = ['Host' => getSiteDomain($urlFolder), ];
 
-    $leafName = md5($data) . '.json';
+    $leafName = md5($json) . '.json';
     $jsonAgain = json_encode($data, JSON_PRETTY_PRINT);
     file_put_contents('/remote/cache/playback/mappings/' . $leafName, $jsonAgain);
 }
