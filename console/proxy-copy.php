@@ -5,6 +5,8 @@
  *
  * Modifies the mappings files to include a header Host filter
  *
+ * @todo Can I run a real scraper on the proxy?
+ * @todo When running this script, clear out old mappings, or back them up somewhere
  * @todo Move this logic into a service
  * @todo Write some unit tests around this
  * @todo Keep a track of files written, as there is a possibility of filename clash
@@ -86,7 +88,9 @@ function copyMapping($urlFolder, $mappingFile)
     $data = json_decode($json, true);
 
     // Add in a host header
-    $data['request']['headers'] = ['Host' => getSiteDomain($urlFolder), ];
+    $data['request']['headers'] = [
+        'Host' => ['equalTo' => getSiteDomain($urlFolder), ]
+    ];
 
     $leafName = md5($json) . '.json';
     $jsonAgain = json_encode($data, JSON_PRETTY_PRINT);
@@ -111,5 +115,5 @@ function getSiteDomain($urlFolder)
         );
     }
 
-    return file_get_contents($domainFile);
+    return trim(file_get_contents($domainFile));
 }
