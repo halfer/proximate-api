@@ -103,7 +103,7 @@ abstract class Base
     {
         return $this->
             getResponse()->
-            withJson($json, $statusCode);
+            withJson($json, $statusCode, JSON_PRETTY_PRINT);
     }
 
     public function setCurl(\PestJSON $curl)
