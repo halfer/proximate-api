@@ -16,7 +16,7 @@ foreach ($folders as $urlFolder)
 {
     if (checkFolder($urlFolder))
     {
-        checkFolder($urlFolder);
+        processFolder($urlFolder);
     }
 }
 
@@ -57,7 +57,7 @@ function processFolder($urlFolder)
 function copyFiles($urlFolder)
 {
     $files = getFilesFolder($urlFolder);
-    system("cp {$files}/* /remote/cache/playback/`");
+    system("cp {$files}/* /remote/cache/playback/");
 }
 
 /**
