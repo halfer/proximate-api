@@ -7,7 +7,7 @@ To run the container:
 
 To rebuild the Docker image:
 
-    docker build -t proximate-api .
+    ./rebuild.sh
 
 To get a shell prompt for debugging:
 
