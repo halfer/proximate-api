@@ -57,7 +57,7 @@ function processFolder($urlFolder)
 function copyFiles($urlFolder)
 {
     $files = getFilesFolder($urlFolder);
-    system("cp {$files}/* /remote/cache/playback/");
+    system("cp {$files}/* /remote/cache/playback/__files");
 }
 
 /**
