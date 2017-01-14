@@ -46,7 +46,7 @@ abstract class ControllerTestBase extends \PHPUnit_Framework_TestCase
         $this->
             getMockedResponse()->
             shouldReceive('withJson')->
-            with($outerJson, $expectedJson['ok'] ? 200 : 500);
+            with($outerJson, $expectedJson['ok'] ? 200 : 500, JSON_PRETTY_PRINT);
     }
 
     protected function getGeneralException()
