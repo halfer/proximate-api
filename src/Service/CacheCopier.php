@@ -24,17 +24,17 @@ class CacheCopier
     public function execute()
     {
         $this->validatePaths();
-        //$this->copy();
+        $this->copyCache();
     }
 
-    protected function copy()
+    protected function copyCache()
     {
-        $folders = glob($pathRecord . '/*');
+        $folders = $this->getFileService()->glob($this->recordCachePath . '/*');
         foreach ($folders as $urlFolder)
         {
-            if (checkFolder($urlFolder))
+            if ($this->checkFolder($urlFolder))
             {
-                processFolder($urlFolder);
+                $this->processFolder($urlFolder);
             }
         }
     }
@@ -53,6 +53,31 @@ class CacheCopier
                 sprintf("Cache directory `%s` does not exist", $path)
             );
         }
+    }
+
+    /**
+     * Checks if a path to a folder, e.g. /remote/cache/record/www_example_com can be processed
+     *
+     * @param string $urlFolder
+     */
+    protected function checkFolder($urlFolder)
+    {
+        $fileService = $this->getFileService();
+
+        return
+            $fileService->isDirectory($urlFolder) &&
+            $fileService->isDirectory($this->getMappingsFolder($urlFolder)) &&
+            $fileService->isDirectory($this->getFilesFolder($urlFolder));
+    }
+
+    protected function getMappingsFolder($urlFolder)
+    {
+        return $urlFolder . '/mappings';
+    }
+
+    protected function getFilesFolder($urlFolder)
+    {
+        return $urlFolder . '/__files';
     }
 
     /**

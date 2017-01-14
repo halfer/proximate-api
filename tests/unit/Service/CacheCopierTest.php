@@ -25,8 +25,10 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
 
     public function testCacheDirectoriesExist()
     {
-        $this->setIsDirectoryExpectation(self::DUMMY_RECORD_DIR, true);
-        $this->setIsDirectoryExpectation(self::DUMMY_PLAY_DIR, true);
+        $this->
+            setGlobExpectation(self::DUMMY_RECORD_DIR . '/*')->
+            setIsDirectoryExpectation(self::DUMMY_RECORD_DIR)->
+            setIsDirectoryExpectation(self::DUMMY_PLAY_DIR);
         $this->
             getCacheCopier()->
             execute();
@@ -38,8 +40,9 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
      */
     public function testRecordCacheDirectoryFails()
     {
-        $this->setIsDirectoryExpectation(self::DUMMY_RECORD_DIR, false);
-        $this->setIsDirectoryExpectation(self::DUMMY_PLAY_DIR, true);
+        $this->
+            setIsDirectoryExpectation(self::DUMMY_RECORD_DIR, false)->
+            setIsDirectoryExpectation(self::DUMMY_PLAY_DIR);
         $this->
             getCacheCopier()->
             execute();
@@ -50,20 +53,53 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
      */
     public function testPlaybackCacheDirectoryFails()
     {
-        $this->setIsDirectoryExpectation(self::DUMMY_RECORD_DIR, true);
-        $this->setIsDirectoryExpectation(self::DUMMY_PLAY_DIR, false);
+        $this->
+            setIsDirectoryExpectation(self::DUMMY_RECORD_DIR)->
+            setIsDirectoryExpectation(self::DUMMY_PLAY_DIR, false);
         $this->
             getCacheCopier()->
             execute();
     }
 
-    protected function setIsDirectoryExpectation($path, $return)
+    public function testCopyCacheCheckFolderFails()
+    {
+        $this->getStandardFolderExpectations();
+        $this->
+            getCacheCopier()->
+            execute();
+    }
+
+    protected function getStandardFolderExpectations()
+    {
+        $files = ['file', ];
+        $this->
+            setGlobExpectation(self::DUMMY_RECORD_DIR . '/*', $files)->
+            setIsDirectoryExpectation(self::DUMMY_RECORD_DIR)->
+            setIsDirectoryExpectation(self::DUMMY_PLAY_DIR);
+
+        return $this;
+    }
+
+    protected function setIsDirectoryExpectation($path, $return = true)
     {
         $this->
             getFileService()->
             shouldReceive('isDirectory')->
             with($path)->
             andReturn($return);
+
+        return $this;
+    }
+
+    protected function setGlobExpectation($path, $return = [])
+    {
+        $this->
+            getFileService()->
+            shouldReceive('glob')->
+            with($path)->
+            andReturn($return);
+
+        return $this;
     }
 
     protected function getCacheCopier($recordCachePath = self::DUMMY_RECORD_DIR, $playCachePath = self::DUMMY_PLAY_DIR)
