@@ -71,10 +71,26 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
     {
         $this->getStandardSearchExpectations();
         $this->setFolderVerificationExpectations($urlOk, $mapOk, $filesOk);
-        $this->
-            getCacheCopier()->
-            execute();
-        // Ensure that process was called zero times
+        $cacheCopier = $this->getCacheCopierMock();
+        $cacheCopier->
+            shouldAllowMockingProtectedMethods()->
+            shouldReceive('processFolder')->
+            never();
+        $cacheCopier->execute();
+    }
+
+    public function testCopyCacheCheckFolderSucceeds()
+    {
+        $this->getStandardSearchExpectations();
+        $this->setFolderVerificationExpectations();
+        $cacheCopier = $this->getCacheCopierMock();
+        $cacheCopier->
+            shouldAllowMockingProtectedMethods()->
+            shouldReceive('copyFiles')->
+            once()->
+            shouldReceive('copyMappings')->
+            once();
+        $cacheCopier->execute();
     }
 
     public function getDirectoryChecksDataProvider()
@@ -129,9 +145,30 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
         return $this;
     }
 
-    protected function getCacheCopier($recordCachePath = self::DUMMY_RECORD_DIR, $playCachePath = self::DUMMY_PLAY_DIR)
+    protected function getCacheCopier(
+        $recordCachePath = self::DUMMY_RECORD_DIR,
+        $playCachePath = self::DUMMY_PLAY_DIR)
     {
         return new CacheCopierService($this->getFileService(), $recordCachePath, $playCachePath);
+    }
+
+    /**
+     * Gets a partial mock of the SUT
+     *
+     * @param FileService $fileService
+     * @param string $recordCachePath
+     * @param string $playCachePath
+     * @return \Mockery\Mock|CacheCopierService
+     */
+    protected function getCacheCopierMock(
+        $recordCachePath = self::DUMMY_RECORD_DIR,
+        $playCachePath = self::DUMMY_PLAY_DIR)
+    {
+        // Make a partial mock on the copier
+        $mock = \Mockery::mock(CacheCopierService::class)->makePartial();
+        $mock->init($this->getFileService(), $recordCachePath, $playCachePath);
+
+        return $mock;
     }
 
     /**

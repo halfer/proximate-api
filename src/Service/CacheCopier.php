@@ -16,6 +16,11 @@ class CacheCopier
 
     public function __construct(File $fileService, $recordCachePath, $playCachePath)
     {
+        $this->init($fileService, $recordCachePath, $playCachePath);
+    }
+
+    public function init(File $fileService, $recordCachePath, $playCachePath)
+    {
         $this->fileService = $fileService;
         $this->recordCachePath = $recordCachePath;
         $this->playCachePath = $playCachePath;
@@ -24,10 +29,10 @@ class CacheCopier
     public function execute()
     {
         $this->validatePaths();
-        $this->copyCache();
+        $this->findFilesAndProcess();
     }
 
-    protected function copyCache()
+    protected function findFilesAndProcess()
     {
         $folders = $this->getFileService()->glob($this->recordCachePath . '/*');
         foreach ($folders as $urlFolder)
@@ -69,6 +74,59 @@ class CacheCopier
             $fileService->isDirectory($this->getMappingsFolder($urlFolder)) &&
             $fileService->isDirectory($this->getFilesFolder($urlFolder));
     }
+
+    /**
+     * Accepts a path to a folder, e.g. /remote/cache/record/www_example_com for processing
+     *
+     * @param string $urlFolder
+     */
+    protected function processFolder($urlFolder)
+    {
+        $this->copyFiles($urlFolder);
+        $this->copyMappings($urlFolder);
+    }
+
+    protected function copyFiles($urlFolder)
+    {
+        $files = getFilesFolder($urlFolder);
+        system("cp {$files}/* /remote/cache/playback/__files");
+    }
+
+    /**
+     * Copies all JSON mappings
+     *
+     * @param string $urlFolder
+     */
+    protected function copyMappings($urlFolder)
+    {
+        $mappingsFiles = glob(getMappingsFolder($urlFolder) . '/*');
+        foreach ($mappingsFiles as $mappingFile)
+        {
+            copyMapping($urlFolder, $mappingFile);
+        }
+    }
+
+    /**
+     * Copies a single JSON mapping file and adds a header
+     *
+     * @param string $mappingFile
+     */
+    function copyMapping($urlFolder, $mappingFile)
+    {
+        // Read the data from the mapping file
+        $json = file_get_contents($mappingFile);
+        $data = json_decode($json, true);
+
+        // Add in a host header
+        $data['request']['headers'] = [
+            'Host' => ['equalTo' => getSiteHost($urlFolder), ]
+        ];
+
+        $leafName = md5($json) . '.json';
+        $jsonAgain = json_encode($data, JSON_PRETTY_PRINT);
+        file_put_contents('/remote/cache/playback/mappings/' . $leafName, $jsonAgain);
+    }
+
 
     protected function getMappingsFolder($urlFolder)
     {
