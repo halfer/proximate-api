@@ -89,7 +89,7 @@ function copyMapping($urlFolder, $mappingFile)
 
     // Add in a host header
     $data['request']['headers'] = [
-        'Host' => ['equalTo' => getSiteDomain($urlFolder), ]
+        'Host' => ['equalTo' => getSiteHost($urlFolder), ]
     ];
 
     $leafName = md5($json) . '.json';
@@ -98,14 +98,14 @@ function copyMapping($urlFolder, $mappingFile)
 }
 
 /**
- * Reads the domain file give a domain folder
+ * Reads the site host given a URL folder
  *
  * @todo Swap the general exception for something more specific
  *
  * @param string $urlFolder
  * @throws \Exception
  */
-function getSiteDomain($urlFolder)
+function getSiteHost($urlFolder)
 {
     $domainFile = $urlFolder . '/domain.txt';
     if (!file_exists($domainFile))
@@ -115,5 +115,8 @@ function getSiteDomain($urlFolder)
         );
     }
 
-    return trim(file_get_contents($domainFile));
+    $url = trim(file_get_contents($domainFile));
+    $host = parse_url($url, PHP_URL_HOST);
+
+    return $host;
 }
