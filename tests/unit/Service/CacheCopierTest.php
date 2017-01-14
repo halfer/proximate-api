@@ -13,6 +13,9 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
 {
     const DUMMY_RECORD_DIR = '/cache/record';
     const DUMMY_PLAY_DIR = '/cache/play';
+    const DUMMY_RECORD_SITE_DIR = '/cache/record/http_www_example_com';
+    const DUMMY_RECORD_SITE_FILES_DIR = '/cache/record/http_www_example_com/__files';
+    const DUMMY_RECORD_SITE_MAPPINGS_DIR = '/cache/record/http_www_example_com/mappings';
 
     protected $fileService;
     
@@ -61,21 +64,45 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
             execute();
     }
 
-    public function testCopyCacheCheckFolderFails()
+    /**
+     * @dataProvider getDirectoryChecksDataProvider
+     */
+    public function testCopyCacheCheckFolderFails($urlOk, $mapOk, $filesOk)
     {
-        $this->getStandardFolderExpectations();
+        $this->getStandardSearchExpectations();
+        $this->setFolderVerificationExpectations($urlOk, $mapOk, $filesOk);
         $this->
             getCacheCopier()->
             execute();
+        // Ensure that process was called zero times
     }
 
-    protected function getStandardFolderExpectations()
+    public function getDirectoryChecksDataProvider()
     {
-        $files = ['file', ];
+        return [
+            [false, true, true, ],
+            [true, false, true, ],
+            [true, true, false, ],
+        ];
+    }
+
+    protected function getStandardSearchExpectations()
+    {
+        $files = [self::DUMMY_RECORD_SITE_DIR, ];
         $this->
             setGlobExpectation(self::DUMMY_RECORD_DIR . '/*', $files)->
             setIsDirectoryExpectation(self::DUMMY_RECORD_DIR)->
             setIsDirectoryExpectation(self::DUMMY_PLAY_DIR);
+
+        return $this;
+    }
+
+    protected function setFolderVerificationExpectations($urlOk = true, $mapOk = true, $filesOk = true)
+    {
+        $this->
+            setIsDirectoryExpectation(self::DUMMY_RECORD_SITE_DIR, $urlOk)->
+            setIsDirectoryExpectation(self::DUMMY_RECORD_SITE_MAPPINGS_DIR, $mapOk)->
+            setIsDirectoryExpectation(self::DUMMY_RECORD_SITE_FILES_DIR, $filesOk);
 
         return $this;
     }
