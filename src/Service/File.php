@@ -37,4 +37,12 @@ class File
     {
         rename($oldname, $newname);
     }
+
+    public function copy($pattern, $target)
+    {
+        foreach ($this->glob($pattern) as $file)
+        {
+            copy($file, $target);
+        }
+    }
 }

@@ -88,8 +88,9 @@ class CacheCopier
 
     protected function copyFiles($urlFolder)
     {
-        $files = getFilesFolder($urlFolder);
-        system("cp {$files}/* /remote/cache/playback/__files");
+        $recordFiles = $this->getFilesFolder($urlFolder);
+        $playFiles = $this->getFilesFolder($this->playCachePath);
+        $this->getFileService()->copy($recordFiles . '/*', $playFiles);
     }
 
     /**
@@ -99,10 +100,12 @@ class CacheCopier
      */
     protected function copyMappings($urlFolder)
     {
-        $mappingsFiles = glob(getMappingsFolder($urlFolder) . '/*');
+        $mappingsFiles = $this->
+            getFileService()->
+            glob($this->getMappingsFolder($urlFolder) . '/*');
         foreach ($mappingsFiles as $mappingFile)
         {
-            copyMapping($urlFolder, $mappingFile);
+            $this->copyMapping($urlFolder, $mappingFile);
         }
     }
 
@@ -111,20 +114,47 @@ class CacheCopier
      *
      * @param string $mappingFile
      */
-    function copyMapping($urlFolder, $mappingFile)
+    protected function copyMapping($urlFolder, $mappingFile)
     {
         // Read the data from the mapping file
-        $json = file_get_contents($mappingFile);
+        $json = $this->getFileService()->fileGetContents($mappingFile);
         $data = json_decode($json, true);
 
         // Add in a host header
         $data['request']['headers'] = [
-            'Host' => ['equalTo' => getSiteHost($urlFolder), ]
+            'Host' => ['equalTo' => $this->getSiteHost($urlFolder), ]
         ];
 
         $leafName = md5($json) . '.json';
         $jsonAgain = json_encode($data, JSON_PRETTY_PRINT);
-        file_put_contents('/remote/cache/playback/mappings/' . $leafName, $jsonAgain);
+        $this->getFileService()->filePutContents(
+            '/remote/cache/playback/mappings/' . $leafName,
+            $jsonAgain
+        );
+    }
+
+    /**
+     * Reads the site host given a URL folder
+     *
+     * @todo Swap the general exception for something more specific
+     *
+     * @param string $urlFolder
+     * @throws \Exception
+     */
+    protected function getSiteHost($urlFolder)
+    {
+        $domainFile = $urlFolder . '/domain.txt';
+        if (!$this->getFileService()->fileExists($domainFile))
+        {
+            throw new \Exception(
+                "Site domain not found"
+            );
+        }
+
+        $url = trim($this->getFileService()->fileGetContents($domainFile));
+        $host = parse_url($url, PHP_URL_HOST);
+
+        return $host;
     }
 
 

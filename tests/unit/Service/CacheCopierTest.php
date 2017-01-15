@@ -13,6 +13,7 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
 {
     const DUMMY_RECORD_DIR = '/cache/record';
     const DUMMY_PLAY_DIR = '/cache/play';
+    const DUMMY_PLAY_FILES_DIR = '/cache/play/__files';
     const DUMMY_RECORD_SITE_DIR = '/cache/record/http_www_example_com';
     const DUMMY_RECORD_SITE_FILES_DIR = '/cache/record/http_www_example_com/__files';
     const DUMMY_RECORD_SITE_MAPPINGS_DIR = '/cache/record/http_www_example_com/mappings';
@@ -90,6 +91,59 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
             once()->
             shouldReceive('copyMappings')->
             once();
+        $cacheCopier->execute();
+    }
+
+    public function testCopyFiles()
+    {
+        $this->getStandardSearchExpectations();
+        $this->setFolderVerificationExpectations();
+        $cacheCopier = $this->getCacheCopierMock();
+
+        // Ignore things in `copyMappings` for the moment
+        $cacheCopier->
+            shouldAllowMockingProtectedMethods()->
+            shouldReceive('copyMappings');
+
+        // Here is the main test
+        $this->
+            getFileService()->
+            shouldReceive('copy')->
+            with(self::DUMMY_RECORD_SITE_FILES_DIR . '/*', self::DUMMY_PLAY_FILES_DIR)->
+            once();
+        $cacheCopier->execute();
+    }
+
+    public function testCopyMappings()
+    {
+        $this->getStandardSearchExpectations();
+        $this->setFolderVerificationExpectations();
+        $cacheCopier = $this->getCacheCopierMock();
+
+        // Ignore things in `copyFiles` for the moment
+        $cacheCopier->
+            shouldAllowMockingProtectedMethods()->
+            shouldReceive('copyFiles');
+
+        // Here is the main test
+        $this->
+            getFileService()->
+            // Search for mappings files
+            shouldReceive('glob')->
+            with(self::DUMMY_RECORD_SITE_MAPPINGS_DIR . '/*')->
+            andReturn([self::DUMMY_RECORD_SITE_MAPPINGS_DIR . '/mapping1.json', ])->
+            once()->
+            // Get the single mapping
+            // @todo Fill in parameters here
+            shouldReceive('fileGetContents')->
+            once()->
+            // @todo Fill in parameters here
+            shouldReceive('fileExists')->
+            once()->
+            // @todo Fill in parameters here
+            shouldReceive('fileGetContents')->
+            once()
+        ;
         $cacheCopier->execute();
     }
 
