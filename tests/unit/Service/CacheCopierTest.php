@@ -14,6 +14,7 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
     const DUMMY_RECORD_DIR = '/cache/record';
     const DUMMY_PLAY_DIR = '/cache/play';
     const DUMMY_PLAY_FILES_DIR = '/cache/play/__files';
+    const DUMMY_PLAY_MAPPINGS_DIR = '/cache/playback/mappings';
     const DUMMY_RECORD_SITE_DIR = '/cache/record/http_www_example_com';
     const DUMMY_RECORD_SITE_FILES_DIR = '/cache/record/http_www_example_com/__files';
     const DUMMY_RECORD_SITE_MAPPINGS_DIR = '/cache/record/http_www_example_com/mappings';
@@ -125,18 +126,21 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
             shouldAllowMockingProtectedMethods()->
             shouldReceive('copyFiles');
 
+        // Here's some details about the mapping file we copy-and-modify
+        $mappingPath = self::DUMMY_RECORD_SITE_MAPPINGS_DIR . '/mapping1.json';
+
         // Here is the main test
         $this->
             getFileService()->
             // Search for mappings files
             shouldReceive('glob')->
             with(self::DUMMY_RECORD_SITE_MAPPINGS_DIR . '/*')->
-            andReturn([self::DUMMY_RECORD_SITE_MAPPINGS_DIR . '/mapping1.json', ])->
+            andReturn([$mappingPath, ])->
             once()->
             // Get the single mapping
             shouldReceive('fileGetContents')->
-            with(self::DUMMY_RECORD_SITE_MAPPINGS_DIR . '/mapping1.json')->
-            andReturn($this->getExampleMapping())->
+            with($mappingPath)->
+            andReturn($this->getExampleMapping(false))->
             once()->
             // See if a domain file exists
             shouldReceive('fileExists')->
@@ -146,10 +150,21 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
             // Return the contents of a domain file
             shouldReceive('fileGetContents')->
             with($domainPath)->
-            andReturn(true)->
+            andReturn('http://www.example.com/')->
             once()->
             // Write the mapping file containing the updated mapping file
             shouldReceive('filePutContents')->
+            withArgs(
+                // Check that $pathname starts with the play mappings path
+                // and ends with ".json"
+                function($pathName, $json)
+                {
+                    $prefix = preg_quote(self::DUMMY_PLAY_MAPPINGS_DIR);
+                    $pathOk = 1;//preg_match("#^{$prefix}\.json$#", $pathName);
+                    $jsonOk = $json === $this->getExampleMapping(true);
+                    return $pathOk && $jsonOk;
+                }
+            )->
             once();
         $cacheCopier->execute();
     }
@@ -159,14 +174,22 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
      *
      * @return string
      */
-    protected function getExampleMapping()
+    protected function getExampleMapping($withHost)
     {
-        return json_encode([
+        $mapping = [
             'request' => [
                 'url' => '/about',
                 'method' => 'GET'
             ]
-        ]);
+        ];
+        if ($withHost)
+        {
+            $mapping['request']['headers'] = [
+                'Host' => ['equalTo' => 'www.example.com', ],
+            ];
+        }
+
+        return json_encode($mapping, JSON_PRETTY_PRINT);
     }
 
     public function getDirectoryChecksDataProvider()
