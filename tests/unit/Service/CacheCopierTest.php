@@ -14,7 +14,7 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
     const DUMMY_RECORD_DIR = '/cache/record';
     const DUMMY_PLAY_DIR = '/cache/play';
     const DUMMY_PLAY_FILES_DIR = '/cache/play/__files';
-    const DUMMY_PLAY_MAPPINGS_DIR = '/cache/playback/mappings';
+    const DUMMY_PLAY_MAPPINGS_DIR = '/cache/play/mappings';
     const DUMMY_RECORD_SITE_DIR = '/cache/record/http_www_example_com';
     const DUMMY_RECORD_SITE_FILES_DIR = '/cache/record/http_www_example_com/__files';
     const DUMMY_RECORD_SITE_MAPPINGS_DIR = '/cache/record/http_www_example_com/mappings';
@@ -160,7 +160,7 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
                 function($pathName, $json)
                 {
                     $prefix = preg_quote(self::DUMMY_PLAY_MAPPINGS_DIR);
-                    $pathOk = 1;//preg_match("#^{$prefix}\.json$#", $pathName);
+                    $pathOk = preg_match("#^{$prefix}.*\.json$#", $pathName);
                     $jsonOk = $json === $this->getExampleMapping(true);
                     return $pathOk && $jsonOk;
                 }

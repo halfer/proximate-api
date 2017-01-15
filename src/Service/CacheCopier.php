@@ -128,7 +128,7 @@ class CacheCopier
         $leafName = md5($json) . '.json';
         $jsonAgain = json_encode($data, JSON_PRETTY_PRINT);
         $this->getFileService()->filePutContents(
-            '/remote/cache/playback/mappings/' . $leafName,
+            $this->getMappingsFolder($this->playCachePath) . '/' . $leafName,
             $jsonAgain
         );
     }
