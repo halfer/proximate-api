@@ -134,17 +134,39 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
             andReturn([self::DUMMY_RECORD_SITE_MAPPINGS_DIR . '/mapping1.json', ])->
             once()->
             // Get the single mapping
-            // @todo Fill in parameters here
             shouldReceive('fileGetContents')->
+            with(self::DUMMY_RECORD_SITE_MAPPINGS_DIR . '/mapping1.json')->
+            andReturn($this->getExampleMapping())->
             once()->
-            // @todo Fill in parameters here
+            // See if a domain file exists
             shouldReceive('fileExists')->
+            with($domainPath = self::DUMMY_RECORD_SITE_DIR . '/domain.txt')->
+            andReturn(true)->
             once()->
-            // @todo Fill in parameters here
+            // Return the contents of a domain file
             shouldReceive('fileGetContents')->
-            once()
-        ;
+            with($domainPath)->
+            andReturn(true)->
+            once()->
+            // Write the mapping file containing the updated mapping file
+            shouldReceive('filePutContents')->
+            once();
         $cacheCopier->execute();
+    }
+
+    /**
+     * Returns a partial mapping file in JSON
+     *
+     * @return string
+     */
+    protected function getExampleMapping()
+    {
+        return json_encode([
+            'request' => [
+                'url' => '/about',
+                'method' => 'GET'
+            ]
+        ]);
     }
 
     public function getDirectoryChecksDataProvider()
