@@ -5,10 +5,10 @@
  *
  * Modifies the mappings files to include a header Host filter
  *
+ * @todo Convert this script to use the CacheCopier service
+ * @todo Test this script after wiring in the CacheCopier
  * @todo Can I run a real scraper on the proxy?
  * @todo When running this script, clear out old mappings, or back them up somewhere
- * @todo Move this logic into a service
- * @todo Write some unit tests around this
  * @todo Keep a track of files written, as there is a possibility of filename clash
  */
 
