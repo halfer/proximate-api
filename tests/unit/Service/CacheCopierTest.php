@@ -32,8 +32,7 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
     {
         $this->
             setGlobExpectation(self::DUMMY_RECORD_DIR . '/*')->
-            setIsDirectoryExpectation(self::DUMMY_RECORD_DIR)->
-            setIsDirectoryExpectation(self::DUMMY_PLAY_DIR);
+            setBasePathValidationExpectations(true, true);
         $this->
             getCacheCopier()->
             execute();
@@ -46,8 +45,7 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
     public function testRecordCacheDirectoryFails()
     {
         $this->
-            setIsDirectoryExpectation(self::DUMMY_RECORD_DIR, false)->
-            setIsDirectoryExpectation(self::DUMMY_PLAY_DIR);
+            setBasePathValidationExpectations(false, true);
         $this->
             getCacheCopier()->
             execute();
@@ -59,8 +57,7 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
     public function testPlaybackCacheDirectoryFails()
     {
         $this->
-            setIsDirectoryExpectation(self::DUMMY_RECORD_DIR)->
-            setIsDirectoryExpectation(self::DUMMY_PLAY_DIR, false);
+            setBasePathValidationExpectations(true, false);
         $this->
             getCacheCopier()->
             execute();
@@ -71,7 +68,7 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
      */
     public function testCopyCacheCheckFolderFails($urlOk, $mapOk, $filesOk)
     {
-        $this->getStandardSearchExpectations();
+        $this->setStandardSearchExpectations();
         $this->setFolderVerificationExpectations($urlOk, $mapOk, $filesOk);
         $cacheCopier = $this->getCacheCopierMock();
         $cacheCopier->
@@ -83,7 +80,7 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
 
     public function testCopyCacheCheckFolderSucceeds()
     {
-        $this->getStandardSearchExpectations();
+        $this->setStandardSearchExpectations();
         $this->setFolderVerificationExpectations();
         $cacheCopier = $this->getCacheCopierMock();
         $cacheCopier->
@@ -97,7 +94,7 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
 
     public function testCopyFiles()
     {
-        $this->getStandardSearchExpectations();
+        $this->setStandardSearchExpectations();
         $this->setFolderVerificationExpectations();
         $cacheCopier = $this->getCacheCopierMock();
 
@@ -117,7 +114,7 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
 
     public function testCopyMappings()
     {
-        $this->getStandardSearchExpectations();
+        $this->setStandardSearchExpectations();
         $this->setFolderVerificationExpectations();
         $cacheCopier = $this->getCacheCopierMock();
 
@@ -241,13 +238,21 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    protected function getStandardSearchExpectations()
+    protected function setStandardSearchExpectations()
     {
         $files = [self::DUMMY_RECORD_SITE_DIR, ];
         $this->
             setGlobExpectation(self::DUMMY_RECORD_DIR . '/*', $files)->
-            setIsDirectoryExpectation(self::DUMMY_RECORD_DIR)->
-            setIsDirectoryExpectation(self::DUMMY_PLAY_DIR);
+            setBasePathValidationExpectations(true, true);
+
+        return $this;
+    }
+
+    protected function setBasePathValidationExpectations($recordPathExists, $playPathExists)
+    {
+        $this->
+            setIsDirectoryExpectation(self::DUMMY_RECORD_DIR, $recordPathExists)->
+            setIsDirectoryExpectation(self::DUMMY_PLAY_DIR, $playPathExists);
 
         return $this;
     }
