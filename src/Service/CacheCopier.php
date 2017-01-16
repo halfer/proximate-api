@@ -50,7 +50,7 @@ class CacheCopier
         $this->validatePath($this->playCachePath);
     }
 
-    public function validatePath($path)
+    protected function validatePath($path)
     {
         if (!$this->getFileService()->isDirectory($path))
         {
