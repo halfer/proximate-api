@@ -38,11 +38,12 @@ class File
         rename($oldname, $newname);
     }
 
-    public function copy($pattern, $target)
+    public function copy($pattern, $targetDir)
     {
         foreach ($this->glob($pattern) as $file)
         {
-            copy($file, $target);
+            $targetFile = $targetDir . DIRECTORY_SEPARATOR . basename($file);
+            copy($file, $targetFile);
         }
     }
 }
