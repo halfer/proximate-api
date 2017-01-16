@@ -126,33 +126,72 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
             shouldAllowMockingProtectedMethods()->
             shouldReceive('copyFiles');
 
-        // Here's some details about the mapping file we copy-and-modify
+        // Here's some details about the files we're working with
         $mappingPath = self::DUMMY_RECORD_SITE_MAPPINGS_DIR . '/mapping1.json';
+        $domainPath = self::DUMMY_RECORD_SITE_DIR . '/domain.txt';
 
         // Here is the main test
         $this->
+            addfindMappingsGlobExpectation($mappingPath)->
+            addMappingGetFileExpectation($mappingPath)->
+            addDomainFileExistsExpectation($domainPath)->
+            addDomainGetFileExpectation($domainPath)->
+            addMappingPutFileExpectation();
+        $cacheCopier->execute();
+    }
+
+    protected function addfindMappingsGlobExpectation($mappingPath)
+    {
+        $this->
             getFileService()->
-            // Search for mappings files
             shouldReceive('glob')->
             with(self::DUMMY_RECORD_SITE_MAPPINGS_DIR . '/*')->
             andReturn([$mappingPath, ])->
-            once()->
-            // Get the single mapping
+            once();
+
+        return $this;
+    }
+
+    protected function addMappingGetFileExpectation($mappingPath)
+    {
+        $this->
+            getFileService()->
             shouldReceive('fileGetContents')->
             with($mappingPath)->
             andReturn($this->getExampleMapping(false))->
-            once()->
-            // See if a domain file exists
+            once();
+
+        return $this;
+    }
+
+    protected function addDomainFileExistsExpectation($domainPath)
+    {
+        $this->
+            getFileService()->
             shouldReceive('fileExists')->
-            with($domainPath = self::DUMMY_RECORD_SITE_DIR . '/domain.txt')->
+            with($domainPath)->
             andReturn(true)->
-            once()->
-            // Return the contents of a domain file
+            once();
+
+        return $this;
+    }
+
+    protected function addDomainGetFileExpectation($domainPath)
+    {
+        $this->
+            getFileService()->
             shouldReceive('fileGetContents')->
             with($domainPath)->
             andReturn('http://www.example.com/')->
-            once()->
-            // Write the mapping file containing the updated mapping file
+            once();
+
+        return $this;
+    }
+
+    protected function addMappingPutFileExpectation()
+    {
+        $this->
+            getFileService()->
             shouldReceive('filePutContents')->
             withArgs(
                 // Check that $pathname starts with the play mappings path
@@ -166,7 +205,8 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
                 }
             )->
             once();
-        $cacheCopier->execute();
+
+        return $this;
     }
 
     /**
