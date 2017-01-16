@@ -29,6 +29,7 @@ class CacheCopier
     public function execute()
     {
         $this->validatePaths();
+        $this->createPlaybackSubfolders();
         $this->findFilesAndProcess();
     }
 
@@ -57,6 +58,20 @@ class CacheCopier
             throw new DirectoryNotFoundException(
                 sprintf("Cache directory `%s` does not exist", $path)
             );
+        }
+    }
+
+    protected function createPlaybackSubfolders()
+    {
+        $this->createFolder($this->getMappingsFolder($this->playCachePath));
+        $this->createFolder($this->getFilesFolder($this->playCachePath));
+    }
+
+    protected function createFolder($path)
+    {
+        if (!$this->getFileService()->isDirectory($path))
+        {
+            $this->getFileService()->mkdir($path);
         }
     }
 

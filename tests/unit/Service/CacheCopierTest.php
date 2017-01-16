@@ -32,7 +32,8 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
     {
         $this->
             setGlobExpectation(self::DUMMY_RECORD_DIR . '/*')->
-            setBasePathValidationExpectations(true, true);
+            setBasePathValidationExpectations(true, true)->
+            setPlaybackPathCheckExpectations();
         $this->
             getCacheCopier()->
             execute();
@@ -58,6 +59,28 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
     {
         $this->
             setBasePathValidationExpectations(true, false);
+        $this->
+            getCacheCopier()->
+            execute();
+    }
+
+    public function testCreatePlaybackFilesFolderIfRequired()
+    {
+        $this->
+            setGlobExpectation(self::DUMMY_RECORD_DIR . '/*')->
+            setBasePathValidationExpectations(true, true)->
+            setPlaybackPathCheckExpectations(false, true);
+        $this->
+            getCacheCopier()->
+            execute();
+    }
+
+    public function testCreatePlaybackMappingsFolderIfRequired()
+    {
+        $this->
+            setGlobExpectation(self::DUMMY_RECORD_DIR . '/*')->
+            setBasePathValidationExpectations(true, true)->
+            setPlaybackPathCheckExpectations(true, false);
         $this->
             getCacheCopier()->
             execute();
@@ -243,16 +266,36 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
         $files = [self::DUMMY_RECORD_SITE_DIR, ];
         $this->
             setGlobExpectation(self::DUMMY_RECORD_DIR . '/*', $files)->
-            setBasePathValidationExpectations(true, true);
+            setBasePathValidationExpectations(true, true)->
+            setPlaybackPathCheckExpectations();
 
         return $this;
     }
 
+    // @todo Set some default values for this
     protected function setBasePathValidationExpectations($recordPathExists, $playPathExists)
     {
         $this->
             setIsDirectoryExpectation(self::DUMMY_RECORD_DIR, $recordPathExists)->
             setIsDirectoryExpectation(self::DUMMY_PLAY_DIR, $playPathExists);
+
+        return $this;
+    }
+
+    protected function setPlaybackPathCheckExpectations($playFilesExists = true, $playMappingsExists = true) {
+        $this->
+            setIsDirectoryExpectation(self::DUMMY_PLAY_FILES_DIR, $playFilesExists)->
+            setIsDirectoryExpectation(self::DUMMY_PLAY_MAPPINGS_DIR, $playMappingsExists);
+
+        // If a directory does not exist, it should be created, and vice versa
+        $this->
+            getFileService()->
+            shouldReceive('mkdir')->
+            with(self::DUMMY_PLAY_FILES_DIR)->
+            times($playFilesExists ? 0 : 1)->
+            shouldReceive('mkdir')->
+            with(self::DUMMY_PLAY_MAPPINGS_DIR)->
+            times($playMappingsExists ? 0 : 1);
 
         return $this;
     }

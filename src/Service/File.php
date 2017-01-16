@@ -46,4 +46,9 @@ class File
             copy($file, $targetFile);
         }
     }
+
+    public function mkdir($pathname)
+    {
+        return mkdir($pathname);
+    }
 }
