@@ -32,7 +32,7 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
     {
         $this->
             setGlobExpectation(self::DUMMY_RECORD_DIR . '/*')->
-            setBasePathValidationExpectations(true, true)->
+            setBasePathValidationExpectations()->
             setPlaybackPathCheckExpectations();
         $this->
             getCacheCopier()->
@@ -68,7 +68,7 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
     {
         $this->
             setGlobExpectation(self::DUMMY_RECORD_DIR . '/*')->
-            setBasePathValidationExpectations(true, true)->
+            setBasePathValidationExpectations()->
             setPlaybackPathCheckExpectations(false, true);
         $this->
             getCacheCopier()->
@@ -79,7 +79,7 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
     {
         $this->
             setGlobExpectation(self::DUMMY_RECORD_DIR . '/*')->
-            setBasePathValidationExpectations(true, true)->
+            setBasePathValidationExpectations()->
             setPlaybackPathCheckExpectations(true, false);
         $this->
             getCacheCopier()->
@@ -266,14 +266,13 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
         $files = [self::DUMMY_RECORD_SITE_DIR, ];
         $this->
             setGlobExpectation(self::DUMMY_RECORD_DIR . '/*', $files)->
-            setBasePathValidationExpectations(true, true)->
+            setBasePathValidationExpectations()->
             setPlaybackPathCheckExpectations();
 
         return $this;
     }
 
-    // @todo Set some default values for this
-    protected function setBasePathValidationExpectations($recordPathExists, $playPathExists)
+    protected function setBasePathValidationExpectations($recordPathExists = true, $playPathExists = true)
     {
         $this->
             setIsDirectoryExpectation(self::DUMMY_RECORD_DIR, $recordPathExists)->
