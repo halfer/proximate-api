@@ -239,12 +239,21 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
     {
         $this->
             getFileService()->
-            // @todo Check paths?
             shouldReceive('deleteFiles')->
-            twice()->
-            // @todo Check paths?
+            with(self::DUMMY_RECORD_SITE_FILES_DIR)->
+            once()->
+            shouldReceive('deleteFiles')->
+            with(self::DUMMY_RECORD_SITE_MAPPINGS_DIR)->
+            once()->
             shouldReceive('rmDir')->
-            times(3);
+            with(self::DUMMY_RECORD_SITE_FILES_DIR)->
+            once()->
+            shouldReceive('rmDir')->
+            with(self::DUMMY_RECORD_SITE_MAPPINGS_DIR)->
+            once()->
+            shouldReceive('rmDir')->
+            with(self::DUMMY_RECORD_SITE_DIR)->
+            once();
 
         return $this;
     }
