@@ -13,6 +13,7 @@ class CacheCopier
     protected $fileService;
     protected $recordCachePath;
     protected $playCachePath;
+    protected $logging = true;
 
     public function __construct(File $fileService, $recordCachePath, $playCachePath)
     {
@@ -35,6 +36,9 @@ class CacheCopier
 
     protected function findFilesAndProcess()
     {
+        $this->logMessage(
+            sprintf("Scanning record path `%s`", $this->recordCachePath)
+        );
         $folders = $this->getFileService()->glob($this->recordCachePath . '/*');
         foreach ($folders as $urlFolder)
         {
@@ -101,6 +105,9 @@ class CacheCopier
      */
     protected function processFolder($urlFolder)
     {
+        $this->logMessage(
+            sprintf("  Processing record folder `%s`", $urlFolder)
+        );
         $this->copyFiles($urlFolder);
         $this->copyMappings($urlFolder);
         $this->deleteUrlFolder($urlFolder);
@@ -194,6 +201,18 @@ class CacheCopier
         return $host;
     }
 
+    public function setLogging($logging)
+    {
+        $this->logging = (bool) $logging;
+    }
+
+    protected function logMessage($message)
+    {
+        if ($this->logging)
+        {
+            echo $message . "\n";
+        }
+    }
 
     protected function getMappingsFolder($urlFolder)
     {

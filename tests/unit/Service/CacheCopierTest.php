@@ -368,7 +368,10 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
         $recordCachePath = self::DUMMY_RECORD_DIR,
         $playCachePath = self::DUMMY_PLAY_DIR)
     {
-        return new CacheCopierService($this->getFileService(), $recordCachePath, $playCachePath);
+        $service = new CacheCopierService($this->getFileService(), $recordCachePath, $playCachePath);
+        $service->setLogging(false);
+
+        return $service;
     }
 
     /**
@@ -386,6 +389,7 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
         // Make a partial mock on the copier
         $mock = \Mockery::mock(CacheCopierService::class)->makePartial();
         $mock->init($this->getFileService(), $recordCachePath, $playCachePath);
+        $mock->setLogging(false);
 
         return $mock;
     }
