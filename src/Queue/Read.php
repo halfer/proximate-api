@@ -118,7 +118,7 @@ class Read extends Base
      */
     protected function resetProxy($url)
     {
-        $this->getProxyResetterService()->execute(
+        $this->getProxyResetterService()->resetRecorder(
             $this->getDomainForUrl($url)
         );
     }

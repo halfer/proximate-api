@@ -41,7 +41,7 @@ class ProxyReset
      *
      * @param string $url
      */
-    public function execute($url)
+    public function resetRecorder($url)
     {
         if (!$url)
         {
@@ -56,6 +56,12 @@ class ProxyReset
         $this->sleep();
 
         return $responseBody;
+    }
+
+    public function resetPlayer()
+    {
+        // @todo Need code to do the following
+        // curl --data '' http://proximate-proxy:8082/__admin/shutdown
     }
 
     protected function sleep()

@@ -22,7 +22,7 @@ class ProxyResetTest extends \PHPUnit_Framework_TestCase
             with('/start?url=' . urlencode(self::DUMMY_RECORD_URL), []);
         $this->
             getProxyResetService()->
-            execute(self::DUMMY_RECORD_URL);
+            resetRecorder(self::DUMMY_RECORD_URL);
     }
 
     /**
@@ -37,7 +37,7 @@ class ProxyResetTest extends \PHPUnit_Framework_TestCase
             shouldReceive('post');
         $this->
             getProxyResetService()->
-            execute('');
+            resetRecorder('');
     }
 
     /**
@@ -53,7 +53,7 @@ class ProxyResetTest extends \PHPUnit_Framework_TestCase
             andThrow(new \Pest_Exception('Bork bork!'));
         $this->
             getProxyResetService()->
-            execute(self::DUMMY_RECORD_URL);
+            resetRecorder(self::DUMMY_RECORD_URL);
     }
 
     protected function getProxyResetService()

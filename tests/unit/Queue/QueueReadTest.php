@@ -115,7 +115,7 @@ class QueueReadTest extends QueueTestBase
         // Set up the fetcher mock to emulate a failure
         $this->
             getResetServiceMock()->
-            shouldReceive('execute')->
+            shouldReceive('resetRecorder')->
             andThrow(new \Pest_Exception('Throw an exception via testProcessorWithProxyResetFail'));
 
         // Set up the queue and process the "waiting" item
@@ -238,7 +238,7 @@ class QueueReadTest extends QueueTestBase
     {
         $this->
             getResetServiceMock()->
-            shouldReceive('execute')->
+            shouldReceive('resetRecorder')->
             once();
     }
 
