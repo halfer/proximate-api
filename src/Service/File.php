@@ -52,6 +52,16 @@ class File
         return mkdir($pathname);
     }
 
+    public function unlinkFile($path)
+    {
+        unlink($path);
+    }
+
+    /**
+     * @todo Rename to unlinkFiles
+     *
+     * @param string $path
+     */
     public function deleteFiles($path)
     {
         foreach ($this->glob($path . DIRECTORY_SEPARATOR . '*') as $file)

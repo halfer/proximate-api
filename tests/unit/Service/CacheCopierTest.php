@@ -18,6 +18,7 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
     const DUMMY_PLAY_FILES_DIR = '/cache/play/__files';
     const DUMMY_PLAY_MAPPINGS_DIR = '/cache/play/mappings';
     const DUMMY_RECORD_SITE_DIR = '/cache/record/http_www_example_com';
+    const DUMMY_RECORD_SITE_DOMAIN = '/cache/record/http_www_example_com/domain.txt';
     const DUMMY_RECORD_SITE_FILES_DIR = '/cache/record/http_www_example_com/__files';
     const DUMMY_RECORD_SITE_MAPPINGS_DIR = '/cache/record/http_www_example_com/mappings';
 
@@ -250,6 +251,9 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
             once()->
             shouldReceive('rmDir')->
             with(self::DUMMY_RECORD_SITE_MAPPINGS_DIR)->
+            once()->
+            shouldReceive('unlinkFile')->
+            with(self::DUMMY_RECORD_SITE_DOMAIN)->
             once()->
             shouldReceive('rmDir')->
             with(self::DUMMY_RECORD_SITE_DIR)->

@@ -165,6 +165,8 @@ class CacheCopier
         $fileService->deleteFiles($mappings);
         $fileService->rmDir($mappings);
 
+        $fileService->unlinkFile($this->getDomainPath($urlFolder));
+
         $fileService->rmDir($urlFolder);
     }
 
@@ -178,7 +180,7 @@ class CacheCopier
      */
     protected function getSiteHost($urlFolder)
     {
-        $domainFile = $urlFolder . '/domain.txt';
+        $domainFile = $this->getDomainPath($urlFolder);
         if (!$this->getFileService()->fileExists($domainFile))
         {
             throw new \Exception(
@@ -201,6 +203,11 @@ class CacheCopier
     protected function getFilesFolder($urlFolder)
     {
         return $urlFolder . '/__files';
+    }
+
+    protected function getDomainPath($urlFolder)
+    {
+        return $urlFolder . '/domain.txt';
     }
 
     /**
