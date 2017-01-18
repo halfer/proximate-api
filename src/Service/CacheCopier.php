@@ -93,12 +93,17 @@ class CacheCopier
     /**
      * Accepts a path to a folder, e.g. /remote/cache/record/www_example_com for processing
      *
+     * Processing this folder means copying the files and mappings folders to the playback
+     * cache, and then deleting the folder. In the future we could move the folder instead if
+     * desired.
+     *
      * @param string $urlFolder
      */
     protected function processFolder($urlFolder)
     {
         $this->copyFiles($urlFolder);
         $this->copyMappings($urlFolder);
+        $this->deleteUrlFolder($urlFolder);
     }
 
     protected function copyFiles($urlFolder)
@@ -146,6 +151,19 @@ class CacheCopier
             $this->getMappingsFolder($this->playCachePath) . '/' . $leafName,
             $jsonAgain
         );
+    }
+
+    protected function deleteUrlFolder($urlFolder)
+    {
+        $fileService = $this->getFileService();
+
+        $files = $this->getFilesFolder($urlFolder);
+        $fileService->deleteFiles($files);
+        $fileService->rmDir($files);
+
+        $mappings = $this->getMappingsFolder($urlFolder);
+        $fileService->deleteFiles($mappings);
+        $fileService->rmDir($mappings);
     }
 
     /**

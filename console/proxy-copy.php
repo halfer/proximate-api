@@ -5,7 +5,6 @@
  *
  * Modifies the mappings files to include a header Host filter
  *
- * @todo After a successful move of a domain folder, delete it
  * @todo Test this script after wiring in the CacheCopier
  * @todo Can I run a real scraper on the proxy?
  * @todo When running this script, clear out old mappings, or back them up somewhere

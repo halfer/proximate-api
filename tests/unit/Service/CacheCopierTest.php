@@ -2,6 +2,8 @@
 
 /**
  * Unit tests for the cache installer service
+ *
+ * @todo Could do with some tests to check if individual file operations succeed or fail
  */
 
 namespace Proximate\Test;
@@ -112,6 +114,8 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
             once()->
             shouldReceive('copyMappings')->
             once();
+        $this->addDeleteSourceFoldersExpectation();
+
         $cacheCopier->execute();
     }
 
@@ -132,6 +136,7 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
             shouldReceive('copy')->
             with(self::DUMMY_RECORD_SITE_FILES_DIR . '/*', self::DUMMY_PLAY_FILES_DIR)->
             once();
+        $this->addDeleteSourceFoldersExpectation();
         $cacheCopier->execute();
     }
 
@@ -156,7 +161,8 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
             addMappingGetFileExpectation($mappingPath)->
             addDomainFileExistsExpectation($domainPath)->
             addDomainGetFileExpectation($domainPath)->
-            addMappingPutFileExpectation();
+            addMappingPutFileExpectation()->
+            addDeleteSourceFoldersExpectation();
         $cacheCopier->execute();
     }
 
@@ -225,6 +231,20 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
                 }
             )->
             once();
+
+        return $this;
+    }
+
+    protected function addDeleteSourceFoldersExpectation()
+    {
+        $this->
+            getFileService()->
+            // @todo Check paths?
+            shouldReceive('deleteFiles')->
+            twice()->
+            // @todo Check paths?
+            shouldReceive('rmDir')->
+            twice();
 
         return $this;
     }

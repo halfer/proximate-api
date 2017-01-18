@@ -51,4 +51,17 @@ class File
     {
         return mkdir($pathname);
     }
+
+    public function deleteFiles($path)
+    {
+        foreach ($this->glob($path . DIRECTORY_SEPARATOR . '*') as $file)
+        {
+            unlink($file);
+        }
+    }
+
+    public function rmDir($path)
+    {
+        rmdir($path);
+    }
 }
