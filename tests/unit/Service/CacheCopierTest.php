@@ -244,7 +244,7 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
             twice()->
             // @todo Check paths?
             shouldReceive('rmDir')->
-            twice();
+            times(3);
 
         return $this;
     }

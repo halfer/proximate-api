@@ -164,6 +164,8 @@ class CacheCopier
         $mappings = $this->getMappingsFolder($urlFolder);
         $fileService->deleteFiles($mappings);
         $fileService->rmDir($mappings);
+
+        $fileService->rmDir($urlFolder);
     }
 
     /**
