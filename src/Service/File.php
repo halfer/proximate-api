@@ -58,13 +58,11 @@ class File
     }
 
     /**
-     * @todo Rename to unlinkFiles
-     *
-     * @param string $path
+     * @param string $folderPath
      */
-    public function deleteFiles($path)
+    public function unlinkFiles($folderPath)
     {
-        foreach ($this->glob($path . DIRECTORY_SEPARATOR . '*') as $file)
+        foreach ($this->glob($folderPath . DIRECTORY_SEPARATOR . '*') as $file)
         {
             unlink($file);
         }

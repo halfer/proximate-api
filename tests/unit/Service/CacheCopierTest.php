@@ -240,10 +240,10 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
     {
         $this->
             getFileService()->
-            shouldReceive('deleteFiles')->
+            shouldReceive('unlinkFiles')->
             with(self::DUMMY_RECORD_SITE_FILES_DIR)->
             once()->
-            shouldReceive('deleteFiles')->
+            shouldReceive('unlinkFiles')->
             with(self::DUMMY_RECORD_SITE_MAPPINGS_DIR)->
             once()->
             shouldReceive('rmDir')->

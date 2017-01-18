@@ -158,11 +158,11 @@ class CacheCopier
         $fileService = $this->getFileService();
 
         $files = $this->getFilesFolder($urlFolder);
-        $fileService->deleteFiles($files);
+        $fileService->unlinkFiles($files);
         $fileService->rmDir($files);
 
         $mappings = $this->getMappingsFolder($urlFolder);
-        $fileService->deleteFiles($mappings);
+        $fileService->unlinkFiles($mappings);
         $fileService->rmDir($mappings);
 
         $fileService->unlinkFile($this->getDomainPath($urlFolder));
