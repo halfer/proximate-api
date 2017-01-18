@@ -40,6 +40,7 @@ class ProxyReset
      * @todo Check the JSON response and fail if it indicates a problem
      *
      * @param string $url
+     * @return string
      */
     public function resetRecorder($url)
     {
@@ -58,10 +59,23 @@ class ProxyReset
         return $responseBody;
     }
 
-    public function resetPlayer()
+    /**
+     * This sends a restart to the WireMock URL in the current cURL
+     *
+     * To do the same bounce on the console, simply fire this off:
+     *
+     * curl --data '' http://proximate-proxy:8082/__admin/shutdown
+     *
+     * @return string
+     */
+    public function resetWiremockProxy()
     {
-        // @todo Need code to do the following
-        // curl --data '' http://proximate-proxy:8082/__admin/shutdown
+        $responseBody = $this->getCurl()->post('__admin/shutdown', []);
+
+        // Wait for the bounced server to settle
+        $this->sleep();
+
+        return $responseBody;
     }
 
     protected function sleep()

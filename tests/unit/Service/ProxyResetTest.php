@@ -56,6 +56,14 @@ class ProxyResetTest extends \PHPUnit_Framework_TestCase
             resetRecorder(self::DUMMY_RECORD_URL);
     }
 
+    /**
+     * @todo Rename above tests to specify they are for the recorder restart
+     * @todo Write some new test(s) to test the general restart method
+     */
+    public function testWiremockRestart() {
+        $this->markTestIncomplete();
+    }
+
     protected function getProxyResetService()
     {
         $mock = \Mockery::mock(ProxyResetService::class)->
