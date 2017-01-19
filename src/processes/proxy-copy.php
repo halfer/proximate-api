@@ -21,6 +21,9 @@ $playCachePath = "/remote/cache/playback";
 $cacheCopier = new CacheCopierService(new FileService(), $recordCachePath, $playCachePath);
 $cacheCopier->execute();
 
+echo "Wait for servers to settle...\n";
+sleep(5);
+
 // Restart the player by calling the proxy restart endpoint directly
 echo "Restarting proxy...\n";
 $curl = new PestJSON('http://proximate-proxy:8082');
