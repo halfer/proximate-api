@@ -10,7 +10,7 @@ use Proximate\Service\CacheCopier as CacheCopierService;
 use Proximate\Service\File as FileService;
 use Proximate\Service\ProxyReset;
 
-$root = realpath(__DIR__ . '/..');
+$root = realpath(__DIR__ . '/../..');
 require_once $root . '/vendor/autoload.php';
 require_once $root . '/src/autoload.php';
 
