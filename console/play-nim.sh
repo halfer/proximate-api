@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #--header "Host: http://www.nimvelo.com" \
 curl \
 	--verbose \
