@@ -6,6 +6,8 @@
 
 namespace Proximate\Service;
 
+use Proximate\Exception\NotWritable as NotWritableException;
+
 class File
 {
     public function fileExists($filename)
@@ -20,6 +22,12 @@ class File
 
     public function filePutContents($filename, $data)
     {
+        if (!is_writable($filename)) {
+            throw new NotWritableException(
+                sprintf("Could not write to file `%s`", $filename)
+            );
+        }
+
         return file_put_contents($filename, $data);
     }
 
@@ -35,7 +43,13 @@ class File
 
     public function rename($oldname, $newname)
     {
-        rename($oldname, $newname);
+        $ok = @rename($oldname, $newname);
+        if (!$ok)
+        {
+            throw new NotWritableException(
+                sprintf("Could not rename `%s` to `%s`", $oldname, $newname)
+            );
+        }
     }
 
     public function copy($pattern, $targetDir)
@@ -43,17 +57,34 @@ class File
         foreach ($this->glob($pattern) as $file)
         {
             $targetFile = $targetDir . DIRECTORY_SEPARATOR . basename($file);
+            if (!is_writable($targetFile)) {
+                throw new NotWritableException(
+                    sprintf("Could not copy to file target `%s`", $targetFile)
+                );
+            }
             copy($file, $targetFile);
         }
     }
 
     public function mkdir($pathname)
     {
-        return mkdir($pathname);
+        $ok = @mkdir($pathname);
+        if (!$ok)
+        {
+            throw new NotWritableException(
+                sprintf("Could not create folder `%s`", $pathname)
+            );
+        }
     }
 
     public function unlinkFile($path)
     {
+        if (!is_writable($path)) {
+            throw new NotWritableException(
+                sprintf("Could not remove file `%s`", $path)
+            );
+        }
+
         unlink($path);
     }
 
@@ -64,12 +95,18 @@ class File
     {
         foreach ($this->glob($folderPath . DIRECTORY_SEPARATOR . '*') as $file)
         {
-            unlink($file);
+            $this->unlinkFiles($file);
         }
     }
 
     public function rmDir($path)
     {
+        if (!is_writable($path)) {
+            throw new NotWritableException(
+                sprintf("Could not remove directory `%s`", $path)
+            );
+        }
+
         rmdir($path);
     }
 }

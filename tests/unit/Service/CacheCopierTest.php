@@ -78,6 +78,31 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
             execute();
     }
 
+    /**
+     * Checks that a failing mkdir raises the expected exception
+     *
+     * @dataProvider missingPlaybackFolderDataProvider
+     * @expectedException \Proximate\Exception\NotWritable
+     */
+    public function testFailsToCreatePlaybackFolder($playFilesExists, $playMappingsExists)
+    {
+        $this->
+            setGlobExpectation(self::DUMMY_RECORD_DIR . '/*')->
+            setBasePathValidationExpectations()->
+            setPlaybackPathCheckExpectations($playFilesExists, $playMappingsExists, true);
+        $this->
+            getCacheCopier()->
+            execute();
+    }
+
+    public function missingPlaybackFolderDataProvider()
+    {
+        return [
+            [false, true],
+            [true, false],
+        ];
+    }
+
     public function testCreatePlaybackMappingsFolderIfRequired()
     {
         $this->
@@ -314,20 +339,49 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
         return $this;
     }
 
-    protected function setPlaybackPathCheckExpectations($playFilesExists = true, $playMappingsExists = true) {
+    protected function setPlaybackPathCheckExpectations(
+        $playFilesExists = true, $playMappingsExists = true, $exceptions = false
+    ) {
         $this->
             setIsDirectoryExpectation(self::DUMMY_PLAY_FILES_DIR, $playFilesExists)->
             setIsDirectoryExpectation(self::DUMMY_PLAY_MAPPINGS_DIR, $playMappingsExists);
 
-        // If a directory does not exist, it should be created, and vice versa
+        // If a directory does not exist, it should be created, and vice versa,
+        // unless we're throwing an exception
         $this->
-            getFileService()->
-            shouldReceive('mkdir')->
-            with(self::DUMMY_PLAY_FILES_DIR)->
-            times($playFilesExists ? 0 : 1)->
-            shouldReceive('mkdir')->
-            with(self::DUMMY_PLAY_MAPPINGS_DIR)->
-            times($playMappingsExists ? 0 : 1);
+            setMkdirExpectation(self::DUMMY_PLAY_FILES_DIR, $playFilesExists ? 0 : 1, $exceptions)->
+            setMkdirExpectation(self::DUMMY_PLAY_MAPPINGS_DIR, $playMappingsExists ? 0 : 1, $exceptions);
+
+        return $this;
+    }
+
+    /**
+     * @todo Can this be simplified to the base case, with andThrow() optionally tacked on
+     * the end?
+     *
+     * @param string $path
+     * @param integer $times
+     * @param boolean $exceptions
+     * @return $this
+     */
+    protected function setMkdirExpectation($path, $times, $exceptions)
+    {
+        $fileService = $this->getFileService();
+        if ($exceptions)
+        {
+            $fileService->
+                shouldReceive('mkdir')->
+                with($path)->
+                times($times)->
+                andThrow(new \Proximate\Exception\NotWritable("Look, a squirrel!"));
+        }
+        else
+        {
+            $fileService->
+                shouldReceive('mkdir')->
+                with($path)->
+                times($times);
+        }
 
         return $this;
     }
