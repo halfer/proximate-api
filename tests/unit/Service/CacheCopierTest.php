@@ -2,8 +2,6 @@
 
 /**
  * Unit tests for the cache installer service
- *
- * @todo Could do with some tests to check if individual file operations succeed or fail
  */
 
 namespace Proximate\Test;
@@ -11,25 +9,14 @@ namespace Proximate\Test;
 use Proximate\Service\CacheCopier as CacheCopierService;
 use Proximate\Service\File as FileService;
 
-class CacheCopierTest extends \PHPUnit_Framework_TestCase
+require_once 'BaseCacheCopierTestCase.php';
+
+class CacheCopierTest extends BaseCacheCopierTestCase
 {
-    const DUMMY_RECORD_DIR = '/cache/record';
-    const DUMMY_PLAY_DIR = '/cache/play';
-    const DUMMY_PLAY_FILES_DIR = '/cache/play/__files';
-    const DUMMY_PLAY_MAPPINGS_DIR = '/cache/play/mappings';
     const DUMMY_RECORD_SITE_DIR = '/cache/record/http_www_example_com';
     const DUMMY_RECORD_SITE_DOMAIN = '/cache/record/http_www_example_com/domain.txt';
     const DUMMY_RECORD_SITE_FILES_DIR = '/cache/record/http_www_example_com/__files';
     const DUMMY_RECORD_SITE_MAPPINGS_DIR = '/cache/record/http_www_example_com/mappings';
-
-    protected $fileService;
-    
-    public function setUp()
-    {
-        parent::setUp();
-
-        $this->fileService = \Mockery::mock(FileService::class);
-    }
 
     public function testCacheDirectoriesExist()
     {
@@ -43,30 +30,6 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(true);
     }
 
-    /**
-     * @expectedException \Proximate\Exception\DirectoryNotFound
-     */
-    public function testRecordCacheDirectoryFails()
-    {
-        $this->
-            setBasePathValidationExpectations(false, true);
-        $this->
-            getCacheCopier()->
-            execute();
-    }
-
-    /**
-     * @expectedException \Proximate\Exception\DirectoryNotFound
-     */
-    public function testPlaybackCacheDirectoryFails()
-    {
-        $this->
-            setBasePathValidationExpectations(true, false);
-        $this->
-            getCacheCopier()->
-            execute();
-    }
-
     public function testCreatePlaybackFilesFolderIfRequired()
     {
         $this->
@@ -76,31 +39,6 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
         $this->
             getCacheCopier()->
             execute();
-    }
-
-    /**
-     * Checks that a failing mkdir raises the expected exception
-     *
-     * @dataProvider missingPlaybackFolderDataProvider
-     * @expectedException \Proximate\Exception\NotWritable
-     */
-    public function testFailsToCreatePlaybackFolder($playFilesExists, $playMappingsExists)
-    {
-        $this->
-            setGlobExpectation(self::DUMMY_RECORD_DIR . '/*')->
-            setBasePathValidationExpectations()->
-            setPlaybackPathCheckExpectations($playFilesExists, $playMappingsExists, true);
-        $this->
-            getCacheCopier()->
-            execute();
-    }
-
-    public function missingPlaybackFolderDataProvider()
-    {
-        return [
-            [false, true],
-            [true, false],
-        ];
     }
 
     public function testCreatePlaybackMappingsFolderIfRequired()
@@ -330,62 +268,6 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
         return $this;
     }
 
-    protected function setBasePathValidationExpectations($recordPathExists = true, $playPathExists = true)
-    {
-        $this->
-            setIsDirectoryExpectation(self::DUMMY_RECORD_DIR, $recordPathExists)->
-            setIsDirectoryExpectation(self::DUMMY_PLAY_DIR, $playPathExists);
-
-        return $this;
-    }
-
-    protected function setPlaybackPathCheckExpectations(
-        $playFilesExists = true, $playMappingsExists = true, $exceptions = false
-    ) {
-        $this->
-            setIsDirectoryExpectation(self::DUMMY_PLAY_FILES_DIR, $playFilesExists)->
-            setIsDirectoryExpectation(self::DUMMY_PLAY_MAPPINGS_DIR, $playMappingsExists);
-
-        // If a directory does not exist, it should be created, and vice versa,
-        // unless we're throwing an exception
-        $this->
-            setMkdirExpectation(self::DUMMY_PLAY_FILES_DIR, $playFilesExists ? 0 : 1, $exceptions)->
-            setMkdirExpectation(self::DUMMY_PLAY_MAPPINGS_DIR, $playMappingsExists ? 0 : 1, $exceptions);
-
-        return $this;
-    }
-
-    /**
-     * @todo Can this be simplified to the base case, with andThrow() optionally tacked on
-     * the end?
-     *
-     * @param string $path
-     * @param integer $times
-     * @param boolean $exceptions
-     * @return $this
-     */
-    protected function setMkdirExpectation($path, $times, $exceptions)
-    {
-        $fileService = $this->getFileService();
-        if ($exceptions)
-        {
-            $fileService->
-                shouldReceive('mkdir')->
-                with($path)->
-                times($times)->
-                andThrow(new \Proximate\Exception\NotWritable("Look, a squirrel!"));
-        }
-        else
-        {
-            $fileService->
-                shouldReceive('mkdir')->
-                with($path)->
-                times($times);
-        }
-
-        return $this;
-    }
-
     protected function setFolderVerificationExpectations($urlOk = true, $mapOk = true, $filesOk = true)
     {
         $this->
@@ -394,38 +276,6 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
             setIsDirectoryExpectation(self::DUMMY_RECORD_SITE_FILES_DIR, $filesOk);
 
         return $this;
-    }
-
-    protected function setIsDirectoryExpectation($path, $return = true)
-    {
-        $this->
-            getFileService()->
-            shouldReceive('isDirectory')->
-            with($path)->
-            andReturn($return);
-
-        return $this;
-    }
-
-    protected function setGlobExpectation($path, $return = [])
-    {
-        $this->
-            getFileService()->
-            shouldReceive('glob')->
-            with($path)->
-            andReturn($return);
-
-        return $this;
-    }
-
-    protected function getCacheCopier(
-        $recordCachePath = self::DUMMY_RECORD_DIR,
-        $playCachePath = self::DUMMY_PLAY_DIR)
-    {
-        $service = new CacheCopierService($this->getFileService(), $recordCachePath, $playCachePath);
-        $service->setLogging(false);
-
-        return $service;
     }
 
     /**
@@ -446,14 +296,5 @@ class CacheCopierTest extends \PHPUnit_Framework_TestCase
         $mock->setLogging(false);
 
         return $mock;
-    }
-
-    /**
-     * 
-     * @return \Mockery\Mock|FileService
-     */
-    protected function getFileService()
-    {
-        return $this->fileService;
     }
 }
