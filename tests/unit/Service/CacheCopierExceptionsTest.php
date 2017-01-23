@@ -6,6 +6,7 @@
 
 namespace Proximate\Test;
 
+use Proximate\Exception\NotWritable;
 #use Proximate\Service\CacheCopier as CacheCopierService;
 #use Proximate\Service\File as FileService;
 
@@ -60,5 +61,62 @@ class CacheCopierExceptionsTest extends BaseCacheCopierTestCase
             [false, true],
             [true, false],
         ];
+    }
+
+    /**
+     * @expectedException Proximate\Exception\NotWritable
+     */
+    public function testCopyFilesFailure()
+    {
+        $this->setStandardSearchExpectations();
+        $this->setFolderVerificationExpectations();
+        $this->
+            getFileService()->
+            shouldReceive('copy')->
+            with(self::DUMMY_RECORD_SITE_FILES_DIR . '/*', self::DUMMY_PLAY_FILES_DIR)->
+            once()->
+            andThrow(new NotWritable());
+
+        $this->
+            getCacheCopier()->
+            execute();
+    }
+
+    // WIP
+    public function __testCopyMappingsFailure()
+    {
+        $this->setStandardSearchExpectations();
+        $this->setFolderVerificationExpectations();
+        $cacheCopier = $this->getCacheCopierMock();
+
+        // Ignore things in `copyFiles` for the moment
+        $cacheCopier->
+            shouldAllowMockingProtectedMethods()->
+            shouldReceive('copyFiles');
+
+        // Here's some details about the files we're working with
+        $mappingPath = self::DUMMY_RECORD_SITE_MAPPINGS_DIR . '/mapping1.json';
+        $domainPath = self::DUMMY_RECORD_SITE_DIR . '/domain.txt';
+
+        // Work up to the file put contents
+        $this->
+            addfindMappingsGlobExpectation($mappingPath)->
+            addMappingGetFileExpectation($mappingPath)->
+            addDomainFileExistsExpectation($domainPath)->
+            addDomainGetFileExpectation($domainPath)->
+            // @todo Replace this with a call to addMappingPutFileExpectation
+            getFileService()->
+            shouldReceive('filePutContents')->
+            once()->
+            andThrow(new NotWritable());
+
+        $this->
+            getCacheCopier()->
+            execute();
+    }
+
+    public function testDeleteUrlFolderFailure()
+    {
+        $this->markTestIncomplete();
     }
 }
