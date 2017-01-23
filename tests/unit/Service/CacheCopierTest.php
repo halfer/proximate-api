@@ -67,6 +67,15 @@ class CacheCopierTest extends BaseCacheCopierTestCase
         $cacheCopier->execute();
     }
 
+    public function getDirectoryChecksDataProvider()
+    {
+        return [
+            [false, true, true, ],
+            [true, false, true, ],
+            [true, true, false, ],
+        ];
+    }
+
     public function testCopyCacheCheckFolderSucceeds()
     {
         $this->setStandardSearchExpectations();
@@ -246,15 +255,6 @@ class CacheCopierTest extends BaseCacheCopierTestCase
         }
 
         return json_encode($mapping, JSON_PRETTY_PRINT);
-    }
-
-    public function getDirectoryChecksDataProvider()
-    {
-        return [
-            [false, true, true, ],
-            [true, false, true, ],
-            [true, true, false, ],
-        ];
     }
 
     protected function setStandardSearchExpectations()
