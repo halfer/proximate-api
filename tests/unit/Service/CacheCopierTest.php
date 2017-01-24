@@ -6,9 +6,7 @@
 
 namespace Proximate\Test;
 
-use Proximate\Service\CacheCopier as CacheCopierService;
-use Proximate\Service\File as FileService;
-
+// @todo Add test parents to the autoloader
 require_once 'BaseCacheCopierTestCase.php';
 
 class CacheCopierTest extends BaseCacheCopierTestCase

@@ -8,6 +8,7 @@ namespace Proximate\Test;
 
 use Proximate\Exception\NotWritable as NotWritableException;
 
+// @todo Add test parents to the autoloader
 require_once 'BaseCacheCopierTestCase.php';
 
 class CacheCopierExceptionsTest extends BaseCacheCopierTestCase
