@@ -30,11 +30,16 @@ if ($ok)
     $curl = new PestJSON('http://proximate-proxy:8082');
     $resetter = new ProxyReset($curl);
     $resetter->resetWiremockProxy();
-}
 
-// If we got this far, wait for a while before allowing Supervisor to run this again
-echo "Sleeping...\n";
-sleep(120);
+    // If we got this far, wait for a while before allowing Supervisor to run this again
+    echo "Sleeping...\n";
+    sleep(120);
+}
+else
+{
+    echo "Giving up due to repeated failures\n";
+    exit(1);
+}
 
 function tryCopyingWithRetries($recordCachePath, $playCachePath)
 {
