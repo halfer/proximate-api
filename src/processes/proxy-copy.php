@@ -18,18 +18,49 @@ $recordCachePath = "/remote/cache/record";
 $playCachePath = "/remote/cache/playback";
 
 // Copy the newly recorded sites to the player
-$cacheCopier = new CacheCopierService(new FileService(), $recordCachePath, $playCachePath);
-$cacheCopier->execute();
+$ok = tryCopyingWithRetries($recordCachePath, $playCachePath);
 
-echo "Wait for servers to settle...\n";
-sleep(5);
+if ($ok)
+{
+    echo "Wait for servers to settle...\n";
+    sleep(5);
 
-// Restart the player by calling the proxy restart endpoint directly
-echo "Restarting proxy...\n";
-$curl = new PestJSON('http://proximate-proxy:8082');
-$resetter = new ProxyReset($curl);
-$resetter->resetWiremockProxy();
+    // Restart the player by calling the proxy restart endpoint directly
+    echo "Restarting proxy...\n";
+    $curl = new PestJSON('http://proximate-proxy:8082');
+    $resetter = new ProxyReset($curl);
+    $resetter->resetWiremockProxy();
+}
 
 // If we got this far, wait for a while before allowing Supervisor to run this again
 echo "Sleeping...\n";
 sleep(120);
+
+function tryCopyingWithRetries($recordCachePath, $playCachePath)
+{
+    $iter = 0;
+    do
+    {
+        $iter++;
+        try
+        {
+            $cacheCopier = new CacheCopierService(new FileService(), $recordCachePath, $playCachePath);
+            $cacheCopier->execute();
+            $ok = true;
+        }
+        catch (\Exception $e)
+        {
+            $ok = false;
+            error_log(
+                sprintf(
+                    "Failed to copy cache files (try %d): %s\n",
+                    $iter,
+                    $e->getMessage()
+                )
+            );
+            sleep(120);
+        }
+    } while (!$ok && $iter < 5);
+
+    return $ok;
+}
