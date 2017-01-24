@@ -6,9 +6,7 @@
 
 namespace Proximate\Test;
 
-use Proximate\Exception\NotWritable;
-#use Proximate\Service\CacheCopier as CacheCopierService;
-#use Proximate\Service\File as FileService;
+use Proximate\Exception\NotWritable as NotWritableException;
 
 require_once 'BaseCacheCopierTestCase.php';
 
@@ -75,15 +73,17 @@ class CacheCopierExceptionsTest extends BaseCacheCopierTestCase
             shouldReceive('copy')->
             with(self::DUMMY_RECORD_SITE_FILES_DIR . '/*', self::DUMMY_PLAY_FILES_DIR)->
             once()->
-            andThrow(new NotWritable());
+            andThrow(new NotWritableException());
 
         $this->
             getCacheCopier()->
             execute();
     }
 
-    // WIP
-    public function __testCopyMappingsFailure()
+    /**
+     * @expectedException Proximate\Exception\NotWritable
+     */
+    public function testCopyMappingsFailure()
     {
         $this->setStandardSearchExpectations();
         $this->setFolderVerificationExpectations();
@@ -104,19 +104,53 @@ class CacheCopierExceptionsTest extends BaseCacheCopierTestCase
             addMappingGetFileExpectation($mappingPath)->
             addDomainFileExistsExpectation($domainPath)->
             addDomainGetFileExpectation($domainPath)->
-            // @todo Replace this with a call to addMappingPutFileExpectation
+            // It blows up here
             getFileService()->
             shouldReceive('filePutContents')->
             once()->
-            andThrow(new NotWritable());
+            andThrow(new NotWritableException());
 
-        $this->
-            getCacheCopier()->
-            execute();
+        $cacheCopier->execute();
     }
 
+    /**
+     * Very similar to CacheCopierTest::testCopyMappings
+     *
+     * See CacheCopierTest::addDeleteSourceFoldersExpectation for all the write ops
+     * that should be able to throw a NotWritable exception. I'm only testing one of them
+     * as they should all behave in the same fashion.
+     *
+     * @expectedException Proximate\Exception\NotWritable
+     */
     public function testDeleteUrlFolderFailure()
     {
-        $this->markTestIncomplete();
+        $this->setStandardSearchExpectations();
+        $this->setFolderVerificationExpectations();
+        $cacheCopier = $this->getCacheCopierMock();
+
+        // Ignore things in `copyFiles` for the moment
+        $cacheCopier->
+            shouldAllowMockingProtectedMethods()->
+            shouldReceive('copyFiles');
+
+        // Here's some details about the files we're working with
+        $mappingPath = self::DUMMY_RECORD_SITE_MAPPINGS_DIR . '/mapping1.json';
+        $domainPath = self::DUMMY_RECORD_SITE_DIR . '/domain.txt';
+
+        // Work up to the file put contents
+        $this->
+            addfindMappingsGlobExpectation($mappingPath)->
+            addMappingGetFileExpectation($mappingPath)->
+            addDomainFileExistsExpectation($domainPath)->
+            addDomainGetFileExpectation($domainPath)->
+            addMappingPutFileExpectation()->
+            // It blows up here
+            getFileService()->
+            shouldReceive('unlinkFiles')->
+            with(self::DUMMY_RECORD_SITE_FILES_DIR)->
+            once()->
+            andThrow(new NotWritableException());
+
+        $cacheCopier->execute();
     }
 }

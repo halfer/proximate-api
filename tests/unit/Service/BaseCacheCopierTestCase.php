@@ -220,6 +220,27 @@ class BaseCacheCopierTestCase extends \PHPUnit_Framework_TestCase
         return $this;
     }
 
+    protected function addMappingPutFileExpectation()
+    {
+        $this->
+            getFileService()->
+            shouldReceive('filePutContents')->
+            withArgs(
+                // Check that $pathname starts with the play mappings path
+                // and ends with ".json"
+                function($pathName, $json)
+                {
+                    $prefix = preg_quote(self::DUMMY_PLAY_MAPPINGS_DIR);
+                    $pathOk = preg_match("#^{$prefix}.*\.json$#", $pathName);
+                    $jsonOk = $json === $this->getExampleMapping(true);
+                    return $pathOk && $jsonOk;
+                }
+            )->
+            once();
+
+        return $this;
+    }
+
     protected function getCacheCopier(
         $recordCachePath = self::DUMMY_RECORD_DIR,
         $playCachePath = self::DUMMY_PLAY_DIR)

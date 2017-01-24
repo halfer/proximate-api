@@ -134,27 +134,6 @@ class CacheCopierTest extends BaseCacheCopierTestCase
         $cacheCopier->execute();
     }
 
-    protected function addMappingPutFileExpectation()
-    {
-        $this->
-            getFileService()->
-            shouldReceive('filePutContents')->
-            withArgs(
-                // Check that $pathname starts with the play mappings path
-                // and ends with ".json"
-                function($pathName, $json)
-                {
-                    $prefix = preg_quote(self::DUMMY_PLAY_MAPPINGS_DIR);
-                    $pathOk = preg_match("#^{$prefix}.*\.json$#", $pathName);
-                    $jsonOk = $json === $this->getExampleMapping(true);
-                    return $pathOk && $jsonOk;
-                }
-            )->
-            once();
-
-        return $this;
-    }
-
     protected function addDeleteSourceFoldersExpectation()
     {
         $this->
