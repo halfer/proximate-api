@@ -22,6 +22,11 @@ class File
 
     public function filePutContents($filename, $data)
     {
+        // Deliberately using the silent operator here. The purpose of this is to create
+        // a file if it is not there but is creatable, so that is_writable succeeds. We do
+        // not care if it fails.
+        @touch($filename);
+
         if (!is_writable($filename)) {
             throw new NotWritableException(
                 sprintf("Could not write to file `%s`", $filename)
