@@ -44,29 +44,30 @@ class Routing
 
         // Originally the plan was to offer play and record features of everything, but
         // since the record instance of WireMock will only be pointing to one subdomain's
-        // folder, this isn't very useful. Maybe a synopsis endpoint for which sites have been
-        // scraped and should be available in the player?
-        //
-        // @todo Redesign endpoints a bit
+        // folder, this isn't very useful.
 
         /**
  * Counts the number of pages stored in the cache
  */
-        $app->get('/count', function ($request, $response) use ($curlRecorder, $routing) {
+        $app->get('/count', function ($request, $response) use ($curlPlayback, $routing) {
             $controller = $routing->getCountController($request, $response);
-            $controller->setCurl($curlRecorder);
+            $controller->setCurl($curlPlayback);
             return $controller->execute();
         });
 
         /**
          * Counts the number of pages for a specific domain in the cache
          */
-        $app->get('/count/{url}', function ($request, $response, $args) use ($curlRecorder, $routing) {
+        $app->get('/count/{url}', function ($request, $response, $args) use ($curlPlayback, $routing) {
             $controller = $routing->getCountUrlController($request, $response);
-            $controller->setCurl($curlRecorder);
+            $controller->setCurl($curlPlayback);
             $controller->setUrl($args['url']);
             return $controller->execute();
         });
+
+        // The /play and /record groups here seem to be a bit out of sync with the /count
+        // endpoints, and I am not sure of the value of seeing what is in the recorder, since
+        // that is ephemeral. I may dump the recorder list endpoint, will see.
 
         $app->group('/play', function() use ($app, $curlPlayback, $routing) {
             $app->get('/list[/{page}[/{pagesize}]]', function ($request, $response, $args) use ($curlPlayback, $routing) {
