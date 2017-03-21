@@ -33,12 +33,31 @@ class CacheList extends Base
         return $this->createJsonResponse($result, $statusCode);
     }
 
+    /**
+     * Fetches the list of cached URLs
+     *
+     * @todo The mappings endpoint does not presently support pagination, so we have to
+     * get the whole lot and do the pagination ourselves. If this gets very large we'll have
+     * to read it as a stream and capture the section we want, so as to avoid memory issues.
+     *
+     * @return array
+     */
     protected function fetchList()
     {
         // @todo This needs parsing a bit to get just the important info
         $requests = $this->getCurl()->get('__admin/mappings');
 
-        return isset($requests['mappings']) ? $requests['mappings'] : null;
+        $mappings = isset($requests['mappings']) ? $requests['mappings'] : [];
+
+        // Hmm, I think slice() might do all this stuff for us...
+        $start = ($this->page - 1) * $this->pageSize;
+        if ($start < count($mappings)) {
+            $section = array_slice($mappings, $start, $this->pageSize);
+        } else {
+            $section = [];
+        }
+
+        return $section;
     }
 
     public function setPage($page)
