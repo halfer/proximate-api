@@ -120,6 +120,11 @@ abstract class Base
      */
     public function getCurl()
     {
+        if (!$this->curl)
+        {
+            throw new AppException("No curl object set in controller");
+        }
+
         return $this->curl;
     }
 

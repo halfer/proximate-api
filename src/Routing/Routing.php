@@ -105,8 +105,9 @@ class Routing
          * @todo I think I should just use the URL rather than a GUID, since duplicates won't
          * be separately cached.
          */
-        $app->get('/status/{guid}', function ($request, $response, $args) use ($routing) {
+        $app->get('/status/{guid}', function ($request, $response, $args) use ($curlPlayback, $routing) {
             $controller = $routing->getItemStatusController($request, $response);
+            $controller->setCurl($curlPlayback);
             $controller->setGuid($args['guid']);
             return $controller->execute();
         });
@@ -114,8 +115,9 @@ class Routing
         /**
          * Requests that a specific mapping is deleted from the cache
          */
-        $app->delete('/cache/{id}', function ($request, $response, $args) use ($routing) {
+        $app->delete('/cache/{id}', function ($request, $response, $args) use ($curlPlayback, $routing) {
             $controller = $routing->getItemDeleteController($request, $response);
+            $controller->setCurl($curlPlayback);
             $controller->setMappingId($args['id']);
             return $controller->execute();
         });
