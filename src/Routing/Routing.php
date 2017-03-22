@@ -118,6 +118,7 @@ class Routing
         $app->delete('/cache/{guid}', function ($request, $response, $args) use ($curlPlayback, $routing) {
             $controller = $routing->getItemDeleteController($request, $response);
             $controller->setCurl($curlPlayback);
+            $controller->setPlaybackCache('/remote/cache/playback');
             $controller->setGuid($args['guid']);
             return $controller->execute();
         });

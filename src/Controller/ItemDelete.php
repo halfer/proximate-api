@@ -12,6 +12,7 @@ use Proximate\Controller\Base;
 class ItemDelete extends Base
 {
     protected $guid;
+    protected $playbackCache;
 
     public function execute()
     {
@@ -19,7 +20,7 @@ class ItemDelete extends Base
         {
             $result = [
                 'result' => [
-                    'ok' => $this->deleteItem(),
+                    'ok' => $this->deleteItemByFile(),
                 ]
             ];
             $statusCode = 200;
@@ -54,5 +55,56 @@ class ItemDelete extends Base
         $this->getCurl()->delete('__admin/mappings/' . $this->guid);
 
         return true;
+    }
+
+    public function setPlaybackCache($playbackCache)
+    {
+        $this->playbackCache = $playbackCache;
+    }
+
+    /**
+     * @todo Use the file service rather than file commands directly
+     */
+    protected function deleteItemByFile()
+    {
+        $path = $this->playbackCache . '/mappings/*.json';
+        foreach (glob($path) as $jsonFile)
+        {
+            $this->examineJsonFile($jsonFile);
+        }
+
+        // Soft restart of WM server
+        #$this->getCurl()->post('__admin/shutdown');
+
+        return true;
+    }
+
+    /**
+     * @todo Use the file service rather than file commands directly
+     */
+    protected function examineJsonFile($jsonFile)
+    {
+        $json = file_get_contents($jsonFile);
+        $data = json_decode($json, true);
+        if (isset($data['id']) === $this->guid)
+        {
+            $htmlLeaf = $data['response']['bodyFileName'];
+            $htmlFile = $this->playbackCache . '/__files/' . $htmlLeaf;
+            $this->deleteFiles([$jsonFile, $htmlFile]);
+        }
+    }
+
+    /**
+     * @todo Use the file service rather than file commands directly
+     */
+    protected function deleteFiles(array $files)
+    {
+        foreach ($files as $file)
+        {
+            if (file_exists($file))
+            {
+                unlink($file);
+            }
+        }
     }
 }
