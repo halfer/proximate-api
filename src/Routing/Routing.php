@@ -6,6 +6,9 @@
 
 namespace Proximate\Routing;
 
+use Slim\Http\Request;
+use Slim\Http\Response;
+
 class Routing
 {
     protected $app;
@@ -109,13 +112,11 @@ class Routing
         });
 
         /**
-         * Requests that a specific site is deleted from the cache
-         *
-         * This can use DELETE "/__admin/mappings/{stubMappingId}" from the WireMock playback instance
+         * Requests that a specific mapping is deleted from the cache
          */
-        $app->delete('/cache/{url}', function ($request, $response, $args) use ($routing) {
+        $app->delete('/cache/{id}', function ($request, $response, $args) use ($routing) {
             $controller = $routing->getItemDeleteController($request, $response);
-            $controller->setUrl($args['url']);
+            $controller->setMappingId($args['id']);
             return $controller->execute();
         });
     }
@@ -160,6 +161,11 @@ class Routing
         return new \Proximate\Controller\ItemStatus($request, $response);
     }
 
+    /**
+     * @param Request $request
+     * @param Response $response
+     * @return \Proximate\Controller\ItemDelete
+     */
     protected function getItemDeleteController($request, $response)
     {
         return new \Proximate\Controller\ItemDelete($request, $response);
