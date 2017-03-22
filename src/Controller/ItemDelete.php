@@ -63,6 +63,8 @@ class ItemDelete extends Base
     }
 
     /**
+     * This is a temporary fix until I can get the Wiremock delete command to work
+     *
      * @todo Use the file service rather than file commands directly
      */
     protected function deleteItemByFile()
@@ -70,11 +72,16 @@ class ItemDelete extends Base
         $path = $this->playbackCache . '/mappings/*.json';
         foreach (glob($path) as $jsonFile)
         {
-            $this->examineJsonFile($jsonFile);
+            $found = $this->examineJsonFile($jsonFile);
+            if ($found)
+            {
+                break;
+            }
         }
 
-        // Soft restart of WM server
-        #$this->getCurl()->post('__admin/shutdown');
+        // Soft restart of WM server plus wait time
+        $this->getCurl()->post('__admin/shutdown');
+        sleep(5);
 
         return true;
     }
@@ -84,14 +91,19 @@ class ItemDelete extends Base
      */
     protected function examineJsonFile($jsonFile)
     {
+        $found = false;
+
         $json = file_get_contents($jsonFile);
         $data = json_decode($json, true);
-        if (isset($data['id']) === $this->guid)
+        if (isset($data['id']) && $data['id'] === $this->guid)
         {
             $htmlLeaf = $data['response']['bodyFileName'];
             $htmlFile = $this->playbackCache . '/__files/' . $htmlLeaf;
             $this->deleteFiles([$jsonFile, $htmlFile]);
+            $found = true;
         }
+
+        return $found;
     }
 
     /**

@@ -88,4 +88,9 @@ class FakeController extends BaseController
     {
         $this->data['guid'] = $guid;
     }
+
+    public function setPlaybackCache($playbackCache)
+    {
+        $this->data['cache'] = $playbackCache;
+    }
 }
