@@ -13,6 +13,7 @@ use Openbuildings\Spiderling\Exception_Curl;
 class RoutingTest extends TestCase
 {
     const DUMMY_URL = 'http://www.example.com/';
+    const DUMMY_ID = ' 282790cd-a154-31fc-8e41-60ad3a0d154a';
 
     // Currently using the script name to get around a dot bug in the PHP web server
     #const BASE_URL = 'http://localhost:10000';
@@ -114,10 +115,10 @@ class RoutingTest extends TestCase
      */
     public function testItemDeleteRouting()
     {
-        $url = self::DUMMY_URL;
-        $page = $this->pageVisit(self::BASE_URL . '/cache/' . urlencode($url), 'DELETE');
+        $guid = self::DUMMY_ID;
+        $page = $this->pageVisit(self::BASE_URL . '/cache/' . urlencode($guid), 'DELETE');
         $this->assertEquals(
-            ['action' => 'getItemDeleteController', 'url' => $url, ],
+            ['action' => 'getItemDeleteController', 'guid' => $guid, ],
             $this->getJson($page)
         );
     }

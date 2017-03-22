@@ -115,10 +115,10 @@ class Routing
         /**
          * Requests that a specific mapping is deleted from the cache
          */
-        $app->delete('/cache/{id}', function ($request, $response, $args) use ($curlPlayback, $routing) {
+        $app->delete('/cache/{guid}', function ($request, $response, $args) use ($curlPlayback, $routing) {
             $controller = $routing->getItemDeleteController($request, $response);
             $controller->setCurl($curlPlayback);
-            $controller->setMappingId($args['id']);
+            $controller->setGuid($args['guid']);
             return $controller->execute();
         });
     }

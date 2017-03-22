@@ -11,7 +11,7 @@ use Proximate\Controller\Base;
 
 class ItemDelete extends Base
 {
-    protected $mappingId;
+    protected $guid;
 
     public function execute()
     {
@@ -33,9 +33,9 @@ class ItemDelete extends Base
         return $this->createJsonResponse($result, $statusCode);
     }
 
-    public function setMappingId($mappingId)
+    public function setGuid($guid)
     {
-        $this->mappingId = $mappingId;
+        $this->guid = $guid;
     }
 
     /**
@@ -46,12 +46,12 @@ class ItemDelete extends Base
      */
     protected function deleteItem()
     {
-        if (!$this->mappingId)
+        if (!$this->guid)
         {
-            throw new \Exception("No mapping ID set");
+            throw new \Exception("No GUID set");
         }
 
-        $this->getCurl()->delete('__admin/mappings/' . $this->mappingId);
+        $this->getCurl()->delete('__admin/mappings/' . $this->guid);
 
         return true;
     }
