@@ -14,13 +14,20 @@ class ItemDelete extends Base
     protected $guid;
     protected $playbackCache;
 
+    /**
+     * Wiremock appears to delete from memory only, not disk. So I delete from memory
+     * using the WM API, and delete from disk manually. I tried deleting from disk and then
+     * restarting the server, but this takes the WM server out of service for 4-5 sec.
+     *
+     * @return \Slim\Http\Response
+     */
     public function execute()
     {
         try
         {
             $result = [
                 'result' => [
-                    'ok' => $this->deleteItemByFile(),
+                    'ok' => $this->deleteItem() && $this->deleteItemByFile(),
                 ]
             ];
             $statusCode = 200;
@@ -63,7 +70,7 @@ class ItemDelete extends Base
     }
 
     /**
-     * This is a temporary fix until I can get the Wiremock delete command to work
+     * Deletes the currently set mapping GUID and associated file from disk
      *
      * @todo Use the file service rather than file commands directly
      */
@@ -78,10 +85,6 @@ class ItemDelete extends Base
                 break;
             }
         }
-
-        // Soft restart of WM server plus wait time
-        $this->getCurl()->post('__admin/shutdown');
-        sleep(5);
 
         return true;
     }
