@@ -91,7 +91,7 @@ class File
             );
         }
 
-        unlink($path);
+        return unlink($path);
     }
 
     /**
@@ -101,7 +101,7 @@ class File
     {
         foreach ($this->glob($folderPath . DIRECTORY_SEPARATOR . '*') as $file)
         {
-            $this->unlinkFiles($file);
+            $this->unlinkFile($file);
         }
     }
 
