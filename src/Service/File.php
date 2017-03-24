@@ -7,6 +7,7 @@
 namespace Proximate\Service;
 
 use Proximate\Exception\NotWritable as NotWritableException;
+use Proximate\Exception\File as FileException;
 
 class File
 {
@@ -62,12 +63,12 @@ class File
         foreach ($this->glob($pattern) as $file)
         {
             $targetFile = $targetDir . DIRECTORY_SEPARATOR . basename($file);
-            if (!is_writable($targetFile)) {
+            $ok = @copy($file, $targetFile);
+            if (!$ok) {
                 throw new NotWritableException(
                     sprintf("Could not copy to file target `%s`", $targetFile)
                 );
             }
-            copy($file, $targetFile);
         }
     }
 
@@ -104,6 +105,15 @@ class File
         }
     }
 
+    /**
+     * Deletes a folder
+     *
+     * @todo Add unit tests for the success test
+     *
+     * @param string $path
+     * @throws NotWritableException
+     * @throws FileException
+     */
     public function rmDir($path)
     {
         if (!is_writable($path)) {
@@ -112,6 +122,12 @@ class File
             );
         }
 
-        rmdir($path);
+        $ok = @rmdir($path);
+        if (!$ok)
+        {
+            throw new FileException(
+                sprintf("Deleting folder `%s` failed", $path)
+            );
+        }
     }
 }
