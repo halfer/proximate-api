@@ -114,8 +114,6 @@ class File
     /**
      * Deletes a folder
      *
-     * @todo Add unit tests for the success test
-     *
      * @param string $path
      * @throws NotWritableException
      * @throws FileException
