@@ -101,6 +101,7 @@ class Routing
 
         $app->get('/status', function(Request $request, Response $response) use ($routing) {
             $controller = $routing->getStatusController($request, $response);
+            $controller->setFileService(new \Proximate\Service\File());
             return $controller->execute();
         });
 

@@ -6,6 +6,7 @@
 
 namespace Proximate\Controller;
 
+use Proximate\Service\File as FileService;
 use Proximate\Exception\BadJson as BadJsonException;
 use Proximate\Exception\App as AppException;
 
@@ -14,6 +15,7 @@ abstract class Base
     protected $request;
     protected $response;
     protected $curl;
+    protected $fileService;
 
     public function __construct($request, $response)
     {
@@ -126,6 +128,21 @@ abstract class Base
         }
 
         return $this->curl;
+    }
+
+    public function setFileService(FileService $fileService)
+    {
+        $this->fileService = $fileService;
+    }
+
+    public function getFileService()
+    {
+        if (!$this->fileService)
+        {
+            throw new AppException("No file service object set in controller");
+        }
+
+        return $this->fileService;
     }
 
     abstract public function execute();

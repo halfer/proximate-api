@@ -19,6 +19,9 @@ class ItemDelete extends Base
      * using the WM API, and delete from disk manually. I tried deleting from disk and then
      * restarting the server, but this takes the WM server out of service for 4-5 sec.
      *
+     * Wiremock should be deleting the files, says the author. @todo look into this!
+     * https://github.com/tomakehurst/wiremock/issues/634
+     *
      * @return \Slim\Http\Response
      */
     public function execute()
