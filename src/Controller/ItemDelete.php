@@ -32,7 +32,7 @@ class ItemDelete extends Base
             ];
             $statusCode = 200;
         }
-        catch (\Exception $ex)
+        catch (\Exception $e)
         {
             $result = $this->getErrorResponse($e);
             $statusCode = 500;
