@@ -16,3 +16,9 @@ spl_autoload_register(
 		}
 	}
 );
+
+// Check we have access to curl
+if (!extension_loaded('curl'))
+{
+    die("Curl module required to run tests\n");
+}
