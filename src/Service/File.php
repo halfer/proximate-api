@@ -91,7 +91,13 @@ class File
             );
         }
 
-        return unlink($path);
+        $ok = unlink($path);
+        if (!$ok)
+        {
+            throw new FileException("Failed to unlink `%s`", $path);
+        }
+
+        return $ok;
     }
 
     /**
