@@ -27,8 +27,9 @@ if ($ok)
 
     // Restart the player by calling the proxy restart endpoint directly
     echo "Restarting proxy...\n";
-    $curl = new PestJSON('http://proximate-proxy:8082');
-    $resetter = new ProxyReset($curl);
+    $curlApi = new PestJSON('http://proximate-proxy:8083');
+    $curlPlayback = new PestJSON('http://proximate-proxy:8082');
+    $resetter = new ProxyReset($curlApi, $curlPlayback);
     $resetter->resetWiremockProxy();
 
     // If we got this far, wait for a while before allowing Supervisor to run this again

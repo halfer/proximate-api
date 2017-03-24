@@ -14,12 +14,13 @@ $root = realpath(__DIR__ . '/../..');
 require_once $root . '/vendor/autoload.php';
 require_once $root . '/src/autoload.php';
 
-$proxyResetCurl = new PestJSON('http://proximate-proxy:8083');
+$curlApi = new PestJSON('http://proximate-proxy:8083');
+$curlPlayback = new PestJSON('http://proximate-proxy:8082');
 $queue = new Proximate\Queue\Read(
     '/var/proximate/queue',
     new File()
 );
 $queue->
     setFetcher(new SiteFetcherService('proximate-proxy:8081'))->
-    setProxyResetter(new ProxyResetService($proxyResetCurl))->
+    setProxyResetter(new ProxyResetService($curlApi, $curlPlayback))->
     process();
