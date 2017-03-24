@@ -99,6 +99,11 @@ class Routing
             return $controller->execute();
         });
 
+        $app->get('/status', function(Request $request, Response $response) use ($routing) {
+            $controller = $routing->getStatusController($request, $response);
+            return $controller->execute();
+        });
+
         /**
          * Fetches the status of a specific site fetch
          *
@@ -172,5 +177,10 @@ class Routing
     protected function getItemDeleteController($request, $response)
     {
         return new \Proximate\Controller\ItemDelete($request, $response);
+    }
+
+    protected function getStatusController($request, $response)
+    {
+        return new \Proximate\Controller\Status($request, $response);
     }
 }

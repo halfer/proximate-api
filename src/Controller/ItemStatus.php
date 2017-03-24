@@ -2,8 +2,6 @@
 
 /**
  * Controller to view the status of a specified site
- *
- * 
  */
 
 namespace Proximate\Controller;
