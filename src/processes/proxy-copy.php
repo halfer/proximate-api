@@ -18,7 +18,8 @@ $recordCachePath = "/remote/cache/record";
 $playCachePath = "/remote/cache/playback";
 
 // Copy the newly recorded sites to the player
-$ok = tryCopyingWithRetries($recordCachePath, $playCachePath);
+$fileService = new FileService('/tmp/proxy-copy.log');
+$ok = tryCopyingWithRetries($fileService, $recordCachePath, $playCachePath);
 
 if ($ok)
 {
@@ -42,7 +43,7 @@ else
     exit(1);
 }
 
-function tryCopyingWithRetries($recordCachePath, $playCachePath)
+function tryCopyingWithRetries(FileService $fileService, $recordCachePath, $playCachePath)
 {
     $iter = 0;
     do
@@ -50,7 +51,7 @@ function tryCopyingWithRetries($recordCachePath, $playCachePath)
         $iter++;
         try
         {
-            $cacheCopier = new CacheCopierService(new FileService(), $recordCachePath, $playCachePath);
+            $cacheCopier = new CacheCopierService($fileService, $recordCachePath, $playCachePath);
             $cacheCopier->execute();
             $ok = true;
         }

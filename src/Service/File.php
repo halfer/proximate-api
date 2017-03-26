@@ -11,6 +11,13 @@ use Proximate\Exception\File as FileException;
 
 class File
 {
+    protected $logPath;
+
+    public function __construct($logPath = null)
+    {
+        $this->logPath = $logPath;
+    }
+
     public function fileExists($filename)
     {
         return file_exists($filename);
@@ -34,7 +41,10 @@ class File
             );
         }
 
-        return file_put_contents($filename, $data);
+        $ok = file_put_contents($filename, $data);
+        $this->writeLog("Writing to file `$filename`", $ok);
+
+        return $ok;
     }
 
     public function fileGetContents($filename)
@@ -56,11 +66,13 @@ class File
                 sprintf("Could not rename `%s` to `%s`", $oldname, $newname)
             );
         }
+        $this->writeLog("Renaming `$oldname` to `$newname`", $ok);
     }
 
     public function copy($pattern, $targetDir)
     {
-        foreach ($this->glob($pattern) as $file)
+        $files = $this->glob($pattern);
+        foreach ($files as $file)
         {
             $targetFile = $targetDir . DIRECTORY_SEPARATOR . basename($file);
             $ok = @copy($file, $targetFile);
@@ -70,6 +82,14 @@ class File
                 );
             }
         }
+        $this->writeLog(
+            sprintf(
+                "Attempted to copy %d files from `%s` to `%s`",
+                count($files),
+                $pattern,
+                $targetDir
+            )
+        );
     }
 
     public function mkdir($pathname)
@@ -81,6 +101,7 @@ class File
                 sprintf("Could not create folder `%s`", $pathname)
             );
         }
+        $this->writeLog("Creating directory `$pathname`", $ok);
     }
 
     public function unlinkFile($path)
@@ -96,6 +117,7 @@ class File
         {
             throw new FileException("Failed to unlink `%s`", $path);
         }
+        $this->writeLog("Unlinking file `$path`", $ok);
 
         return $ok;
     }
@@ -133,5 +155,31 @@ class File
                 sprintf("Deleting folder `%s` failed", $path)
             );
         }
+        $this->writeLog("Removing directory `$path`", $ok);
+
+        return $ok;
+    }
+
+    protected function writeLog($message, $ok = null)
+    {
+        // Only write if we have a log path
+        if (!$this->logPath)
+        {
+            return;
+        }
+
+        // Compose log message
+        $final = $message;
+        if (is_bool($ok))
+        {
+            $final .= $ok ? ' (OK)' : ' (Failed)';
+        }
+        $final .= "\n";
+
+        file_put_contents(
+            $this->logPath,
+            $final,
+            FILE_APPEND
+        );
     }
 }

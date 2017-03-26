@@ -16,6 +16,7 @@ class Status extends Base
             $result = [
                 'result' => [
                     'recorder' => ['sites' => $this->getWaitingSites(), ],
+                    'file_logs' => $this->getFileOperationLogs(),
                     'ok' => true,
                 ]
             ];
@@ -54,5 +55,17 @@ class Status extends Base
         }
 
         return array_flip($flipped);
+    }
+
+    /**
+     * Could use tail() or similar to just get the last logs here
+     *
+     * @return string
+     */
+    protected function getFileOperationLogs()
+    {
+        return file_exists('/tmp/proxy-copy.log') ?
+            file_get_contents('/tmp/proxy-copy.log') :
+            null;
     }
 }
