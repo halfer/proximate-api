@@ -10,14 +10,31 @@ use Proximate\Service\ProxyReset as ProxyResetService;
 
 class ProxyResetTest extends \PHPUnit_Framework_TestCase
 {
-    use CurlTrait;
+    use CurlTrait {
+        setUp as traitSetUp;
+    }
 
     const DUMMY_RECORD_URL = 'http://example.com/hello';
+
+    protected $curlProxy;
+
+    /**
+     * Adds another curl mock to the test class
+     *
+     * CurlTrait brings in $this->curl, which we will use for the API, so will add
+     * another one here for the proxy.
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $this->traitSetUp();
+        $this->curlProxy = \Mockery::mock(\PestJSON::class);
+    }
 
     public function testSuccessfulResetCall()
     {
         $this->
-            getCurlMock()->
+            getCurlApiMock()->
             shouldReceive('post')->
             with('/start?url=' . urlencode(self::DUMMY_RECORD_URL), []);
         $this->
@@ -33,7 +50,7 @@ class ProxyResetTest extends \PHPUnit_Framework_TestCase
     public function testMissingUrlResetCall()
     {
         $this->
-            getCurlMock()->
+            getCurlApiMock()->
             shouldReceive('post');
         $this->
             getProxyResetService()->
@@ -48,7 +65,7 @@ class ProxyResetTest extends \PHPUnit_Framework_TestCase
     public function testCurlErrorResetCall()
     {
         $this->
-            getCurlMock()->
+            getCurlApiMock()->
             shouldReceive('post')->
             andThrow(new \Pest_Exception('Bork bork!'));
         $this->
@@ -71,8 +88,18 @@ class ProxyResetTest extends \PHPUnit_Framework_TestCase
         $mock->
             shouldAllowMockingProtectedMethods()->
             shouldReceive('sleep');
-        $mock->init($this->getCurlMock());
+        $mock->init($this->getCurlApiMock(), $this->getCurlProxyMock());
 
         return $mock;
+    }
+
+    protected function getCurlApiMock()
+    {
+        return $this->getCurlMock();
+    }
+
+    protected function getCurlProxyMock()
+    {
+        return $this->curlProxy;
     }
 }

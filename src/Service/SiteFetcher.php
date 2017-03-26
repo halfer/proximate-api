@@ -10,12 +10,13 @@ use Proximate\Exception\SiteFetch as SiteFetchException;
 
 class SiteFetcher
 {
-    protected $proxy;
+    protected $httpProxy;
+    protected $httpsProxy;
     protected $lastLog;
 
-    public function __construct($proxy)
+    public function __construct($httpProxy, $httpsProxy)
     {
-        $this->setProxy($proxy);
+        $this->setProxies($httpProxy, $httpsProxy);
     }
 
     public function execute($url, $urlRegex, $rejectFiles)
@@ -46,7 +47,8 @@ class SiteFetcher
                 {$rejectFilesCmd} \\
                 {$urlRegexCmd} \\
                 -e use_proxy=yes \\
-                -e http_proxy={$this->proxy} \\
+                -e http_proxy={$this->httpProxy} \\
+                -e https_proxy={$this->httpsProxy} \\
                 {$url}
         ";
         $skipLines = $this->trimBlankLines($raw);
@@ -64,11 +66,13 @@ class SiteFetcher
     /**
      * Useful for testing (when the constructor is not called)
      *
-     * @param string $proxy
+     * @param string $httpProxy
+     * @param string $httpsProxy
      */
-    public function setProxy($proxy)
+    public function setProxies($httpProxy, $httpsProxy)
     {
-        $this->proxy = $proxy;
+        $this->httpProxy = $httpProxy;
+        $this->httpsProxy = $httpsProxy;
     }
 
     /**

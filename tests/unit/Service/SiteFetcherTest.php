@@ -11,7 +11,8 @@ use Proximate\Service\SiteFetcher;
 class SiteFetcherTest extends \PHPUnit_Framework_TestCase
 {
     const DUMMY_URL = 'http://example.com/';
-    const DUMMY_PROXY = '127.0.0.1:8082';
+    const DUMMY_HTTP_PROXY = '127.0.0.1:8082';
+    const DUMMY_HTTPS_PROXY = '127.0.0.1:8083';
 
     public function testWithUrlOnly()
     {
@@ -34,6 +35,7 @@ class SiteFetcherTest extends \PHPUnit_Framework_TestCase
         $expectedCommand = $this->getCommandPrefix() . "
                 -e use_proxy=yes \\
                 -e http_proxy=127.0.0.1:8082 \\
+                -e https_proxy=127.0.0.1:8083 \\
                 {$url}";
 
         $siteFetcher = $this->getFetcherService($expectedCommand, $ok);
@@ -48,6 +50,7 @@ class SiteFetcherTest extends \PHPUnit_Framework_TestCase
                 --accept-regex \"{$regex}\" \\
                 -e use_proxy=yes \\
                 -e http_proxy=127.0.0.1:8082 \\
+                -e https_proxy=127.0.0.1:8083 \\
                 {$url}";
 
         $siteFetcher = $this->getFetcherService($expectedCommand);
@@ -62,6 +65,7 @@ class SiteFetcherTest extends \PHPUnit_Framework_TestCase
                 --reject \"{$reject}\" \\
                 -e use_proxy=yes \\
                 -e http_proxy=127.0.0.1:8082 \\
+                -e https_proxy=127.0.0.1:8083 \\
                 {$url}";
 
         $siteFetcher = $this->getFetcherService($expectedCommand);
@@ -86,7 +90,7 @@ class SiteFetcherTest extends \PHPUnit_Framework_TestCase
         $siteFetcher = \Mockery::mock(SiteFetcher::class)->
             makePartial()->
             shouldAllowMockingProtectedMethods();
-        $siteFetcher->setProxy(self::DUMMY_PROXY);
+        $siteFetcher->setProxies(self::DUMMY_HTTP_PROXY, self::DUMMY_HTTPS_PROXY);
         $siteFetcher->
             shouldReceive('runCommand')->
             with($expectedCommand)->
