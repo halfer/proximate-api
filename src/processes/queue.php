@@ -3,7 +3,8 @@
 /**
  * Launches the queue, will be restarted by Supervisor when it finishes
  *
- * @todo Might be worth sending the proxy address in via an env var, and reading it here?
+ * @todo How can I test whether the below code works? e.g. if the constructors correct?
+ * @todo Might be worth sending the proxy addresses in via an env var, and reading it here?
  */
 
 use Proximate\Service\File;
