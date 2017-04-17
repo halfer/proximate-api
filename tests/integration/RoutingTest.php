@@ -29,21 +29,6 @@ class RoutingTest extends TestCase
     }
 
     /**
-     * @todo Work out how to get around annoying PHP web server "dot" bug
-     * @driver simple
-     */
-    public function testCountUrlRouting()
-    {
-        $url = self::DUMMY_URL;
-        $page = $this->pageVisit(self::BASE_URL . '/count/' . urlencode($url));
-        $this->assertEquals(
-            ['action' => 'getCountUrlController', 'url' => $url, ],
-            $this->getJson($page)
-        );
-
-    }
-
-    /**
      * @driver simple
      *
      * @todo Use a dataprovider to supply testCacheListRouting/testCacheListRoutingWithPage/testCacheListRoutingWithPageAndSize
@@ -121,7 +106,6 @@ class RoutingTest extends TestCase
             [
                 'action' => 'getItemDeleteController',
                 'guid' => $guid,
-                'cache' => '/remote/cache/playback',
             ],
             $this->getJson($page)
         );

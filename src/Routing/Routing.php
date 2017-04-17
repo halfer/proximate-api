@@ -102,10 +102,9 @@ class Routing
         /**
          * Requests that a specific mapping is deleted from the cache
          */
-        $app->delete('/cache/{guid}', function ($request, $response, $args) use ($curlPlayback, $routing) {
+        $app->delete('/cache/{guid}', function ($request, $response, $args) use ($routing, $cacheAdapter) {
             $controller = $routing->getItemDeleteController($request, $response);
-            $controller->setCurl($curlPlayback);
-            $controller->setPlaybackCache('/remote/cache/playback');
+            $controller->setCacheAdapter($cacheAdapter);
             $controller->setGuid($args['guid']);
             return $controller->execute();
         });
