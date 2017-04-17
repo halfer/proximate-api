@@ -60,7 +60,7 @@ class Routing
             return $controller->execute();
         });
 
-        $app->get('/list', function($request, $response, $args) use ($app, $routing, $cacheAdapter) {
+        $app->get('/list[/{page}[/{pagesize}]]', function($request, $response, $args) use ($app, $routing, $cacheAdapter) {
             $controller = $routing->getCacheListController($request, $response);
             $controller->setCacheAdapter($cacheAdapter);
             $controller->setPage(isset($args['page']) ? $args['page'] : 1);
