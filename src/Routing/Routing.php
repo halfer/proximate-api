@@ -51,26 +51,12 @@ class Routing
         $queue = $this->queue;
         $routing = $this;
 
-        // Originally the plan was to offer play and record features of everything, but
-        // since the record instance of WireMock will only be pointing to one subdomain's
-        // folder, this isn't very useful.
-
         /**
          * Counts the number of pages stored in the cache
          */
         $app->get('/count', function ($request, $response) use ($routing, $cacheAdapter) {
             $controller = $routing->getCountController($request, $response);
             $controller->setCacheAdapter($cacheAdapter);
-            return $controller->execute();
-        });
-
-        /**
-         * Counts the number of pages for a specific domain in the cache
-         */
-        $app->get('/count/{url}', function ($request, $response, $args) use ($curlPlayback, $routing) {
-            $controller = $routing->getCountUrlController($request, $response);
-            $controller->setCurl($curlPlayback);
-            $controller->setUrl($args['url']);
             return $controller->execute();
         });
 
@@ -105,9 +91,6 @@ class Routing
 
         /**
          * Fetches the status of a specific site fetch
-         *
-         * @todo I think I should just use the URL rather than a GUID, since duplicates won't
-         * be separately cached.
          */
         $app->get('/status/{guid}', function ($request, $response, $args) use ($curlPlayback, $routing) {
             $controller = $routing->getItemStatusController($request, $response);
@@ -131,11 +114,6 @@ class Routing
     protected function getCountController($request, $response)
     {
         return new \Proximate\Controller\Count($request, $response);
-    }
-
-    protected function getCountUrlController($request, $response)
-    {
-        return new \Proximate\Controller\CountUrl($request, $response);
     }
 
     protected function getCacheListController($request, $response)
