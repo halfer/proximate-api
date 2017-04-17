@@ -85,19 +85,6 @@ class RoutingTest extends TestCase
     /**
      * @driver simple
      */
-    public function testItemStatusRouting()
-    {
-        $guid = 1;
-        $page = $this->pageVisit(self::BASE_URL . "/status/$guid");
-        $this->assertEquals(
-            ['action' => 'getItemStatusController', 'guid' => $guid, ],
-            $this->getJson($page)
-        );
-    }
-
-    /**
-     * @driver simple
-     */
     public function testItemDeleteRouting()
     {
         $guid = self::DUMMY_ID;

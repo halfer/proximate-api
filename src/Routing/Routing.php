@@ -70,21 +70,6 @@ class Routing
             return $controller->execute();
         });
 
-        $app->get('/status', function(Request $request, Response $response) use ($routing) {
-            $controller = $routing->getStatusController($request, $response);
-            $controller->setFileService(new \Proximate\Service\File());
-            return $controller->execute();
-        });
-
-        /**
-         * Fetches the status of a specific site fetch
-         */
-        $app->get('/status/{guid}', function ($request, $response, $args) use ($routing) {
-            $controller = $routing->getItemStatusController($request, $response);
-            $controller->setGuid($args['guid']);
-            return $controller->execute();
-        });
-
         /**
          * Requests that a specific mapping is deleted from the cache
          */
@@ -111,11 +96,6 @@ class Routing
         return new \Proximate\Controller\CacheSave($request, $response);
     }
 
-    protected function getItemStatusController($request, $response)
-    {
-        return new \Proximate\Controller\ItemStatus($request, $response);
-    }
-
     /**
      * @param Request $request
      * @param Response $response
@@ -124,10 +104,5 @@ class Routing
     protected function getItemDeleteController($request, $response)
     {
         return new \Proximate\Controller\ItemDelete($request, $response);
-    }
-
-    protected function getStatusController($request, $response)
-    {
-        return new \Proximate\Controller\Status($request, $response);
     }
 }
