@@ -13,8 +13,6 @@ class Routing
 {
     protected $app;
     protected $cacheAdapter;
-    protected $curlRecorder;
-    protected $curlPlayback;
     protected $queue;
 
     public function __construct(\Slim\App $app)
@@ -27,16 +25,6 @@ class Routing
         $this->cacheAdapter = $cacheAdapter;
     }
 
-    public function setRecorderCurl(\PestJSON $curl)
-    {
-        $this->curlRecorder = $curl;
-    }
-
-    public function setPlaybackCurl(\PestJSON $curl)
-    {
-        $this->curlPlayback = $curl;
-    }
-
     public function setQueue(\Proximate\Queue\Write $queue)
     {
         $this->queue = $queue;
@@ -47,7 +35,6 @@ class Routing
         // Set up the dependencies
         $app = $this->app;
         $cacheAdapter = $this->cacheAdapter;
-        $curlPlayback = $this->curlPlayback;
         $queue = $this->queue;
         $routing = $this;
 
@@ -60,7 +47,7 @@ class Routing
             return $controller->execute();
         });
 
-        $app->get('/list[/{page}[/{pagesize}]]', function($request, $response, $args) use ($app, $routing, $cacheAdapter) {
+        $app->get('/list[/{page}[/{pagesize}]]', function($request, $response, $args) use ($routing, $cacheAdapter) {
             $controller = $routing->getCacheListController($request, $response);
             $controller->setCacheAdapter($cacheAdapter);
             $controller->setPage(isset($args['page']) ? $args['page'] : 1);
@@ -92,9 +79,8 @@ class Routing
         /**
          * Fetches the status of a specific site fetch
          */
-        $app->get('/status/{guid}', function ($request, $response, $args) use ($curlPlayback, $routing) {
+        $app->get('/status/{guid}', function ($request, $response, $args) use ($routing) {
             $controller = $routing->getItemStatusController($request, $response);
-            $controller->setCurl($curlPlayback);
             $controller->setGuid($args['guid']);
             return $controller->execute();
         });
