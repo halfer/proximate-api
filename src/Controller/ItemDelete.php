@@ -39,6 +39,8 @@ class ItemDelete extends Base
     public function setGuid($guid)
     {
         $this->guid = $guid;
+
+        return $this;
     }
 
     /**

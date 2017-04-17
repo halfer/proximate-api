@@ -8,6 +8,7 @@ namespace Proximate\Test;
 
 use Slim\Http\Request;
 use Slim\Http\Response;
+use Proximate\CacheAdapter\Filesystem;
 
 abstract class ControllerTestBase extends \PHPUnit_Framework_TestCase
 {
@@ -34,6 +35,11 @@ abstract class ControllerTestBase extends \PHPUnit_Framework_TestCase
         return $this->response;
     }
 
+    protected function getCacheAdapterMock()
+    {
+        return $this->cacheAdapter;
+    }
+
     protected function setJsonResponseExpectation($error = null, array $additionalValues = [])
     {
         $expectedJson = ['ok' => !$error, ];
@@ -58,7 +64,8 @@ abstract class ControllerTestBase extends \PHPUnit_Framework_TestCase
     {
         $this->request = \Mockery::mock(Request::class);
         $this->response = \Mockery::mock(Response::class);
-   }
+        $this->cacheAdapter = \Mockery::mock(Filesystem::class);
+    }
 
     public function tearDown()
     {

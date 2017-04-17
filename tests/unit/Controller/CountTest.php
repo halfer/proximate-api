@@ -7,7 +7,6 @@
 namespace Proximate\Test;
 
 use Proximate\Controller\Count as CountController;
-use Proximate\CacheAdapter\Filesystem;
 
 class CountTest extends ControllerTestBase
 {
@@ -16,7 +15,8 @@ class CountTest extends ControllerTestBase
     public function testGoodCountCase()
     {
         $expectedCount = 5;
-        $this->getCacheAdapterMock()->
+        $this->
+            getCacheAdapterMock()->
             shouldReceive('countCacheItems')->
             andReturn($expectedCount);
 
@@ -53,20 +53,12 @@ class CountTest extends ControllerTestBase
 
     protected function getCountController()
     {
-        $controller = new CountController($this->getMockedRequest(), $this->getMockedResponse());
+        $controller = new CountController(
+            $this->getMockedRequest(),
+            $this->getMockedResponse()
+        );
         $controller->setCacheAdapter($this->getCacheAdapterMock());
 
         return $controller;
-    }
-
-    public function setUp()
-    {
-        $this->cacheAdapter = \Mockery::mock(Filesystem::class);
-        parent::setUp();
-    }
-
-    protected function getCacheAdapterMock()
-    {
-        return $this->cacheAdapter;
     }
 }
