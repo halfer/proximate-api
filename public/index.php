@@ -1,10 +1,6 @@
 <?php
 
 use Proximate\Routing\Routing;
-use League\Flysystem\Adapter\Local as FlyFileAdapter;
-use League\Flysystem\Filesystem as FlyFilesystem;
-use Cache\Adapter\Filesystem\FilesystemCachePool;
-use Proximate\CacheAdapter\Filesystem as ProximateFilesystem;
 
 $root = realpath(__DIR__ . '/..');
 require_once $root . '/vendor/autoload.php';
@@ -15,18 +11,6 @@ class TestFrontController extends \Proximate\FrontController
     public function getRouting(\Slim\App $app)
     {
         return new Routing($app);
-    }
-
-    public function getCacheAdapter()
-    {
-        $filesystemAdapter = new FlyFileAdapter('/remote');
-        $filesystem = new FlyFilesystem($filesystemAdapter);
-        $cacheAdapter = new ProximateFilesystem($filesystem);
-
-        $cachePool = new FilesystemCachePool($filesystem);
-        $cacheAdapter->setCacheItemPoolInterface($cachePool);
-
-        return $cacheAdapter;
     }
 
     public function getRecorderCurl()
@@ -40,5 +24,5 @@ class TestFrontController extends \Proximate\FrontController
     }
 }
 
-$frontController = new TestFrontController('/var/proximate/queue');
+$frontController = new TestFrontController('/var/proximate/queue', '/remote');
 $frontController->execute();

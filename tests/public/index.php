@@ -29,5 +29,5 @@ class TestFrontController extends \Proximate\FrontController
     }
 }
 
-$frontController = new TestFrontController('.');
+$frontController = new TestFrontController('.', '.');
 $frontController->execute();
