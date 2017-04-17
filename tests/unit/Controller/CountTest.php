@@ -32,19 +32,11 @@ class CountTest extends ControllerTestBase
      */
     public function testCurlCountGeneralFailure()
     {
-        $this->checkCacheSaveFailure(
-            "An error occured",
-            $this->getGeneralException()
-        );
-    }
-
-    protected function checkCacheSaveFailure($expectedError, \Exception $exception)
-    {
         $this->
             getCacheAdapterMock()->
             shouldReceive('countCacheItems')->
-            andThrow($exception);
-        $this->setJsonResponseExpectation($expectedError);
+            andThrow($this->getGeneralException());
+        $this->setJsonResponseExpectation("An error occured");
 
         $this->
             getCountController()->
