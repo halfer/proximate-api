@@ -47,7 +47,6 @@ class Routing
         // Set up the dependencies
         $app = $this->app;
         $cacheAdapter = $this->cacheAdapter;
-        $curlRecorder = $this->curlRecorder;
         $curlPlayback = $this->curlPlayback;
         $queue = $this->queue;
         $routing = $this;
@@ -57,11 +56,11 @@ class Routing
         // folder, this isn't very useful.
 
         /**
- * Counts the number of pages stored in the cache
- */
-        $app->get('/count', function ($request, $response) use ($curlPlayback, $routing) {
+         * Counts the number of pages stored in the cache
+         */
+        $app->get('/count', function ($request, $response) use ($routing, $cacheAdapter) {
             $controller = $routing->getCountController($request, $response);
-            $controller->setCurl($curlPlayback);
+            $controller->setCacheAdapter($cacheAdapter);
             return $controller->execute();
         });
 
@@ -80,7 +79,6 @@ class Routing
             $controller->setCacheAdapter($cacheAdapter);
             $controller->setPage(isset($args['page']) ? $args['page'] : 1);
             $controller->setPageSize(isset($args['pagesize']) ? $args['pagesize'] : 10);
-
             return $controller->execute();
         });
 

@@ -7,22 +7,18 @@
 namespace Proximate\Test;
 
 use Proximate\Controller\Count as CountController;
+use Proximate\CacheAdapter\Filesystem;
 
 class CountTest extends ControllerTestBase
 {
-    use CurlTrait;
+    protected $cacheAdapter;
 
     public function testGoodCountCase()
     {
-        $expectedResult = [
-            'meta' => [
-                'total' => $expectedCount = 5,
-            ]
-        ];
-        $this->getCurlMock()->
-            shouldReceive('get')->
-            with('__admin/mappings')->
-            andReturn($expectedResult);
+        $expectedCount = 5;
+        $this->getCacheAdapterMock()->
+            shouldReceive('countCacheItems')->
+            andReturn($expectedCount);
 
         $this->setJsonResponseExpectation(null, ['count' => $expectedCount, ]);
 
@@ -32,9 +28,7 @@ class CountTest extends ControllerTestBase
     }
 
     /**
-     * Checks that a general error in the curl module is reported cautiously
-     *
-     * (There is no app-level error that can come from the cURL module, since it is third-party)
+     * Checks that a general error in the cache module is reported cautiously
      */
     public function testCurlCountGeneralFailure()
     {
@@ -46,8 +40,9 @@ class CountTest extends ControllerTestBase
 
     protected function checkCacheSaveFailure($expectedError, \Exception $exception)
     {
-        $this->getCurlMock()->
-            shouldReceive('get')->
+        $this->
+            getCacheAdapterMock()->
+            shouldReceive('countCacheItems')->
             andThrow($exception);
         $this->setJsonResponseExpectation($expectedError);
 
@@ -59,8 +54,19 @@ class CountTest extends ControllerTestBase
     protected function getCountController()
     {
         $controller = new CountController($this->getMockedRequest(), $this->getMockedResponse());
-        $controller->setCurl($this->getCurlMock());
+        $controller->setCacheAdapter($this->getCacheAdapterMock());
 
         return $controller;
+    }
+
+    public function setUp()
+    {
+        $this->cacheAdapter = \Mockery::mock(Filesystem::class);
+        parent::setUp();
+    }
+
+    protected function getCacheAdapterMock()
+    {
+        return $this->cacheAdapter;
     }
 }

@@ -37,8 +37,6 @@ class Count extends Base
 
     protected function fetchCount()
     {
-        $mappings = $this->getCurl()->get('__admin/mappings');
-
-        return isset($mappings['meta']['total']) ? $mappings['meta']['total'] : null;
+        return $this->getCacheAdapter()->countCacheItems();
     }
 }
