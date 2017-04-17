@@ -6,6 +6,8 @@
 
 namespace Proximate\Controller;
 
+use Proximate\CacheAdapter\Filesystem as CacheAdapter;
+use Proximate\CacheAdapter\BaseAdapter;
 use Proximate\Service\File as FileService;
 use Proximate\Exception\BadJson as BadJsonException;
 use Proximate\Exception\App as AppException;
@@ -15,6 +17,7 @@ abstract class Base
     protected $request;
     protected $response;
     protected $curl;
+    protected $cacheAdapter;
     protected $fileService;
 
     public function __construct($request, $response)
@@ -128,6 +131,27 @@ abstract class Base
         }
 
         return $this->curl;
+    }
+
+    public function setCacheAdapter(BaseAdapter $cacheAdapter)
+    {
+        $this->cacheAdapter = $cacheAdapter;
+    }
+
+    /**
+     * Gets the cache adapter to query the cache
+     *
+     * @return CacheAdapter
+     * @throws AppException
+     */
+    public function getCacheAdapter()
+    {
+        if (!$this->cacheAdapter)
+        {
+            throw new AppException("No cache adapter object set in controller");
+        }
+
+        return $this->cacheAdapter;
     }
 
     public function setFileService(FileService $fileService)

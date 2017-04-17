@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b0782c0db65c6207862518d721555eb8",
+    "hash": "6e6653049670a8d55c0b9a3f5f2b3cb4",
     "content-hash": "f76d7da5a51e3c8a881b01dba343864f",
     "packages": [
         {
@@ -322,12 +322,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/halfer/proximate-requester.git",
-                "reference": "624014efde6175d200071c0c327e001b4838d7f1"
+                "reference": "a16558af2d4592a8f2bbcfa0fd0769293687d254"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/halfer/proximate-requester/zipball/624014efde6175d200071c0c327e001b4838d7f1",
-                "reference": "624014efde6175d200071c0c327e001b4838d7f1",
+                "url": "https://api.github.com/repos/halfer/proximate-requester/zipball/a16558af2d4592a8f2bbcfa0fd0769293687d254",
+                "reference": "a16558af2d4592a8f2bbcfa0fd0769293687d254",
                 "shasum": ""
             },
             "require": {
@@ -354,7 +354,7 @@
                 "source": "https://github.com/halfer/proximate-requester/tree/master",
                 "issues": "https://github.com/halfer/proximate-requester/issues"
             },
-            "time": "2017-04-15 15:55:25"
+            "time": "2017-04-17 11:34:35"
         },
         {
             "name": "league/flysystem",

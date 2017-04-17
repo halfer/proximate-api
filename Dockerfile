@@ -13,6 +13,8 @@ RUN apk update
 
 # Install PHP and the non-BusyBox wget
 RUN apk --update add php5 wget
+# Temporary addition of sockets until the proximate cache classes get their own repo
+RUN apk --update add php5-sockets
 
 # Taken from the "alpine-supervisord-docker" repo
 ENV PYTHON_VERSION=2.7.12-r0
@@ -71,4 +73,4 @@ EXPOSE 8080
 COPY container-start.sh /tmp/
 
 # Use Supervisor as the entry point
-ENTRYPOINT ["supervisord", "--nodaemon", "--configuration", "/etc/supervisord.conf"]
+ENTRYPOINT ["sh", "/tmp/container-start.sh"]

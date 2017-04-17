@@ -26,6 +26,7 @@ abstract class FrontController
 
         // Set up routing object
         $routing = $this->getRouting($app);
+        $routing->setCacheAdapter($this->getCacheAdapter());
         $routing->setRecorderCurl($this->getRecorderCurl());
         $routing->setPlaybackCurl($this->getPlaybackCurl());
         $routing->setQueue($queue);
@@ -35,6 +36,7 @@ abstract class FrontController
     }
 
     abstract function getRouting(App $app);
+    abstract function getCacheAdapter();
     abstract function getRecorderCurl();
     abstract function getPlaybackCurl();
 }

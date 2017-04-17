@@ -12,6 +12,7 @@ use Slim\Http\Response;
 class Routing
 {
     protected $app;
+    protected $cacheAdapter;
     protected $curlRecorder;
     protected $curlPlayback;
     protected $queue;
@@ -19,6 +20,11 @@ class Routing
     public function __construct(\Slim\App $app)
     {
         $this->app = $app;
+    }
+
+    public function setCacheAdapter(\Proximate\CacheAdapter\BaseAdapter $cacheAdapter)
+    {
+        $this->cacheAdapter = $cacheAdapter;
     }
 
     public function setRecorderCurl(\PestJSON $curl)
@@ -40,6 +46,7 @@ class Routing
     {
         // Set up the dependencies
         $app = $this->app;
+        $cacheAdapter = $this->cacheAdapter;
         $curlRecorder = $this->curlRecorder;
         $curlPlayback = $this->curlPlayback;
         $queue = $this->queue;
@@ -68,20 +75,13 @@ class Routing
             return $controller->execute();
         });
 
-        // The /play and /record groups here seem to be a bit out of sync with the /count
-        // endpoints, and I am not sure of the value of seeing what is in the recorder, since
-        // that is ephemeral. I may dump the recorder list endpoint, will see.
+        $app->get('/list', function($request, $response, $args) use ($app, $routing, $cacheAdapter) {
+            $controller = $routing->getCacheListController($request, $response);
+            $controller->setCacheAdapter($cacheAdapter);
+            $controller->setPage(isset($args['page']) ? $args['page'] : 1);
+            $controller->setPageSize(isset($args['pagesize']) ? $args['pagesize'] : 10);
 
-        $app->group('/play', function() use ($app, $curlPlayback, $routing) {
-            $app->get('/list[/{page}[/{pagesize}]]', function ($request, $response, $args) use ($curlPlayback, $routing) {
-                return $routing->executeList($request, $response, $args, $curlPlayback);
-            });
-        });
-
-        $app->group('/record', function() use ($app, $curlRecorder, $routing) {
-            $app->get('/list[/{page}[/{pagesize}]]', function ($request, $response, $args) use ($curlRecorder, $routing) {
-                return $routing->executeList($request, $response, $args, $curlRecorder);
-            });
+            return $controller->execute();
         });
 
         /**
@@ -128,21 +128,6 @@ class Routing
             $controller->setGuid($args['guid']);
             return $controller->execute();
         });
-    }
-
-    /**
-     * List the pages in the cache, given a page and a page size
-     *
-     * This can use GET "/__admin/mappings" from the WireMock playback instance
-     */
-    protected function executeList($request, $response, $args, $curl)
-    {
-        $controller = $this->getCacheListController($request, $response);
-        $controller->setCurl($curl);
-        $controller->setPage(isset($args['page']) ? $args['page'] : 1);
-        $controller->setPageSize(isset($args['pagesize']) ? $args['pagesize'] : 10);
-
-        return $controller->execute();
     }
 
     protected function getCountController($request, $response)
