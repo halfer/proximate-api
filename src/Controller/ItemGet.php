@@ -1,18 +1,20 @@
 <?php
 
-/** 
- * Controller to delete a specific endpoint from the cache
+/**
+ * Controller to fetch a specific endpoint from the cache
  */
 
 namespace Proximate\Controller;
 use Proximate\Controller\Base;
 
-class ItemDelete extends Base
+class ItemGet extends Base
 {
     protected $guid;
 
     /**
      * Main entry point
+     *
+     * @todo This is so similar to ItemDelete::execute() and probably others, can I refactor?
      *
      * @return \Slim\Http\Response
      */
@@ -22,7 +24,8 @@ class ItemDelete extends Base
         {
             $result = [
                 'result' => [
-                    'ok' => $this->deleteItem(),
+                    'ok' => true,
+                    'item' => $this->fetchItem(),
                 ]
             ];
             $statusCode = 200;
@@ -44,19 +47,19 @@ class ItemDelete extends Base
     }
 
     /**
-     * Calls the expire cache function for the currently set mapping ID
+     * Calls the get cache function for the currently set mapping ID
      *
      * @tood Use a specific exception
      */
-    protected function deleteItem()
+    protected function fetchItem()
     {
         if (!$this->guid)
         {
             throw new \Exception("No GUID set");
         }
 
-        $this->getCacheAdapter()->expireCacheItem($this->guid);
+        $cacheItem = $this->getCacheAdapter()->readCacheItem($this->guid);
 
-        return true;
+        return $cacheItem;
     }
 }

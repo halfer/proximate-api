@@ -14,6 +14,7 @@ class RoutingTest extends TestCase
 {
     const DUMMY_URL = 'http://www.example.com/';
     const DUMMY_ID = '282790cd-a154-31fc-8e41-60ad3a0d154a';
+    const CACHE_ADAPTER_CLASS = 'Proximate\\CacheAdapter\\Filesystem';
 
     // Currently using the script name to get around a dot bug in the PHP web server
     #const BASE_URL = 'http://localhost:10000';
@@ -25,7 +26,10 @@ class RoutingTest extends TestCase
     public function testCountRouting()
     {
         $page = $this->pageVisit(self::BASE_URL . '/count');
-        $this->assertEquals(['action' => 'getCountController', ], $this->getJson($page));
+        $this->assertEquals(
+            ['action' => 'getCountController', 'cache_adapter' => self::CACHE_ADAPTER_CLASS, ],
+            $this->getJson($page)
+        );
     }
 
     /**
@@ -38,7 +42,8 @@ class RoutingTest extends TestCase
     {
         $page = $this->pageVisit(self::BASE_URL . '/list');
         $this->assertEquals(
-            ['action' => 'getCacheListController', 'page' => 1, 'pagesize' => 10, ],
+            ['action' => 'getCacheListController', 'page' => 1,
+                'pagesize' => 10, 'cache_adapter' => self::CACHE_ADAPTER_CLASS, ],
             $this->getJson($page)
         );
     }
@@ -51,7 +56,8 @@ class RoutingTest extends TestCase
         $pageNo = 3;
         $page = $this->pageVisit(self::BASE_URL . "/list/$pageNo");
         $this->assertEquals(
-            ['action' => 'getCacheListController', 'page' => $pageNo, 'pagesize' => 10, ],
+            ['action' => 'getCacheListController', 'page' => $pageNo,
+                'pagesize' => 10, 'cache_adapter' => self::CACHE_ADAPTER_CLASS, ],
             $this->getJson($page)
         );
     }
@@ -65,7 +71,8 @@ class RoutingTest extends TestCase
         $pageSize = 15;
         $page = $this->pageVisit(self::BASE_URL . "/list/$pageNo/$pageSize");
         $this->assertEquals(
-            ['action' => 'getCacheListController', 'page' => $pageNo, 'pagesize' => $pageSize, ],
+            ['action' => 'getCacheListController', 'page' => $pageNo,
+                'pagesize' => $pageSize, 'cache_adapter' => self::CACHE_ADAPTER_CLASS ],
             $this->getJson($page)
         );
     }
@@ -85,14 +92,30 @@ class RoutingTest extends TestCase
     /**
      * @driver simple
      */
+    public function testItemFetchRouting()
+    {
+        $guid = self::DUMMY_ID;
+        $page = $this->pageVisit(self::BASE_URL . '/cache/' . urlencode($guid));
+        $this->assertEquals(
+            [
+                'action' => 'getItemGetController', 'guid' => $guid,
+                'cache_adapter' => self::CACHE_ADAPTER_CLASS,
+            ],
+            $this->getJson($page)
+        );
+    }
+
+    /**
+     * @driver simple
+     */
     public function testItemDeleteRouting()
     {
         $guid = self::DUMMY_ID;
         $page = $this->pageVisit(self::BASE_URL . '/cache/' . urlencode($guid), 'DELETE');
         $this->assertEquals(
             [
-                'action' => 'getItemDeleteController',
-                'guid' => $guid,
+                'action' => 'getItemDeleteController', 'guid' => $guid,
+                'cache_adapter' => self::CACHE_ADAPTER_CLASS,
             ],
             $this->getJson($page)
         );

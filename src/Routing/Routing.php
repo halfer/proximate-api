@@ -55,6 +55,13 @@ class Routing
             return $controller->execute();
         });
 
+        $app->get('/cache/{guid}', function($request, $response, $args) use ($routing, $cacheAdapter) {
+            $controller = $routing->getItemGetController($request, $response);
+            $controller->setCacheAdapter($cacheAdapter);
+            $controller->setGuid($args['guid']);
+            return $controller->execute();
+        });
+
         /**
          * Requests that a specific site is cached
          *
@@ -79,6 +86,14 @@ class Routing
             $controller->setGuid($args['guid']);
             return $controller->execute();
         });
+    }
+
+    /**
+     * @return \Proximate\Controller\ItemGet
+     */
+    protected function getItemGetController($request, $response)
+    {
+        return new \Proximate\Controller\ItemGet($request, $response);
     }
 
     protected function getCountController($request, $response)

@@ -10,19 +10,20 @@ use Proximate\Controller\ItemDelete as ItemDeleteController;
 
 class DeleteTest extends ControllerTestBase
 {
+    const GUID = '282790cd-a154-31fc-8e41-60ad3a0d154a';
+
     public function testGoodDeleteCase()
     {
-        $guid = '282790cd-a154-31fc-8e41-60ad3a0d154a';
         $this->
             getCacheAdapterMock()->
             shouldReceive('expireCacheItem')->
-            with($guid);
+            with(self::GUID);
 
         $this->setJsonResponseExpectation(null, []);
 
         $this->
             getDeleteController()->
-            setGuid($guid)->
+            setGuid(self::GUID)->
             execute();
     }
 
@@ -36,6 +37,7 @@ class DeleteTest extends ControllerTestBase
 
         $this->
             getDeleteController()->
+            setGuid(self::GUID)->
             execute();
     }
 

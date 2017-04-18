@@ -11,6 +11,7 @@ namespace Proximate\Test;
 
 use Proximate\Routing\Routing;
 use Proximate\Controller\Base as BaseController;
+use Proximate\CacheAdapter\BaseAdapter;
 
 class RoutingTestHarness extends Routing
 {
@@ -34,7 +35,7 @@ class RoutingTestHarness extends Routing
         return (new FakeController($request, $response))->setAction(__FUNCTION__);
     }
 
-    protected function getItemStatusController($request, $response)
+    protected function getItemGetController($request, $response)
     {
         return (new FakeController($request, $response))->setAction(__FUNCTION__);
     }
@@ -89,8 +90,8 @@ class FakeController extends BaseController
         $this->data['guid'] = $guid;
     }
 
-    public function setPlaybackCache($playbackCache)
+    public function setCacheAdapter(BaseAdapter $cacheAdapter)
     {
-        $this->data['cache'] = $playbackCache;
+        $this->data['cache_adapter'] = get_class($cacheAdapter);
     }
 }
