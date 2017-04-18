@@ -6,6 +6,8 @@
 
 namespace Proximate\Controller;
 use Proximate\Controller\Base;
+use Proximate\Exception\App as AppException;
+use Cache\Adapter\Common\Exception\InvalidArgumentException as CacheArgumentException;
 
 class ItemGet extends Base
 {
@@ -58,7 +60,21 @@ class ItemGet extends Base
             throw new \Exception("No GUID set");
         }
 
-        $cacheItem = $this->getCacheAdapter()->readCacheItem($this->guid);
+        try
+        {
+            $cacheItem = $this->getCacheAdapter()->readCacheItem($this->guid);
+        }
+        // Cache param exceptions are made public, e.g.
+        // Invalid key "a-b". Valid filenames must match [a-zA-Z0-9_\.! ]
+        catch (CacheArgumentException $e)
+        {
+            throw new AppException($e->getMessage());
+        }
+        // Any other problems are just rethrown
+        catch (\Exception $e)
+        {
+            throw $e;
+        }
 
         return $cacheItem;
     }

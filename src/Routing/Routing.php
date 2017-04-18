@@ -55,8 +55,13 @@ class Routing
             return $controller->execute();
         });
 
-        $app->get('/cache/{guid}', function($request, $response, $args) use ($routing, $cacheAdapter) {
-            $controller = $routing->getItemGetController($request, $response);
+        /**
+         * Handles both the fetch and the delete endpoints
+         */
+        $app->map(['GET', 'DELETE'],'/cache/{guid}', function($request, $response, $args) use ($routing, $cacheAdapter) {
+            $controller = $request->getMethod() == 'GET' ?
+                $routing->getItemGetController($request, $response) :
+                $routing->getItemDeleteController($request, $response);
             $controller->setCacheAdapter($cacheAdapter);
             $controller->setGuid($args['guid']);
             return $controller->execute();
@@ -77,15 +82,6 @@ class Routing
             return $controller->execute();
         });
 
-        /**
-         * Requests that a specific mapping is deleted from the cache
-         */
-        $app->delete('/cache/{guid}', function ($request, $response, $args) use ($routing, $cacheAdapter) {
-            $controller = $routing->getItemDeleteController($request, $response);
-            $controller->setCacheAdapter($cacheAdapter);
-            $controller->setGuid($args['guid']);
-            return $controller->execute();
-        });
     }
 
     /**
