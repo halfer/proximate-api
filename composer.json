@@ -1,7 +1,8 @@
 {
     "require": {
         "slim/slim": "^3.0",
-        "halferbits/proximate-requester": "dev-master",
+        "proximate/storage": "dev-master",
+        "proximate/core": "dev-master",
         "educoder/pest": "1.0.0"
     },
     "require-dev": {
@@ -16,7 +17,11 @@
         },
         {
           "type": "vcs",
-          "url": "https://github.com/halfer/proximate-requester.git"
+          "url": "https://github.com/halfer/proximate-storage.git"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/halfer/proximate-core.git"
         }
     ]
 }

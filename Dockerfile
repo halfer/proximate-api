@@ -13,8 +13,6 @@ RUN apk update
 
 # Install PHP and the non-BusyBox wget
 RUN apk --update add php5 wget
-# Temporary addition of sockets until the proximate cache classes get their own repo
-RUN apk --update add php5-sockets
 
 # Taken from the "alpine-supervisord-docker" repo
 ENV PYTHON_VERSION=2.7.12-r0
