@@ -1,8 +1,12 @@
 {
+    "name": "proximate/api",
+    "description": "An HTTP API to read and control a Proximate proxy instance",
     "require": {
         "slim/slim": "^3.0",
         "proximate/storage": "dev-master",
         "proximate/core": "dev-master",
+        "proximate/crawler": "dev-master",
+        "proximate/requester": "dev-master",
         "educoder/pest": "1.0.0"
     },
     "require-dev": {
@@ -13,15 +17,23 @@
     "repositories": [
         {
             "type": "vcs",
-            "url":  "https://github.com/halfer/spiderling-utils.git"
+            "url": "https://github.com/halfer/spiderling-utils.git"
         },
         {
-          "type": "vcs",
-          "url": "https://github.com/halfer/proximate-storage.git"
+            "type": "vcs",
+            "url": "https://github.com/halfer/proximate-storage.git"
         },
         {
-          "type": "vcs",
-          "url": "https://github.com/halfer/proximate-core.git"
+            "type": "vcs",
+            "url": "https://github.com/halfer/proximate-core.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/halfer/proximate-crawler.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/halfer/proximate-requester.git"
         }
     ]
 }
