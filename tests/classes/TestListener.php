@@ -21,7 +21,7 @@ class TestListener extends BaseTestListener
 	{
 		return
 			($name == 'integration') ||
-			(strpos($name, 'Proximate\\Test\\Integration2\\') !== false);
+			(strpos($name, 'Proximate\\Test\\Integration\\') !== false);
 	}
 
 	public function setupServers()
