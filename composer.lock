@@ -563,7 +563,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v5.4.17",
+            "version": "v5.4.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -605,16 +605,16 @@
         },
         {
             "name": "illuminate/support",
-            "version": "v5.4.17",
+            "version": "v5.4.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/support.git",
-                "reference": "c7e7c9daf5044e76b46085b8351f8235a3e979c6"
+                "reference": "b8cb37e15331c59da51c8ee5838038baa22d7955"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/support/zipball/c7e7c9daf5044e76b46085b8351f8235a3e979c6",
-                "reference": "c7e7c9daf5044e76b46085b8351f8235a3e979c6",
+                "url": "https://api.github.com/repos/illuminate/support/zipball/b8cb37e15331c59da51c8ee5838038baa22d7955",
+                "reference": "b8cb37e15331c59da51c8ee5838038baa22d7955",
                 "shasum": ""
             },
             "require": {
@@ -658,7 +658,7 @@
             ],
             "description": "The Illuminate Support package.",
             "homepage": "https://laravel.com",
-            "time": "2017-03-28 12:49:45"
+            "time": "2017-04-09 14:34:57"
         },
         {
             "name": "league/flysystem",
@@ -991,12 +991,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/halfer/proximate-crawler.git",
-                "reference": "0b41682e93baf30c627316581ccf1de1734ddcc4"
+                "reference": "146aa1cc5f258a883a479e8d0b0edb55f0bee479"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/halfer/proximate-crawler/zipball/0b41682e93baf30c627316581ccf1de1734ddcc4",
-                "reference": "0b41682e93baf30c627316581ccf1de1734ddcc4",
+                "url": "https://api.github.com/repos/halfer/proximate-crawler/zipball/146aa1cc5f258a883a479e8d0b0edb55f0bee479",
+                "reference": "146aa1cc5f258a883a479e8d0b0edb55f0bee479",
                 "shasum": ""
             },
             "require": {
@@ -1016,7 +1016,7 @@
                 "source": "https://github.com/halfer/proximate-crawler/tree/master",
                 "issues": "https://github.com/halfer/proximate-crawler/issues"
             },
-            "time": "2017-04-20 10:48:27"
+            "time": "2017-04-20 17:44:48"
         },
         {
             "name": "proximate/requester",
