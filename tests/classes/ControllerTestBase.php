@@ -8,7 +8,7 @@ namespace Proximate\Test;
 
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Proximate\CacheAdapter\Filesystem;
+use Proximate\Storage\Filesystem;
 
 abstract class ControllerTestBase extends \PHPUnit_Framework_TestCase
 {

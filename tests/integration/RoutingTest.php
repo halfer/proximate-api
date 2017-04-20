@@ -14,7 +14,7 @@ class RoutingTest extends TestCase
 {
     const DUMMY_URL = 'http://www.example.com/';
     const DUMMY_ID = '282790cd-a154-31fc-8e41-60ad3a0d154a';
-    const CACHE_ADAPTER_CLASS = 'Proximate\\CacheAdapter\\Filesystem';
+    const CACHE_ADAPTER_CLASS = 'Proximate\\Storage\\Filesystem';
 
     // Currently using the script name to get around a dot bug in the PHP web server
     #const BASE_URL = 'http://localhost:10000';

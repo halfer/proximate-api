@@ -6,6 +6,7 @@
 
 namespace Proximate\Routing;
 
+use Proximate\Storage\BaseAdapter;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -20,7 +21,7 @@ class Routing
         $this->app = $app;
     }
 
-    public function setCacheAdapter(\Proximate\CacheAdapter\BaseAdapter $cacheAdapter)
+    public function setCacheAdapter(BaseAdapter $cacheAdapter)
     {
         $this->cacheAdapter = $cacheAdapter;
     }

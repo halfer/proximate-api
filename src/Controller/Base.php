@@ -6,8 +6,8 @@
 
 namespace Proximate\Controller;
 
-use Proximate\CacheAdapter\Filesystem as CacheAdapter;
-use Proximate\CacheAdapter\BaseAdapter;
+use Proximate\Storage\Filesystem as CacheAdapter;
+use Proximate\Storage\BaseAdapter;
 use Proximate\Service\File as FileService;
 use Proximate\Exception\BadJson as BadJsonException;
 use Proximate\Exception\App as AppException;

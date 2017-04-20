@@ -8,7 +8,7 @@ use Proximate\Service\File as FileService;
 use League\Flysystem\Adapter\Local as FlyFileAdapter;
 use League\Flysystem\Filesystem as FlyFilesystem;
 use Cache\Adapter\Filesystem\FilesystemCachePool;
-use Proximate\CacheAdapter\Filesystem as ProximateFilesystem;
+use Proximate\Storage\Filesystem as ProximateFilesystem;
 
 /**
  * Sets up front controller based on preferences in a child class

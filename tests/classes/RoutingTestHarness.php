@@ -11,7 +11,7 @@ namespace Proximate\Test;
 
 use Proximate\Routing\Routing;
 use Proximate\Controller\Base as BaseController;
-use Proximate\CacheAdapter\BaseAdapter;
+use Proximate\Storage\BaseAdapter;
 
 class RoutingTestHarness extends Routing
 {
