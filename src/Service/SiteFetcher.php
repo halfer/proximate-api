@@ -21,18 +21,28 @@ class SiteFetcher
 
     public function execute($startUrl, $pathRegex)
     {
-        $crawler = new SimpleCrawler($this->proxyAddress);
+        $crawler = $this->createSimpleCrawler();
         $crawler->
             init()->
             crawl($startUrl, $pathRegex);
 
-        // FIXME how do we know it failed?
+        // @todo Add logic to work out whether it failed
         if (false)
         {
             throw new SiteFetchException(
                 "There was a problem with the site fetch call"
             );
         }
+    }
+
+    /**
+     * Creates an instance of the crawler wrapper
+     *
+     * @return SimpleCrawler
+     */
+    protected function createSimpleCrawler()
+    {
+        return new SimpleCrawler($this->proxyAddress);
     }
 
     /**
