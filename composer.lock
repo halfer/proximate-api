@@ -991,19 +991,24 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/halfer/proximate-crawler.git",
-                "reference": "146aa1cc5f258a883a479e8d0b0edb55f0bee479"
+                "reference": "e36afec80526ab38de7417867f27e283f2ec4218"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/halfer/proximate-crawler/zipball/146aa1cc5f258a883a479e8d0b0edb55f0bee479",
-                "reference": "146aa1cc5f258a883a479e8d0b0edb55f0bee479",
+                "url": "https://api.github.com/repos/halfer/proximate-crawler/zipball/e36afec80526ab38de7417867f27e283f2ec4218",
+                "reference": "e36afec80526ab38de7417867f27e283f2ec4218",
                 "shasum": ""
             },
             "require": {
                 "proximate/core": "dev-master",
                 "proximate/requester": "dev-master",
                 "proximate/storage": "dev-master",
-                "spatie/crawler": "1.3.*"
+                "spatie/crawler": "2.1.*"
+            },
+            "require-dev": {
+                "halfer/spiderling-utils": "dev-master",
+                "openbuildings/phpunit-spiderling": "0.2.0-rc.1",
+                "phpunit/phpunit": "^6.1"
             },
             "type": "library",
             "autoload": {
@@ -1016,7 +1021,7 @@
                 "source": "https://github.com/halfer/proximate-crawler/tree/master",
                 "issues": "https://github.com/halfer/proximate-crawler/issues"
             },
-            "time": "2017-04-20 17:44:48"
+            "time": "2017-04-21 15:10:36"
         },
         {
             "name": "proximate/requester",
@@ -1024,12 +1029,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/halfer/proximate-requester.git",
-                "reference": "e8121506d4a96522989837447775810e53b8454d"
+                "reference": "2883e884b6ff009307e7ac2ef83353ad6e4a39be"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/halfer/proximate-requester/zipball/e8121506d4a96522989837447775810e53b8454d",
-                "reference": "e8121506d4a96522989837447775810e53b8454d",
+                "url": "https://api.github.com/repos/halfer/proximate-requester/zipball/2883e884b6ff009307e7ac2ef83353ad6e4a39be",
+                "reference": "2883e884b6ff009307e7ac2ef83353ad6e4a39be",
                 "shasum": ""
             },
             "require": {
@@ -1059,7 +1064,7 @@
                 "source": "https://github.com/halfer/proximate-requester/tree/master",
                 "issues": "https://github.com/halfer/proximate-requester/issues"
             },
-            "time": "2017-04-20 11:54:15"
+            "time": "2017-04-21 15:48:56"
         },
         {
             "name": "proximate/storage",
@@ -1410,26 +1415,26 @@
         },
         {
             "name": "spatie/crawler",
-            "version": "1.3.1",
+            "version": "2.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/crawler.git",
-                "reference": "c83bef7eecc247f67a0a0a96957c9fb2ebb0806d"
+                "reference": "33b3229fdf80fa6b478206ce268abe897f5ab595"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/crawler/zipball/c83bef7eecc247f67a0a0a96957c9fb2ebb0806d",
-                "reference": "c83bef7eecc247f67a0a0a96957c9fb2ebb0806d",
+                "url": "https://api.github.com/repos/spatie/crawler/zipball/33b3229fdf80fa6b478206ce268abe897f5ab595",
+                "reference": "33b3229fdf80fa6b478206ce268abe897f5ab595",
                 "shasum": ""
             },
             "require": {
                 "guzzlehttp/guzzle": "^6.2",
-                "illuminate/support": "^5.1",
-                "php": ">=5.6.0",
-                "symfony/dom-crawler": "^2.7|^3.0"
+                "php": "^7.0",
+                "symfony/dom-crawler": "^3.0",
+                "tightenco/collect": "^5.3"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.0"
+                "phpunit/phpunit": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -1460,7 +1465,7 @@
                 "spatie",
                 "website"
             ],
-            "time": "2016-09-13 13:13:44"
+            "time": "2017-03-06 10:47:36"
         },
         {
             "name": "symfony/dom-crawler",
