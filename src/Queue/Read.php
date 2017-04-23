@@ -7,24 +7,15 @@
 namespace Proximate\Queue;
 
 use Proximate\Service\SiteFetcher as FetcherService;
-use Proximate\Service\ProxyReset as ProxyResetService;
 use Proximate\Exception\RequiredDependency as RequiredDependencyException;
 
 class Read extends Base
 {
     protected $fetcherService;
-    protected $proxyResetService;
 
     public function setFetcher(FetcherService $fetcherService)
     {
         $this->fetcherService = $fetcherService;
-
-        return $this;
-    }
-
-    public function setProxyResetter(ProxyResetService $proxyResetService)
-    {
-        $this->proxyResetService = $proxyResetService;
 
         return $this;
     }
@@ -98,7 +89,6 @@ class Read extends Base
 
         try
         {
-            $this->resetProxy($url);
             $this->fetchSite($itemData);
             $status = self::STATUS_DONE;
         }
@@ -109,18 +99,6 @@ class Read extends Base
         }
 
         $this->changeItemStatus($url, self::STATUS_DOING, $status);
-    }
-
-    /**
-     * Restarts the proxy recorder, asking it to record at this URL
-     *
-     * @param string $url
-     */
-    protected function resetProxy($url)
-    {
-        $this->getProxyResetterService()->resetRecorder(
-            $this->getDomainForUrl($url)
-        );
     }
 
     /**
@@ -198,24 +176,6 @@ class Read extends Base
         }
 
         return $this->fetcherService;
-    }
-
-    /**
-     * Gets the currently configured proxy resetter
-     *
-     * @throws RequiredDependencyException
-     * @return ProxyResetService
-     */
-    protected function getProxyResetterService()
-    {
-        if (!$this->proxyResetService)
-        {
-            throw new RequiredDependencyException(
-                "The queue read module needs a proxy resetter to operate"
-            );
-        }
-
-        return $this->proxyResetService;
     }
 
     /**

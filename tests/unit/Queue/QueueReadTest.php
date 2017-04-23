@@ -10,13 +10,11 @@ use Proximate\Queue\Read as Queue;
 use Proximate\Queue\Write as QueueWrite;
 use Proximate\Service\File as FileService;
 use Proximate\Service\SiteFetcher as FetcherService;
-use Proximate\Service\ProxyReset as ProxyResetService;
 use Proximate\Exception\SiteFetch as SiteFetchException;
 
 class QueueReadTest extends QueueTestBase
 {
     protected $fetcherService;
-    protected $resetService;
 
     /**
      * Check that the read-specific setter stores the fetcher OK
@@ -47,9 +45,6 @@ class QueueReadTest extends QueueTestBase
                 QueueWrite::DEFAULT_REJECT_FILES
             )->
             once();
-
-        // Mock out some methods on the proxy resetter
-        $this->setResetServiceExpection();
 
         // Set up the queue and process the "waiting" item
         $this->processOneItem();
@@ -88,35 +83,11 @@ class QueueReadTest extends QueueTestBase
         $this->setRenameExpectations(Queue::STATUS_ERROR);
         $this->setAddErrorExpectation();
 
-        // We'll call the reset service normally first
-        $this->setResetServiceExpection();
-
         // Set up the fetcher mock to emulate a failure
         $this->
             getFetcherServiceMock()->
             shouldReceive('execute')->
             andThrow(new SiteFetchException('Throw an exception via testProcessorWithFetchFail'));
-
-        // Set up the queue and process the "waiting" item
-        $this->processOneItem();
-    }
-
-    /**
-     * Ensures that a proxy reset call failure results in a status change to error
-     */
-    public function testProcessorWithProxyResetFail()
-    {
-        $this->initFileServiceMockWithOneEntry();
-
-        // Specify expected status and error message changes
-        $this->setRenameExpectations(Queue::STATUS_ERROR);
-        $this->setAddErrorExpectation();
-
-        // Set up the fetcher mock to emulate a failure
-        $this->
-            getResetServiceMock()->
-            shouldReceive('resetRecorder')->
-            andThrow(new \Pest_Exception('Throw an exception via testProcessorWithProxyResetFail'));
 
         // Set up the queue and process the "waiting" item
         $this->processOneItem();
@@ -234,14 +205,6 @@ class QueueReadTest extends QueueTestBase
             once();
     }
 
-    protected function setResetServiceExpection()
-    {
-        $this->
-            getResetServiceMock()->
-            shouldReceive('resetRecorder')->
-            once();
-    }
-
     protected function getQueueTestHarness()
     {
         return new QueueReadTestHarness();
@@ -257,7 +220,6 @@ class QueueReadTest extends QueueTestBase
         $queue = parent::getQueueMock(QueueReadTestHarness::class);
         /* @var $queue Queue */
         $queue->setFetcher($this->getFetcherServiceMock());
-        $queue->setProxyResetter($this->getResetServiceMock());
 
         return $queue;
     }
@@ -273,7 +235,6 @@ class QueueReadTest extends QueueTestBase
     protected function setUp()
     {
         $this->fetcherService = \Mockery::mock(FetcherService::class);
-        $this->resetService = \Mockery::mock(ProxyResetService::class);
         parent::setUp();
     }
 
@@ -287,18 +248,6 @@ class QueueReadTest extends QueueTestBase
         }
 
         return $this->fetcherService;
-    }
-
-    protected function getResetServiceMock()
-    {
-        if (!$this->resetService)
-        {
-            throw new \Exception(
-                "This call needs a reset service mock to have been set up"
-            );
-        }
-
-        return $this->resetService;
     }
 }
 

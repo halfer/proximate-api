@@ -9,7 +9,6 @@
 
 use Proximate\Service\File;
 use Proximate\Service\SiteFetcher as SiteFetcherService;
-use Proximate\Service\ProxyReset as ProxyResetService;
 
 $root = realpath(__DIR__ . '/../..');
 require_once $root . '/vendor/autoload.php';
@@ -23,5 +22,4 @@ $queue = new Proximate\Queue\Read(
 );
 $queue->
     setFetcher(new SiteFetcherService('proximate-proxy:8081'))->
-    setProxyResetter(new ProxyResetService($curlApi, $curlPlayback))->
     process();
