@@ -5,7 +5,6 @@
  * Launches the queue, will be restarted by Supervisor when it finishes
  *
  * @todo Create an integration test for the queue
- * @todo Might be worth sending the proxy address in via an env var, and reading it here?
  */
 
 use Proximate\Service\File;
@@ -16,15 +15,20 @@ $root = realpath(__DIR__ . '/../..');
 require_once $root . '/vendor/autoload.php';
 require_once $root . '/src/autoload.php';
 
-if ($argc != 2)
+$commands = ['a' => 'address', 'p' => 'path', ];
+$actions = getopt('a:p:', ['address:', 'path:']);
+
+$queuePath = isset($actions['path']) ? $actions['path'] : (isset($actions['p']) ? $actions['p'] : null);
+$proxyAddress = isset($actions['address']) ? $actions['address'] : (isset($actions['a']) ? $actions['a'] : null);
+
+if (!$queuePath || !$proxyAddress)
 {
     $command = __FILE__;
     die(
-        sprintf("Syntax: %s <queue-path>\n", $command)
+        sprintf("Syntax: %s --address <api> --path <queue-path>\n", $command)
     );
 }
 
-$queuePath = $argv[1];
 if (!file_exists($queuePath))
 {
     die(
@@ -34,5 +38,5 @@ if (!file_exists($queuePath))
 
 $queue = new QueueReader($queuePath, new File());
 $queue->
-    setFetcher(new SiteFetcherService('proximate-proxy:8081'))->
+    setFetcher(new SiteFetcherService($proxyAddress))->
     process();
