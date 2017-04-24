@@ -662,16 +662,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "1.0.37",
+            "version": "1.0.38",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "78b5cc4feb61a882302df4fbaf63b7662e5e4ccd"
+                "reference": "4ba6e13f5116204b21c3afdf400ecf2b9eb1c482"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/78b5cc4feb61a882302df4fbaf63b7662e5e4ccd",
-                "reference": "78b5cc4feb61a882302df4fbaf63b7662e5e4ccd",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/4ba6e13f5116204b21c3afdf400ecf2b9eb1c482",
+                "reference": "4ba6e13f5116204b21c3afdf400ecf2b9eb1c482",
                 "shasum": ""
             },
             "require": {
@@ -693,12 +693,12 @@
                 "league/flysystem-azure": "Allows you to use Windows Azure Blob storage",
                 "league/flysystem-cached-adapter": "Flysystem adapter decorator for metadata caching",
                 "league/flysystem-copy": "Allows you to use Copy.com storage",
-                "league/flysystem-dropbox": "Allows you to use Dropbox storage",
                 "league/flysystem-eventable-filesystem": "Allows you to use EventableFilesystem",
                 "league/flysystem-rackspace": "Allows you to use Rackspace Cloud Files",
                 "league/flysystem-sftp": "Allows you to use SFTP server storage via phpseclib",
                 "league/flysystem-webdav": "Allows you to use WebDAV storage",
-                "league/flysystem-ziparchive": "Allows you to use ZipArchive adapter"
+                "league/flysystem-ziparchive": "Allows you to use ZipArchive adapter",
+                "spatie/flysystem-dropbox": "Allows you to use Dropbox storage"
             },
             "type": "library",
             "extra": {
@@ -741,7 +741,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2017-03-22 15:43:14"
+            "time": "2017-04-22 18:59:19"
         },
         {
             "name": "monolog/monolog",
@@ -991,12 +991,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/halfer/proximate-crawler.git",
-                "reference": "e36afec80526ab38de7417867f27e283f2ec4218"
+                "reference": "aa079a23d556f83e68b47299f914dc7ef37c99ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/halfer/proximate-crawler/zipball/e36afec80526ab38de7417867f27e283f2ec4218",
-                "reference": "e36afec80526ab38de7417867f27e283f2ec4218",
+                "url": "https://api.github.com/repos/halfer/proximate-crawler/zipball/aa079a23d556f83e68b47299f914dc7ef37c99ab",
+                "reference": "aa079a23d556f83e68b47299f914dc7ef37c99ab",
                 "shasum": ""
             },
             "require": {
@@ -1021,7 +1021,7 @@
                 "source": "https://github.com/halfer/proximate-crawler/tree/master",
                 "issues": "https://github.com/halfer/proximate-crawler/issues"
             },
-            "time": "2017-04-21 15:10:36"
+            "time": "2017-04-24 16:22:35"
         },
         {
             "name": "proximate/requester",
@@ -1029,12 +1029,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/halfer/proximate-requester.git",
-                "reference": "2883e884b6ff009307e7ac2ef83353ad6e4a39be"
+                "reference": "eb9aa86669683669b2ae8722814106354c3c6f55"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/halfer/proximate-requester/zipball/2883e884b6ff009307e7ac2ef83353ad6e4a39be",
-                "reference": "2883e884b6ff009307e7ac2ef83353ad6e4a39be",
+                "url": "https://api.github.com/repos/halfer/proximate-requester/zipball/eb9aa86669683669b2ae8722814106354c3c6f55",
+                "reference": "eb9aa86669683669b2ae8722814106354c3c6f55",
                 "shasum": ""
             },
             "require": {
@@ -1064,7 +1064,7 @@
                 "source": "https://github.com/halfer/proximate-requester/tree/master",
                 "issues": "https://github.com/halfer/proximate-requester/issues"
             },
-            "time": "2017-04-21 15:48:56"
+            "time": "2017-04-24 16:12:45"
         },
         {
             "name": "proximate/storage",
