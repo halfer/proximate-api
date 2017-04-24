@@ -116,8 +116,7 @@ abstract class QueueTestBase extends \PHPUnit_Framework_TestCase
     {
 $json = '{
     "url": __URL__,
-    "url_regex": null,
-    "reject_files": "*.png,*.jpg,*.jpeg,*.css,*.js"
+    "path_regex": null
 }';
         $out = str_replace('__URL__', json_encode($url), $json);
 

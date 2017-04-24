@@ -62,18 +62,18 @@ class QueueWriteTest extends QueueTestBase
         $this->assertEquals(self::DUMMY_URL, $queue->getUrl());
     }
 
-    public function testUrlRegexStorage()
+    public function testPathRegexStorage()
     {
         // Doesn't need full initialisation
         $queue = new QueueWriteTestHarness();
 
         // Test the empty condition first
-        $this->assertNull($queue->getUrlRegex());
+        $this->assertNull($queue->getPathRegex());
 
         // Now try the setter
         $regex = ".*(/about/careers/.*)|(/job/.*)";
-        $queue->setUrlRegex($regex);
-        $this->assertEquals($regex, $queue->getUrlRegex());
+        $queue->setPathRegex($regex);
+        $this->assertEquals($regex, $queue->getPathRegex());
     }
 
     /**

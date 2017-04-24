@@ -7,7 +7,6 @@
 namespace Proximate\Test;
 
 use Proximate\Queue\Read as Queue;
-use Proximate\Queue\Write as QueueWrite;
 use Proximate\Service\File as FileService;
 use Proximate\Service\SiteFetcher as FetcherService;
 use Proximate\Exception\SiteFetch as SiteFetchException;

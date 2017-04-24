@@ -113,7 +113,7 @@ class CacheSaveTest extends ControllerTestBase
         $this->setRequestBodyExpectation([
             'url' => $url = self::EXAMPLE_URL,
         ]);
-        $this->setQueueExpectation($url, null, null, $exception);
+        $this->setQueueExpectation($url, null, $exception);
 
         $this->setJsonResponseExpectation($expectedError);
 

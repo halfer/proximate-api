@@ -75,7 +75,7 @@ class Routing
          *
          * Takes a JSON input document containing:
          *
-         * [url, url_regex, reject_files]
+         * [url, path_regex]
          */
         $app->post('/cache', function ($request, $response) use ($queue, $routing) {
             $controller = $routing->getCacheSaveController($request, $response);

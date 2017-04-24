@@ -132,8 +132,7 @@ class Read extends Base
         // Call the site fetcher service here
         $this->getSiteFetcherService()->execute(
             $itemData['url'],
-            $itemData['url_regex'],
-            $itemData['reject_files']
+            $itemData['path_regex']
         );
     }
 
