@@ -63,11 +63,8 @@ class CacheSave extends Base
         }
 
         // Treatment for optional parameters
-        $validatedParams['url_regex'] = isset($params['url_regex']) ?
-            (string) $params['url_regex'] :
-            null;
-        $validatedParams['reject_files'] = isset($params['reject_files']) ?
-            (string) $params['reject_files'] :
+        $validatedParams['path_regex'] = isset($params['path_regex']) ?
+            (string) $params['path_regex'] :
             null;
 
         // Ensure that no other items are permitted
@@ -101,9 +98,10 @@ class CacheSave extends Base
         return !$ok;
     }
 
+    // This is well out of date, what does the SimpleCrawler actually need?
     protected function getPermittedKeys()
     {
-        return ['url', 'url_regex', 'reject_files', ];
+        return ['url', 'path_regex', ];
     }
 
     /**
@@ -117,8 +115,7 @@ class CacheSave extends Base
         $this->
             getQueue()->
             setUrl($fetchRequest['url'])->
-            setUrlRegex($fetchRequest['url_regex'])->
-            setRejectFiles($fetchRequest['reject_files'])->
+            setPathRegex($fetchRequest['path_regex'])->
             queue();
     }
 

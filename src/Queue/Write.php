@@ -12,11 +12,8 @@ use Proximate\Exception\QueueWrite as QueueWriteException;
 
 class Write extends Base
 {
-    const DEFAULT_REJECT_FILES = '*.png,*.jpg,*.jpeg,*.css,*.js';
-
     protected $url;
-    protected $urlRegex;
-    protected $rejectFiles = self::DEFAULT_REJECT_FILES;
+    protected $pathRegex;
 
     public function setUrl($url)
     {
@@ -41,29 +38,18 @@ class Write extends Base
         return $this->url;
     }
 
-    public function setUrlRegex($urlRegex)
+    public function setPathRegex($pathRegex)
     {
-        $this->urlRegex = $urlRegex;
+        $this->pathRegex = $pathRegex;
 
         return $this;
     }
 
-    public function getUrlRegex()
+    public function getPathRegex()
     {
-        return $this->urlRegex;
+        return $this->pathRegex;
     }
 
-    public function setRejectFiles($rejectFiles)
-    {
-        $this->rejectFiles = $rejectFiles;
-
-        return $this;
-    }
-
-    public function getRejectFiles()
-    {
-        return $this->rejectFiles;
-    }
 
     /**
      * Creates a queue item for the current URL
@@ -124,8 +110,7 @@ class Write extends Base
     {
         return [
             'url' => $this->getUrl(),
-            'url_regex' => $this->urlRegex,
-            'reject_files' => $this->rejectFiles,
+            'path_regex' => $this->pathRegex,
         ];
     }
 }

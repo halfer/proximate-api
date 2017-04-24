@@ -76,19 +76,6 @@ class QueueWriteTest extends QueueTestBase
         $this->assertEquals($regex, $queue->getUrlRegex());
     }
 
-    public function testRejectFilesStorage()
-    {
-        $queue = new QueueWriteTestHarness('', new FileService());
-
-        // Test the initial condition has the default value
-        $this->assertEquals(Queue::DEFAULT_REJECT_FILES, $queue->getRejectFiles());
-
-        // Now try the setter to something different
-        $reject = "*.js";
-        $queue->setRejectFiles($reject);
-        $this->assertEquals($reject, $queue->getRejectFiles());
-    }
-
     /**
      * Checks that a new item is written to a mock FS
      */

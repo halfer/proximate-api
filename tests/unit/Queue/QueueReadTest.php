@@ -41,8 +41,7 @@ class QueueReadTest extends QueueTestBase
             shouldReceive('execute')->
             with(
                 self::DUMMY_URL,
-                null,
-                QueueWrite::DEFAULT_REJECT_FILES
+                null
             )->
             once();
 

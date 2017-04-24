@@ -34,10 +34,9 @@ class CacheSaveTest extends ControllerTestBase
     {
         $this->setRequestBodyExpectation([
             'url' => $url = self::EXAMPLE_URL,
-            'url_regex' => $urlRegex = '/section/*.html',
-            'reject_files' => $rejectFiles = '*.png',
+            'path_regex' => $pathRegex = '/section/*.html',
         ]);
-        $this->setQueueExpectation($url, $urlRegex, $rejectFiles);
+        $this->setQueueExpectation($url, $pathRegex);
 
         $this->setJsonResponseExpectation();
 
@@ -49,10 +48,9 @@ class CacheSaveTest extends ControllerTestBase
     public function testMissingCacheSaveParameter()
     {
         $this->setRequestBodyExpectation([
-            'url_regex' => $urlRegex = '/section/*.html',
-            'reject_files' => $rejectFiles = '*.png',
+            'path_regex' => $urlRegex = '/section/*.html',
         ]);
-        $this->setQueueExpectation(null, $urlRegex, $rejectFiles);
+        $this->setQueueExpectation(null, $urlRegex);
 
         $this->setJsonResponseExpectation('URL not present in request body');
 
@@ -69,7 +67,7 @@ class CacheSaveTest extends ControllerTestBase
         ]);
         $this->setQueueExpectation($url, null, null);
 
-        $this->setJsonResponseExpectation('The only permitted keys are: url, url_regex, reject_files');
+        $this->setJsonResponseExpectation('The only permitted keys are: url, path_regex');
 
         $this->
             getCacheSaveController()->
@@ -150,18 +148,15 @@ class CacheSaveTest extends ControllerTestBase
             andReturn("Hello there");
     }
 
-    protected function setQueueExpectation($url, $urlRegex, $rejectFiles, \Exception $exception = null)
+    protected function setQueueExpectation($url, $pathRegex, \Exception $exception = null)
     {
         $queue = $this->getMockedQueue();
         $queue->
             shouldReceive('setUrl')->
             with($url)->
             andReturn($queue)->
-            shouldReceive('setUrlRegex')->
-            with($urlRegex)->
-            andReturn($queue)->
-            shouldReceive('setRejectFiles')->
-            with($rejectFiles)->
+            shouldReceive('setPathRegex')->
+            with($pathRegex)->
             andReturn($queue);
         if (!$exception)
         {
