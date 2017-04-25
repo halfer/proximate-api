@@ -14,9 +14,11 @@ class TestFrontController extends \Proximate\FrontController
     }
 }
 
-// Currently uses these paths:
+// Supply queue and cache folder locations
 //
-// ./queue for the queue
-// ./cache for the proxy storage
-$frontController = new TestFrontController($root . '/queue', $root . '/cache');
+// @todo Add in the restrictions on symlinks placed by Flysystem
+$frontController = new TestFrontController(
+    $root . '/queue',
+    $root . '/../proximate-requester/cache/data'
+);
 $frontController->execute();
