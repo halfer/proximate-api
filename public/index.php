@@ -12,17 +12,11 @@ class TestFrontController extends \Proximate\FrontController
     {
         return new Routing($app);
     }
-
-    public function getRecorderCurl()
-    {
-        return new PestJSON('http://proximate-proxy:8081');
-    }
-
-    public function getPlaybackCurl()
-    {
-        return new PestJSON('http://proximate-proxy:8082');
-    }
 }
 
-$frontController = new TestFrontController('/var/proximate/queue', '/remote');
+// Currently uses these paths:
+//
+// ./queue for the queue
+// ./cache for the proxy storage
+$frontController = new TestFrontController($root . '/queue', $root . '/cache');
 $frontController->execute();

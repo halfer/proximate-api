@@ -5,10 +5,7 @@ namespace Proximate;
 use Slim\App;
 use Proximate\Queue\Write as Queue;
 use Proximate\Service\File as FileService;
-use League\Flysystem\Adapter\Local as FlyFileAdapter;
-use League\Flysystem\Filesystem as FlyFilesystem;
-use Cache\Adapter\Filesystem\FilesystemCachePool;
-use Proximate\Storage\Filesystem as ProximateFilesystem;
+use Proximate\Storage\FilecacheFactory;
 
 /**
  * Sets up front controller based on preferences in a child class
@@ -41,14 +38,10 @@ abstract class FrontController
 
     public function getCacheAdapter()
     {
-        $filesystemAdapter = new FlyFileAdapter($this->cacheFolder);
-        $filesystem = new FlyFilesystem($filesystemAdapter);
-        $cacheAdapter = new ProximateFilesystem($filesystem);
+        $factory = new FilecacheFactory($this->cacheFolder);
+        $factory->init();
 
-        $cachePool = new FilesystemCachePool($filesystem);
-        $cacheAdapter->setCacheItemPoolInterface($cachePool);
-
-        return $cacheAdapter;
+        return $factory->getCacheAdapter();
     }
 
     abstract function getRouting(App $app);
