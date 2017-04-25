@@ -14,11 +14,16 @@ class TestFrontController extends \Proximate\FrontController
     }
 }
 
-// Supply queue and cache folder locations
-//
-// @todo Add in the restrictions on symlinks placed by Flysystem
+/*
+ * Supply queue and cache folder locations
+ *
+ * I've found that Flysystem seems to prefer its base directory being used only for its
+ * own purposes, hence I've used a two-level structure: "cache" is the base of the Flysystem
+ * and "data" is a subfolder. If the base of the Flysystem contains symlinks an error
+ * "Links are not supported" may be encountered - the two-level structure avoids that.
+ */
 $frontController = new TestFrontController(
     $root . '/queue',
-    $root . '/../proximate-requester/cache/data'
+    $root . '/cache/data'
 );
 $frontController->execute();
