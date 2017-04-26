@@ -19,5 +19,8 @@ class TestFrontController extends \Proximate\FrontController
     }
 }
 
-$frontController = new TestFrontController($root . '/queue', '/tmp/proximate-tests/cache-read');
+$frontController = new TestFrontController(
+    '/tmp/proximate-tests/queue',
+    '/tmp/proximate-tests/cache-read'
+);
 $frontController->execute();

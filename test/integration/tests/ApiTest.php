@@ -3,7 +3,11 @@
 /**
  * Functional test for API
  *
- * @todo Does this need to extend from SpiderlingUtils if it does not use visit() etc?
+ * Not all func tests here could be expressed using Spiderling (i.e. post, delete endpoints).
+ * Thus I have used Curl as well, which is more flexible.
+ *
+ * @todo Convert Spiderling tests to Curl so just one approach is used
+ * @todo Swap from SpiderlingUtils\TestCase to PHPUnit TestCase
  */
 
 namespace Proximate\Test\Integration;
@@ -24,6 +28,7 @@ class ApiTest extends TestCase
     public function setUp()
     {
         $this->resetCache();
+        $this->createEmptyQueue();
         $this->initCurl();
 
         parent::setUp();
@@ -120,29 +125,49 @@ class ApiTest extends TestCase
     }
 
     /**
-     * @todo Cannot post using Spiderling, need to use another library
+     * Create an entry in the crawler queue
+     *
+     * @todo Move queue and cache paths to consts
      */
-    public function __testQueueItem()
+    public function testQueueItem()
     {
-        $this->getCurlClient()->post(
+        $client = $this->getCurlClient()->post(
             self::BASE_URL . '/cache',
             json_encode([
                 'url' => 'http://example.com/hullo',
                 'path_regex' => '.*',
             ])
         );
+
+        // Make sure we have an OK response and a new entry in the queue
+        $queueData = json_decode($client->response, true);
+        $this->assertEquals(
+            ['result' => ['ok' => true, ]],
+            $queueData
+        );
+        $this->assertEquals(
+            1,
+            count(glob('/tmp/proximate-tests/queue/*'))
+        );
     }
 
     /**
      * Creates a pristine copy of a test cache for every test
      */
-    public function resetCache()
+    protected function resetCache()
     {
         $cacheSource = realpath(__DIR__ . '/../cache');
         $testCache = '/tmp/proximate-tests/cache-read';
         system("mkdir --parents {$testCache}");
-        system("rm {$testCache}/*");
+        system("rm -f {$testCache}/*");
         system("cp {$cacheSource}/* {$testCache}/");
+    }
+
+    protected function createEmptyQueue()
+    {
+        $testQueue = '/tmp/proximate-tests/queue';
+        system("mkdir --parents {$testQueue}");
+        system("rm -f {$testQueue}/*");
     }
 
     /**
