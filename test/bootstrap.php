@@ -12,7 +12,7 @@ spl_autoload_register(
 		$loader = new Autoloader();
 		if ($loader->ourNamespace($class, Autoloader::PREFIX_TEST))
 		{
-			$loader->mainLoader($class, Autoloader::PREFIX_TEST, 'tests/classes/');
+			$loader->mainLoader($class, Autoloader::PREFIX_TEST, 'test/classes/');
 		}
 	}
 );
