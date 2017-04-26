@@ -83,6 +83,23 @@ class Routing
             return $controller->execute();
         });
 
+        // Set up 404 JSON response
+        $container = $app->getContainer();
+        $container['notFoundHandler'] = function() {
+            return function(Request $request, Response $response) {
+                $result = [
+                    'result' => [
+                        'ok' => false,
+                        'error' => 'Endpoint not found'
+                    ]
+                ];
+                return
+                    $response->
+                    withStatus(404)->
+                    withHeader('Content-Type', 'application/json')->
+                    write(json_encode($result));
+            };
+        };
     }
 
     /**
