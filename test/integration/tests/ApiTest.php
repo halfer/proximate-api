@@ -2,26 +2,28 @@
 
 /**
  * Functional test for API
+ *
+ * @todo Does this need to extend from SpiderlingUtils if it does not use visit() etc?
  */
 
 namespace Proximate\Test\Integration;
 
 use halfer\SpiderlingUtils\TestCase;
+use Curl\Curl;
 
 class ApiTest extends TestCase
 {
     const BASE_URL = 'http://localhost:10001/index.php';
+
+    protected $curlClient;
 
     /**
      * Reset the queue to ensure tests do not become serially dependent
      */
     public function setUp()
     {
-        $cacheSource = realpath(__DIR__ . '/../cache');
-        $testCache = '/tmp/proximate-tests/cache-read';
-        system("mkdir --parents {$testCache}");
-        system("rm {$testCache}/*");
-        system("cp {$cacheSource}/* {$testCache}/");
+        $this->resetCache();
+        $this->initCurl();
 
         parent::setUp();
     }
@@ -107,5 +109,35 @@ class ApiTest extends TestCase
     {
         // @todo
         $this->markTestIncomplete();
+    }
+
+    /**
+     * Creates a pristine copy of a test cache for every test
+     */
+    public function resetCache()
+    {
+        $cacheSource = realpath(__DIR__ . '/../cache');
+        $testCache = '/tmp/proximate-tests/cache-read';
+        system("mkdir --parents {$testCache}");
+        system("rm {$testCache}/*");
+        system("cp {$cacheSource}/* {$testCache}/");
+    }
+
+    /**
+     * Set up a new curl client
+     */
+    protected function initCurl()
+    {
+        $this->curlClient = new Curl();
+    }
+
+    /**
+     * Gets the current curl instance
+     *
+     * @return Curl
+     */
+    protected function getCurlClient()
+    {
+        return $this->curlClient;
     }
 }
