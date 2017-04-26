@@ -14,6 +14,7 @@ use Curl\Curl;
 class ApiTest extends TestCase
 {
     const BASE_URL = 'http://localhost:10001/index.php';
+    const EXAMPLE_CACHE_KEY = '18b4ddb061a95760ec6c58f4c4dc037f54614da2';
 
     protected $curlClient;
 
@@ -29,15 +30,18 @@ class ApiTest extends TestCase
     }
 
     /**
-     * @driver simple
-     * @expectedException \Openbuildings\Spiderling\Exception_Curl
-     *
-     * @todo Spiderling throws away the response in a non-200 case, so need to use
-     * another test approach
+     * Checks that the 404 response looks good
      */
     public function testNonExistentEndpoint()
     {
-        $json = $this->visit(self::BASE_URL . '/cockadoodledoo')->text();
+        $client = $this->
+            getCurlClient()->
+            get(self::BASE_URL . '/cockadoodledoo');
+        $this->assertEquals(404, $client->http_status_code);
+        $this->assertEquals(
+            ['result' => ['ok' => false, 'error' => 'Endpoint not found']],
+            json_decode($client->response, true)
+        );
     }
 
     /**
@@ -72,8 +76,7 @@ class ApiTest extends TestCase
      */
     public function testFetchCacheItem()
     {
-        $key = '18b4ddb061a95760ec6c58f4c4dc037f54614da2';
-        $json = $this->visit(self::BASE_URL . '/cache/' . $key)->text();
+        $json = $this->visit(self::BASE_URL . '/cache/' . self::EXAMPLE_CACHE_KEY)->text();
         $data = json_decode($json, true);
 
         // I'm removing the response just to reduce test brittleness
@@ -86,7 +89,7 @@ class ApiTest extends TestCase
                     'item' => [
                         'url' => 'http://127.0.0.1:23306/test.html',
                         'method' => 'POST',
-                        'key' => $key,
+                        'key' => self::EXAMPLE_CACHE_KEY,
                     ]
                 ]
             ],
@@ -95,20 +98,39 @@ class ApiTest extends TestCase
     }
 
     /**
-     * @todo Cannot delete using Spiderling, need to use another library
+     * Checks that a cache item can be deleted by the API
      */
     public function testDeleteCacheItem()
     {
-        $this->markTestIncomplete();
+        $client = $this->
+            getCurlClient()->
+            delete(self::BASE_URL . '/cache/' . self::EXAMPLE_CACHE_KEY);
+        $this->assertEquals(
+            ['result' => ['ok' => 1, ]],
+            json_decode($client->response, true)
+        );
+
+        // Let's confirm the new count (should be 2 minus the 1 deleted item)
+        $countJson = $client->
+            reset()->
+            get(self::BASE_URL . '/count')->
+            response;
+        $countData = json_decode($countJson, true);
+        $this->assertEquals(1, $countData['result']['count']);
     }
 
     /**
      * @todo Cannot post using Spiderling, need to use another library
      */
-    public function testQueueItem()
+    public function __testQueueItem()
     {
-        // @todo
-        $this->markTestIncomplete();
+        $this->getCurlClient()->post(
+            self::BASE_URL . '/cache',
+            json_encode([
+                'url' => 'http://example.com/hullo',
+                'path_regex' => '.*',
+            ])
+        );
     }
 
     /**
