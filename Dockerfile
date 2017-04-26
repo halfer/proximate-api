@@ -6,26 +6,28 @@
 # A build server would negate the need for Composer and its dependencies, but the approach
 # of building in the container is fine for now.
 
-FROM alpine:3.4
+FROM alpine:3.5
 
 # Do a system update
 RUN apk update
 
-# Install PHP and the non-BusyBox wget
-RUN apk --update add php5 wget
+# Install PHP
+RUN apk --update add php7
 
 # Taken from the "alpine-supervisord-docker" repo
-ENV PYTHON_VERSION=2.7.12-r0
-ENV PY_PIP_VERSION=8.1.2-r0
+ENV PYTHON_VERSION=2.7.13-r0
+ENV PY_PIP_VERSION=9.0.0-r1
 ENV SUPERVISOR_VERSION=3.3.0
 
 # Install Supervisor components from the same source
 RUN apk add python=$PYTHON_VERSION py-pip=$PY_PIP_VERSION
 RUN pip install supervisor==$SUPERVISOR_VERSION
 
-# Composer needs all of 'php5-openssl php5-json php5-phar'
-# Pest needs 'php5-curl'
-RUN apk --update add openssl php5-openssl php5-json php5-phar php5-curl
+# Composer needs all of 'phpX-openssl phpX-json phpX-phar phpX-mbstring' and 'zlib' is
+# recommended
+RUN apk --update add openssl php7-openssl php7-json php7-phar php7-mbstring php7-zlib
+# Pest needs 'php5-curl', clue/socket-raw requires sockets
+RUN apk add php7-curl php7-sockets
 
 # Refresh the SSL certs, which seem to be missing
 RUN wget -O /etc/ssl/cert.pem https://curl.haxx.se/ca/cacert.pem
@@ -34,6 +36,9 @@ RUN wget -O /etc/ssl/cert.pem https://curl.haxx.se/ca/cacert.pem
 # See https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md
 COPY install/composer.sh /tmp/composer.sh
 RUN chmod u+x /tmp/composer.sh
+
+# Ooh, non-standard PHP binary name
+RUN ln -s /usr/bin/php7 /usr/bin/php
 
 # Install Composer
 RUN cd /tmp && sh /tmp/composer.sh
