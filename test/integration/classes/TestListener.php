@@ -24,13 +24,18 @@ class TestListener extends BaseTestListener
 			(strpos($name, 'Proximate\\Test\\Integration\\') !== false);
 	}
 
+    /**
+     * Set up fake and real API web servers
+     */
 	public function setupServers()
 	{
-		$testRoot = $this->getTestRoot();
-		$server = new Server($testRoot);
-        $server->setServerUri('127.0.0.1:10000');
+		$testServer = new Server($this->getFakeServerRoot(), '127.0.0.1:10000');
+        $testServer->setServerPidPath('/tmp/proximate-api-server-test.pid');
+		$this->addServer($testServer);
 
-		$this->addServer($server);
+        $realServer = new Server($this->getRealServerRoot(), '127.0.0.1:10001');
+        $testServer->setServerPidPath('/tmp/proximate-api-server-real.pid');
+		$this->addServer($realServer);
 	}
 
     /**
@@ -45,8 +50,13 @@ class TestListener extends BaseTestListener
         sleep(1);
     }
 
-	protected function getTestRoot()
+	protected function getFakeServerRoot()
 	{
-		return realpath(__DIR__ . '/../../public');
+		return realpath(__DIR__ . '/../webroots/fake');
 	}
+
+    protected function getRealServerRoot()
+    {
+        return realpath(__DIR__ . '/../webroots/real');
+    }
 }

@@ -1,0 +1,19 @@
+a:3:{i:0;a:4:{s:3:"url";s:32:"http://127.0.0.1:23306/test.html";s:6:"method";s:4:"POST";s:3:"key";s:40:"18b4ddb061a95760ec6c58f4c4dc037f54614da2";s:8:"response";s:430:"HTTP/1.1 200 OK
+Host: 127.0.0.1:23306
+Date: Tue, 25 Apr 2017 16:15:14 +0100
+Connection: close
+X-Powered-By: PHP/7.1.4-1+deb.sury.org~trusty+1
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div>Hello</div>
+    </body>
+</html>
+";}i:1;a:0:{}i:2;N;}

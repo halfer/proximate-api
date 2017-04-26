@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Front controller for testing purposes
+ * A copy of the real front controller, except for changed queue/cache locations
  */
 
-use Proximate\Test\RoutingTestHarness;
+use Proximate\Routing\Routing;
 
-$root = realpath(__DIR__ . '/../..');
+$root = realpath(__DIR__ . '/../../../..');
 require_once $root . '/vendor/autoload.php';
 require_once $root . '/src/autoload.php';
 require_once $root . '/test/bootstrap.php';
@@ -15,9 +15,9 @@ class TestFrontController extends \Proximate\FrontController
 {
     public function getRouting(\Slim\App $app)
     {
-        return new RoutingTestHarness($app);
+        return new Routing($app);
     }
 }
 
-$frontController = new TestFrontController('.', '.');
+$frontController = new TestFrontController($root . '/queue', '/tmp/proximate-tests/cache-read');
 $frontController->execute();
