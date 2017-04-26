@@ -13,7 +13,7 @@ class ApiTest extends TestCase
     const BASE_URL = 'http://localhost:10001/index.php';
 
     /**
-     * Reset the queue to ensure tests do not become serial
+     * Reset the queue to ensure tests do not become serially dependent
      */
     public function setUp()
     {
@@ -26,10 +26,16 @@ class ApiTest extends TestCase
         parent::setUp();
     }
 
+    /**
+     * @driver simple
+     * @expectedException \Openbuildings\Spiderling\Exception_Curl
+     *
+     * @todo Spiderling throws away the response in a non-200 case, so need to use
+     * another test approach
+     */
     public function testNonExistentEndpoint()
     {
-        // @todo
-        $this->markTestIncomplete();
+        $json = $this->visit(self::BASE_URL . '/cockadoodledoo')->text();
     }
 
     /**
@@ -87,16 +93,15 @@ class ApiTest extends TestCase
     }
 
     /**
-     * @driver simple
+     * @todo Cannot delete using Spiderling, need to use another library
      */
     public function testDeleteCacheItem()
     {
-        // @todo
         $this->markTestIncomplete();
     }
 
     /**
-     * @driver simple
+     * @todo Cannot post using Spiderling, need to use another library
      */
     public function testQueueItem()
     {
