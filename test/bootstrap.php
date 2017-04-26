@@ -15,7 +15,7 @@ spl_autoload_register(
 			$ok = $loader->mainLoader($class, Autoloader::PREFIX_TEST, 'test/unit/classes/');
             if (!$ok)
             {
-                $loader->mainLoader($class, Autoloader::PREFIX_TEST, 'test/classes/');
+                $loader->mainLoader($class, Autoloader::PREFIX_TEST, 'test/integration/classes/');
             }
 		}
 	}

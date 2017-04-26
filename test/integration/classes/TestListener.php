@@ -47,6 +47,6 @@ class TestListener extends BaseTestListener
 
 	protected function getTestRoot()
 	{
-		return realpath(__DIR__ . '/../public');
+		return realpath(__DIR__ . '/../../public');
 	}
 }

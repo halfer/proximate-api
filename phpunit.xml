@@ -12,7 +12,7 @@
 	<listeners>
 		<listener
 			class="\Proximate\Test\TestListener"
-			file="test/classes/TestListener.php"
+			file="test/integration/classes/TestListener.php"
 		/>
 	</listeners>
 </phpunit>
