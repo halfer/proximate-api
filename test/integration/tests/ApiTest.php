@@ -151,6 +151,16 @@ class ApiTest extends TestCase
         );
     }
 
+    public function testQueueItemBadUrl()
+    {
+        $this->markTestIncomplete();
+    }
+
+    public function testQueueItemBadRegex()
+    {
+        $this->markTestIncomplete();
+    }
+
     /**
      * Creates a pristine copy of a test cache for every test
      */
