@@ -19,6 +19,8 @@ class ApiTest extends TestCase
 {
     const BASE_URL = 'http://localhost:10001/index.php';
     const EXAMPLE_CACHE_KEY = '18b4ddb061a95760ec6c58f4c4dc037f54614da2';
+    const PATH_QUEUE = '/tmp/proximate-tests/queue';
+    const PATH_CACHE = '/tmp/proximate-tests/cache-read';
 
     protected $curlClient;
 
@@ -126,8 +128,6 @@ class ApiTest extends TestCase
 
     /**
      * Create an entry in the crawler queue
-     *
-     * @todo Move queue and cache paths to consts
      */
     public function testQueueItem()
     {
@@ -147,7 +147,7 @@ class ApiTest extends TestCase
         );
         $this->assertEquals(
             1,
-            count(glob('/tmp/proximate-tests/queue/*'))
+            count(glob(self::PATH_QUEUE . '/*'))
         );
     }
 
@@ -167,7 +167,7 @@ class ApiTest extends TestCase
     protected function resetCache()
     {
         $cacheSource = realpath(__DIR__ . '/../cache');
-        $testCache = '/tmp/proximate-tests/cache-read';
+        $testCache = self::PATH_CACHE;
         system("mkdir --parents {$testCache}");
         system("rm -f {$testCache}/*");
         system("cp {$cacheSource}/* {$testCache}/");
@@ -175,7 +175,7 @@ class ApiTest extends TestCase
 
     protected function createEmptyQueue()
     {
-        $testQueue = '/tmp/proximate-tests/queue';
+        $testQueue = self::PATH_QUEUE;
         system("mkdir --parents {$testQueue}");
         system("rm -f {$testQueue}/*");
     }
