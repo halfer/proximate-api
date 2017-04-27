@@ -64,6 +64,10 @@ COPY conf/supervisord.conf /etc/supervisord.conf
 COPY src /var/www/src
 COPY public /var/www/public
 
+# Configure cache and queue folders
+RUN ln -s /var/proximate/queue/ /var/www/queue
+RUN ln -s /remote/cache /var/www/cache
+
 # The port is:
 #
 # 8080 - API
