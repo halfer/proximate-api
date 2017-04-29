@@ -1,8 +1,6 @@
 version: '2'
 services:
 
-  # This is the app, once this has bedded in I think we can remove the ext ports
-  # for the API and the proxy
   proximate-app:
     container_name: "app_instance"
     image: proximate-app
@@ -11,7 +9,7 @@ services:
     links:
     - proximate-api
 
-  # This defines an external port so it can be called by the outside world
+  # @todo Remove external ports once everything is happy
   proximate-api:
     container_name: "api_instance"
     image: proximate-api
@@ -22,11 +20,11 @@ services:
     volumes:
     - proximate-volume:/remote/cache
 
-  # This does not need external ports defined, since it is for internal use only
+  # @todo Remove external ports once everything is happy
   proximate-proxy:
     image: proximate-proxy
     ports:
-    - "8082:8082"
+    - "8081:8081"
     container_name: "proxy_instance"
     volumes:
     - proximate-volume:/remote/cache
