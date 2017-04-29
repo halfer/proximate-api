@@ -30,6 +30,8 @@ services:
     container_name: "proxy_instance"
     volumes:
     - proximate-volume:/remote/cache
+    environment:
+    - PROXY_LOG_PATH:/remote/proxy.log
 
 volumes:
   proximate-volume:
