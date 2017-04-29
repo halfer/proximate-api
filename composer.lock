@@ -662,16 +662,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "1.0.39",
+            "version": "1.0.40",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "2474325ee924134bb05848663b12531f6f2e9fbe"
+                "reference": "3828f0b24e2c1918bb362d57a53205d6dc8fde61"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/2474325ee924134bb05848663b12531f6f2e9fbe",
-                "reference": "2474325ee924134bb05848663b12531f6f2e9fbe",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/3828f0b24e2c1918bb362d57a53205d6dc8fde61",
+                "reference": "3828f0b24e2c1918bb362d57a53205d6dc8fde61",
                 "shasum": ""
             },
             "require": {
@@ -741,7 +741,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2017-04-25 15:24:43"
+            "time": "2017-04-28 10:15:08"
         },
         {
             "name": "monolog/monolog",
@@ -964,12 +964,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/halfer/proximate-core.git",
-                "reference": "1a538ef4891512e43e065b44b90a386d1a8956fa"
+                "reference": "7ddd20975b4accd08763ec2d53e7ec7a17c74c78"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/halfer/proximate-core/zipball/1a538ef4891512e43e065b44b90a386d1a8956fa",
-                "reference": "1a538ef4891512e43e065b44b90a386d1a8956fa",
+                "url": "https://api.github.com/repos/halfer/proximate-core/zipball/7ddd20975b4accd08763ec2d53e7ec7a17c74c78",
+                "reference": "7ddd20975b4accd08763ec2d53e7ec7a17c74c78",
                 "shasum": ""
             },
             "type": "library",
@@ -983,7 +983,7 @@
                 "source": "https://github.com/halfer/proximate-core/tree/master",
                 "issues": "https://github.com/halfer/proximate-core/issues"
             },
-            "time": "2017-04-20 11:41:00"
+            "time": "2017-04-26 15:09:19"
         },
         {
             "name": "proximate/crawler",
@@ -1029,12 +1029,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/halfer/proximate-requester.git",
-                "reference": "fb8cb1cf3fa51cccd0353f423075881ec0ec75ae"
+                "reference": "c1cf75da1dba74ed124bd79ad2a2786780815bdd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/halfer/proximate-requester/zipball/fb8cb1cf3fa51cccd0353f423075881ec0ec75ae",
-                "reference": "fb8cb1cf3fa51cccd0353f423075881ec0ec75ae",
+                "url": "https://api.github.com/repos/halfer/proximate-requester/zipball/c1cf75da1dba74ed124bd79ad2a2786780815bdd",
+                "reference": "c1cf75da1dba74ed124bd79ad2a2786780815bdd",
                 "shasum": ""
             },
             "require": {
@@ -1064,7 +1064,7 @@
                 "source": "https://github.com/halfer/proximate-requester/tree/master",
                 "issues": "https://github.com/halfer/proximate-requester/issues"
             },
-            "time": "2017-04-25 15:11:29"
+            "time": "2017-04-29 11:14:01"
         },
         {
             "name": "proximate/storage",
@@ -1794,12 +1794,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mockery/mockery.git",
-                "reference": "e3a85ae983b481d9cc680ca8e1a03879772353f8"
+                "reference": "8e0ea898cf987e22ebfdbc7c13c18593b53c0334"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mockery/mockery/zipball/e3a85ae983b481d9cc680ca8e1a03879772353f8",
-                "reference": "e3a85ae983b481d9cc680ca8e1a03879772353f8",
+                "url": "https://api.github.com/repos/mockery/mockery/zipball/8e0ea898cf987e22ebfdbc7c13c18593b53c0334",
+                "reference": "8e0ea898cf987e22ebfdbc7c13c18593b53c0334",
                 "shasum": ""
             },
             "require": {
@@ -1851,7 +1851,7 @@
                 "test double",
                 "testing"
             ],
-            "time": "2017-04-15 07:20:44"
+            "time": "2017-04-27 05:35:56"
         },
         {
             "name": "openbuildings/environment-backup",
