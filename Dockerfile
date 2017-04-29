@@ -77,4 +77,4 @@ EXPOSE 8080
 COPY container-start.sh /tmp/
 
 # Use Supervisor as the entry point
-ENTRYPOINT ["sh", "/tmp/container-start.sh"]
+ENTRYPOINT ["supervisord", "--nodaemon", "--configuration", "/etc/supervisord.conf"]
