@@ -1,12 +1,13 @@
 <?php
 
 use Proximate\Routing\Routing;
+use \Proximate\FrontController;
 
 $root = realpath(__DIR__ . '/..');
 require_once $root . '/vendor/autoload.php';
 require_once $root . '/src/autoload.php';
 
-class TestFrontController extends \Proximate\FrontController
+class RealFrontController extends FrontController
 {
     public function getRouting(\Slim\App $app)
     {
@@ -22,7 +23,7 @@ class TestFrontController extends \Proximate\FrontController
  * and "data" is a subfolder. If the base of the Flysystem contains symlinks an error
  * "Links are not supported" may be encountered - the two-level structure avoids that.
  */
-$frontController = new TestFrontController(
+$frontController = new RealFrontController(
     $root . '/queue',
     $root . '/cache/data'
 );
