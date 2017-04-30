@@ -73,8 +73,8 @@ RUN ln -s /remote/cache /var/www/cache
 # 8080 - API
 EXPOSE 8080
 
-# We need a shell command to interpret the env var
-COPY bin/web-server-start.sh /tmp/
+# Copy container start (root) and web start (non-root) scripts
+COPY bin/ /tmp/
 
 # Use Supervisor as the entry point
-ENTRYPOINT ["supervisord", "--nodaemon", "--configuration", "/etc/supervisord.conf"]
+ENTRYPOINT ["/tmp/bin/container-start.sh"]
