@@ -74,7 +74,7 @@ RUN ln -s /remote/cache /var/www/cache
 EXPOSE 8080
 
 # We need a shell command to interpret the env var
-COPY container-start.sh /tmp/
+COPY bin/web-server-start.sh /tmp/
 
 # Use Supervisor as the entry point
 ENTRYPOINT ["supervisord", "--nodaemon", "--configuration", "/etc/supervisord.conf"]
