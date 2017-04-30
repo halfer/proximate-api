@@ -74,7 +74,8 @@ RUN ln -s /remote/cache /var/www/cache
 EXPOSE 8080
 
 # Copy container start (root) and web start (non-root) scripts
-COPY bin/ /tmp/
+COPY bin/container-start.sh /tmp/bin/
+COPY bin/web-server-start.sh /tmp/bin/
 
 # Use Supervisor as the entry point
-ENTRYPOINT ["/tmp/bin/container-start.sh"]
+ENTRYPOINT ["sh", "/tmp/bin/container-start.sh"]

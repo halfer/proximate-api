@@ -29,7 +29,7 @@ services:
     volumes:
     - proximate-volume:/remote/cache
     environment:
-    - PROXY_LOG_PATH:/remote/proxy.log
+    - PROXY_LOG_PATH=/remote/cache/proxy.log
 
 volumes:
   proximate-volume:
