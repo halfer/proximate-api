@@ -161,6 +161,11 @@ class ApiTest extends TestCase
         $this->markTestIncomplete();
     }
 
+    public function testProxyLog()
+    {
+        $this->markTestIncomplete();
+    }
+
     /**
      * Creates a pristine copy of a test cache for every test
      */
