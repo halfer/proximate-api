@@ -83,6 +83,11 @@ class Routing
             return $controller->execute();
         });
 
+        $app->get('/log', function ($request, $response) use ($routing) {
+            $controller = $routing->getProxyLogController($request, $response);
+            return $controller->execute();
+        });
+
         // Set up 404 JSON response
         $container = $app->getContainer();
         $container['notFoundHandler'] = function() {
@@ -133,5 +138,10 @@ class Routing
     protected function getItemDeleteController($request, $response)
     {
         return new \Proximate\Controller\ItemDelete($request, $response);
+    }
+
+    protected function getProxyLogController($request, $response)
+    {
+        return new \Proximate\Controller\ProxyLog($request, $response);
     }
 }

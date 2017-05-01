@@ -44,6 +44,11 @@ class RoutingTestHarness extends Routing
     {
         return (new FakeController($request, $response))->setAction(__FUNCTION__);
     }
+
+    protected function getProxyLogController($request, $response)
+    {
+        return (new FakeController($request, $response))->setAction(__FUNCTION__);
+    }
 }
 
 class FakeController extends BaseController

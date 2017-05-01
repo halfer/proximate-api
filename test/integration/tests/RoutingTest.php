@@ -121,6 +121,18 @@ class RoutingTest extends TestCase
         );
     }
 
+    /**
+     * @driver simple
+     */
+    public function testProxyLogRouting()
+    {
+        $page = $this->pageVisit(self::BASE_URL . '/log');
+        $this->assertEquals(
+            ['action' => 'getProxyLogController', ],
+            $this->getJson($page)
+        );
+    }
+
     protected function getJson(Page $page)
     {
         $json = $page->text();
