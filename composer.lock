@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "85f8a2250f37d65e1e17c55b262c7de4",
-    "content-hash": "8dd83a2cba857c9632cbe20277309f84",
+    "hash": "de24f695a125bb135881aae3e74e1ddc",
+    "content-hash": "83bfd7364ec04dc8035dbd3ebe567464",
     "packages": [
         {
             "name": "cache/adapter-common",
@@ -560,6 +560,46 @@
                 "url"
             ],
             "time": "2017-03-20 17:10:46"
+        },
+        {
+            "name": "icyapril/tail",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/IcyApril/Tail.git",
+                "reference": "4259f595d8255c6d52f478f99aa994a5f517f016"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/IcyApril/Tail/zipball/4259f595d8255c6d52f478f99aa994a5f517f016",
+                "reference": "4259f595d8255c6d52f478f99aa994a5f517f016",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">7.0.0"
+            },
+            "require-dev": {
+                "codeclimate/php-test-reporter": "dev-master",
+                "phpunit/phpunit": "5.5.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "IcyApril\\Tail\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Junade Ali",
+                    "email": "mjsa@junade.com"
+                }
+            ],
+            "description": "PHP library seeking to mimic the Unix tail program.",
+            "time": "2016-09-19 17:04:09"
         },
         {
             "name": "illuminate/contracts",

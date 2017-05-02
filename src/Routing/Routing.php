@@ -85,6 +85,7 @@ class Routing
 
         $app->get('/log', function ($request, $response) use ($routing) {
             $controller = $routing->getProxyLogController($request, $response);
+            $controller->setLogPath('/remote/cache/proxy.log');
             return $controller->execute();
         });
 

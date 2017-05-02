@@ -128,7 +128,10 @@ class RoutingTest extends TestCase
     {
         $page = $this->pageVisit(self::BASE_URL . '/log');
         $this->assertEquals(
-            ['action' => 'getProxyLogController', ],
+            [
+                'action' => 'getProxyLogController',
+                'log_path' => '/remote/cache/proxy.log',
+            ],
             $this->getJson($page)
         );
     }

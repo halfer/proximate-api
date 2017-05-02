@@ -99,4 +99,9 @@ class FakeController extends BaseController
     {
         $this->data['cache_adapter'] = get_class($cacheAdapter);
     }
+
+    public function setLogPath($logPath)
+    {
+        $this->data['log_path'] = $logPath;
+    }
 }
