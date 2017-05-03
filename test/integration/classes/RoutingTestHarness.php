@@ -49,6 +49,11 @@ class RoutingTestHarness extends Routing
     {
         return (new FakeController($request, $response))->setAction(__FUNCTION__);
     }
+
+    protected function getQueueListController($request, $response)
+    {
+        return (new FakeController($request, $response))->setAction(__FUNCTION__);
+    }
 }
 
 class FakeController extends BaseController
@@ -103,5 +108,10 @@ class FakeController extends BaseController
     public function setLogPath($logPath)
     {
         $this->data['log_path'] = $logPath;
+    }
+
+    public function setStatus($status)
+    {
+        $this->data['status'] = $status;
     }
 }

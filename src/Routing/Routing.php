@@ -89,6 +89,12 @@ class Routing
             return $controller->execute();
         });
 
+        $app->get('/queue/{status}', function ($request, $response, $args) use ($routing) {
+            $controller = $routing->getQueueListController($request, $response);
+            $controller->setStatus($args['status']);
+            return $controller->execute();
+        });
+
         // Set up 404 JSON response
         $container = $app->getContainer();
         $container['notFoundHandler'] = function() {
@@ -144,5 +150,10 @@ class Routing
     protected function getProxyLogController($request, $response)
     {
         return new \Proximate\Controller\ProxyLog($request, $response);
+    }
+
+    protected function getQueueListController($request, $response)
+    {
+        return new \Proximate\Controller\QueueList($request, $response);
     }
 }

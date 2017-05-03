@@ -136,6 +136,21 @@ class RoutingTest extends TestCase
         );
     }
 
+    /**
+     * @driver simple
+     */
+    public function testQueueListRouting()
+    {
+        $page = $this->pageVisit(self::BASE_URL . '/queue/ready');
+        $this->assertEquals(
+            [
+                'action' => 'getQueueListController',
+                'status' => 'ready',
+            ],
+            $this->getJson($page)
+        );
+    }
+
     protected function getJson(Page $page)
     {
         $json = $page->text();
