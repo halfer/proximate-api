@@ -1031,12 +1031,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/halfer/proximate-crawler.git",
-                "reference": "723c75cf988fbb561208041042f2da3a66facefe"
+                "reference": "bb871a9b10ffbec7fb636db92231b08b9b8f9a8b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/halfer/proximate-crawler/zipball/723c75cf988fbb561208041042f2da3a66facefe",
-                "reference": "723c75cf988fbb561208041042f2da3a66facefe",
+                "url": "https://api.github.com/repos/halfer/proximate-crawler/zipball/bb871a9b10ffbec7fb636db92231b08b9b8f9a8b",
+                "reference": "bb871a9b10ffbec7fb636db92231b08b9b8f9a8b",
                 "shasum": ""
             },
             "require": {
@@ -1061,7 +1061,7 @@
                 "source": "https://github.com/halfer/proximate-crawler/tree/master",
                 "issues": "https://github.com/halfer/proximate-crawler/issues"
             },
-            "time": "2017-05-03 16:23:04"
+            "time": "2017-05-03 18:59:57"
         },
         {
             "name": "proximate/requester",
