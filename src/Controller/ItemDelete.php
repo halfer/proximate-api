@@ -5,6 +5,7 @@
  */
 
 namespace Proximate\Controller;
+
 use Proximate\Controller\Base;
 
 class ItemDelete extends Base

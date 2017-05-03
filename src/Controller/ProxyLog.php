@@ -5,6 +5,7 @@
  */
 
 namespace Proximate\Controller;
+
 use Proximate\Controller\Base;
 use Proximate\Exception\Init as InitException;
 use IcyApril\Tail\Tail;

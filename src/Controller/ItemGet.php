@@ -5,6 +5,7 @@
  */
 
 namespace Proximate\Controller;
+
 use Proximate\Controller\Base;
 use Proximate\Exception\App as AppException;
 use Cache\Adapter\Common\Exception\InvalidArgumentException as CacheArgumentException;
