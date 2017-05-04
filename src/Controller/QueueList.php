@@ -22,12 +22,14 @@ class QueueList extends Base
      */
     public function execute()
     {
+        $status = $this->getStatus();
         try
         {
             $result = [
                 'result' => [
                     'ok' => true,
-                    'queue' => $this->fetchQueueList(),
+                    'status' => $status,
+                    'queue' => $this->fetchQueueList($status),
                 ]
             ];
             $statusCode = 200;
@@ -59,13 +61,15 @@ class QueueList extends Base
     /**
      * @return array
      */
-    protected function fetchQueueList()
+    protected function fetchQueueList($status)
     {
-        $status = $this->getStatus();
+        // @todo Do a glob() using status in the queue folder
 
         return [
-            'name' => 1,
-            'status' => 'rah',
+            [
+                'url' => 1,
+                'path_regex' => 'rah',
+            ],
         ];
     }
 }
