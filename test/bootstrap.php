@@ -26,3 +26,8 @@ if (!extension_loaded('curl'))
 {
     die("Curl module required to run tests\n");
 }
+
+// Turn on any errors/warnings that could bork JSON output. This emulates the settings
+// on Travis, so we don't find tests passing locally and failing remotely.
+error_reporting(-1);
+ini_set('display_errors', true);

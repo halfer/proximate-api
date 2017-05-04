@@ -12,6 +12,7 @@ namespace Proximate\Test;
 use Proximate\Routing\Routing;
 use Proximate\Controller\Base as BaseController;
 use Proximate\Storage\BaseAdapter;
+use Proximate\Service\File as FileService;
 
 class RoutingTestHarness extends Routing
 {
@@ -125,7 +126,7 @@ class FakeController extends BaseController
         $this->data['queue_path'] = $queuePath;
     }
 
-    public function setFileService($fileService)
+    public function setFileService(FileService $fileService)
     {
         $this->data['file_service'] = get_class($fileService);
     }
