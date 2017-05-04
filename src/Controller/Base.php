@@ -159,6 +159,12 @@ abstract class Base
         $this->fileService = $fileService;
     }
 
+    /**
+     * Gets the file service passed to the controller
+     *
+     * @return FileService
+     * @throws AppException
+     */
     public function getFileService()
     {
         if (!$this->fileService)

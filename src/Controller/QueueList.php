@@ -12,6 +12,7 @@ use Proximate\Exception\App as AppException;
 class QueueList extends Base
 {
     protected $status;
+    protected $queuePath;
 
     /**
      * Main entry point
@@ -58,18 +59,57 @@ class QueueList extends Base
         return $this->status;
     }
 
+    public function setQueuePath($queuePath)
+    {
+        $this->queuePath = $queuePath;
+    }
+
+    protected function getQueuePath()
+    {
+        if (!$this->queuePath)
+        {
+            return new AppException("Queue path not set");
+        }
+
+        return $this->queuePath;
+    }
+
     /**
      * @return array
      */
     protected function fetchQueueList($status)
     {
-        // @todo Do a glob() using status in the queue folder
+        // Get the required queue data matching the specified status
+        $paths = $this->readQueueItemPaths($status);
+        $list = $this->readQueueItems($paths);
 
-        return [
-            [
-                'url' => 1,
-                'path_regex' => 'rah',
-            ],
-        ];
+        return $list;
+    }
+
+    /**
+     * Reads all queue items of the specified status
+     *
+     * Note! The status must not come from user input, since it is not filtered here.
+     *
+     * @param string $status
+     * @return array
+     */
+    protected function readQueueItemPaths($status)
+    {
+        $files = $this->getFileService()->glob($this->getQueuePath() . '/*.' . $status);
+
+        return $files;
+    }
+
+    protected function readQueueItems(array $queueItemPaths)
+    {
+        $list = [];
+        foreach ($queueItemPaths as $queueItemPath)
+        {
+            $json = file_get_contents($queueItemPath);
+            $list[] = json_decode($json, true);
+        }
+
+        return $list;
     }
 }

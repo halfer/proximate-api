@@ -2,6 +2,12 @@
 
 /**
  * Class to set up routing rules
+ *
+ * @todo Add setters or a DIC for hardwired items in this file:
+ *
+ * - proxy log
+ * - file service
+ * - crawler queue path
  */
 
 namespace Proximate\Routing;
@@ -9,6 +15,7 @@ namespace Proximate\Routing;
 use Proximate\Storage\BaseAdapter;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use Proximate\Service\File as FileService;
 
 class Routing
 {
@@ -91,6 +98,8 @@ class Routing
 
         $app->get('/queue/{status}', function ($request, $response, $args) use ($routing) {
             $controller = $routing->getQueueListController($request, $response);
+            $controller->setQueuePath('/var/proximate/queue');
+            $controller->setFileService(new FileService());
             $controller->setStatus($args['status']);
             return $controller->execute();
         });
