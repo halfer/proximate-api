@@ -160,6 +160,11 @@ class File
         return $ok;
     }
 
+    public function basename($path)
+    {
+        return basename($path);
+    }
+
     protected function writeLog($message, $ok = null)
     {
         // Only write if we have a log path

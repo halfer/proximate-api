@@ -96,18 +96,28 @@ class QueueList extends Base
      */
     protected function readQueueItemPaths($status)
     {
-        $files = $this->getFileService()->glob($this->getQueuePath() . '/*.' . $status);
+        $searchPath = $this->getQueuePath() . '/*.' . $status;
+        $files = $this->getFileService()->glob($searchPath);
 
         return $files;
     }
 
+    /**
+     * For a list of JSON filenames, reads them all and concats them into a large array
+     *
+     * @todo Add the basename as an 'id' entry
+     *
+     * @param array $queueItemPaths
+     * @return array
+     */
     protected function readQueueItems(array $queueItemPaths)
     {
         $list = [];
         foreach ($queueItemPaths as $queueItemPath)
         {
             $json = file_get_contents($queueItemPath);
-            $list[] = json_decode($json, true);
+            $decoded = json_decode($json, true);
+            $list[] = $decoded;
         }
 
         return $list;

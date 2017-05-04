@@ -114,4 +114,14 @@ class FakeController extends BaseController
     {
         $this->data['status'] = $status;
     }
+
+    public function setQueuePath($queuePath)
+    {
+        $this->data['queue_path'] = $queuePath;
+    }
+
+    public function setFileService($fileService)
+    {
+        $this->data['file_service'] = get_class($fileService);
+    }
 }

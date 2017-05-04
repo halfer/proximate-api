@@ -84,7 +84,7 @@ class RoutingTest extends TestCase
     {
         $page = $this->pageVisit(self::BASE_URL . '/cache', 'POST');
         $this->assertEquals(
-            ['queue' => 'Proximate\Queue\Write', 'action' => 'getCacheSaveController', ],
+            ['queue' => 'Proximate\\Queue\\Write', 'action' => 'getCacheSaveController', ],
             $this->getJson($page)
         );
     }
@@ -146,6 +146,8 @@ class RoutingTest extends TestCase
             [
                 'action' => 'getQueueListController',
                 'status' => 'ready',
+                'queue_path' => '/var/proximate/queue',
+                'file_service' => 'Proximate\\Service\\File'
             ],
             $this->getJson($page)
         );
