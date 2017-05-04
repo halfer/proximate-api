@@ -23,6 +23,9 @@ The following endpoints are currently implemented:
 * `DELETE /cache/<key>` - removes a specific item from the cache
 * `POST /cache` - crawl a site based on the JSON document sent in the request body (supported values
 are `url` for the starting URL, and `path_regex` for a regex to match)
+* `GET /log` - returns a list of the last 100 proxy log lines
+* `GET /queue/<status>` - returns a list of crawler queue items (supported status values are
+'doing' and 'error')
 
 Configuration
 ---
