@@ -117,6 +117,7 @@ class QueueList extends Base
         {
             $json = file_get_contents($queueItemPath);
             $decoded = json_decode($json, true);
+            $decoded['key'] = $this->getFileService()->basename($queueItemPath);
             $list[] = $decoded;
         }
 

@@ -56,6 +56,11 @@ class RoutingTestHarness extends Routing
     }
 }
 
+/**
+ * This could be swapped with a class that does not extend from BaseController and instead
+ * calls it indirectly. That will allow all the setters to be swapped with magic methods,
+ * which is less code to maintain.
+ */
 class FakeController extends BaseController
 {
     protected $data = [];
