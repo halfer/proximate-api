@@ -23,6 +23,10 @@ services:
     # manually in the container, see https://wiki.alpinelinux.org/wiki/Setting_the_timezone
     - /etc/localtime:/etc/localtime:ro
     - /etc/timezone:/etc/timezone:ro
+    # Should perhaps pass this as a var to docker-compose so as not to hardwire it,
+    # but it is fine for now
+    environment:
+    - PHP_TIMEZONE=Europe/London
 
   # @todo Remove external ports once everything is happy
   proximate-proxy:

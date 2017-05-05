@@ -15,6 +15,12 @@ class RealFrontController extends FrontController
     }
 }
 
+// Configure TZ if env var supplied
+if ($tz = getenv('PHP_TIMEZONE'))
+{
+    date_default_timezone_set($tz);
+}
+
 /*
  * Supply queue and cache folder locations
  *
