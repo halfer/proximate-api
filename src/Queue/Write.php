@@ -111,6 +111,17 @@ class Write extends Base
         return [
             'url' => $this->getUrl(),
             'path_regex' => $this->pathRegex,
+            'timestamp_queued' => $this->getTimestamp(),
         ];
+    }
+
+    /**
+     * Gets date/time in human-readable format
+     *
+     * @return string
+     */
+    protected function getTimestamp()
+    {
+        return date('r');
     }
 }

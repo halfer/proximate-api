@@ -15,6 +15,7 @@ abstract class QueueTestBase extends \PHPUnit_Framework_TestCase
     const DUMMY_DIR = '/any/dir';
     const DUMMY_URL = 'http://example.com/';
     const DUMMY_HASH = 'a6bf1757fff057f266b697df9cf176fd';
+    const DUMMY_TIMESTAMP = 'Fri, 05 May 2017 09:07:19 +0100';
 
     protected $fileService;
 
@@ -116,11 +117,13 @@ abstract class QueueTestBase extends \PHPUnit_Framework_TestCase
     {
 $json = '{
     "url": __URL__,
-    "path_regex": null
+    "path_regex": null,
+    "timestamp_queued": "__TIMESTAMP__"
 }';
-        $out = str_replace('__URL__', json_encode($url), $json);
+        $out1 = str_replace('__URL__', json_encode($url), $json);
+        $out2 = str_replace('__TIMESTAMP__', self::DUMMY_TIMESTAMP, $out1);
 
-        return $out;
+        return $out2;
     }
 
     protected function getQueueEntryPath($status = Queue::STATUS_READY)

@@ -182,4 +182,12 @@ class QueueWriteTestHarness extends Queue
     {
         return parent::getFileService();
     }
+
+    /**
+     * Overrides a method that produces untestable results
+     */
+    public function getTimestamp()
+    {
+        return QueueTestBase::DUMMY_TIMESTAMP;
+    }
 }
