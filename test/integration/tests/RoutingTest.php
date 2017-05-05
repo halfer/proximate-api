@@ -155,9 +155,7 @@ class RoutingTest extends TestCase
 
     protected function getJson(Page $page)
     {
-        echo "Getting JSON:\n";
         $json = $page->text();
-        echo $json . "\n";
         $data = json_decode($json, true);
 
         return $data;
