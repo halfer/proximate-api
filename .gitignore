@@ -6,3 +6,7 @@ vendor/
 
 # Ignore IDE
 nbproject/
+
+# Symlinks
+queue
+cache
