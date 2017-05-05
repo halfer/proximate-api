@@ -19,6 +19,10 @@ services:
     - proximate-proxy
     volumes:
     - proximate-volume:/remote/cache
+    # Use time and TZ from the host, could alternatively use env vars and set it
+    # manually in the container, see https://wiki.alpinelinux.org/wiki/Setting_the_timezone
+    - /etc/localtime:/etc/localtime:ro
+    - /etc/timezone:/etc/timezone:ro
 
   # @todo Remove external ports once everything is happy
   proximate-proxy:
