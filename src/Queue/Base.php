@@ -51,9 +51,9 @@ class Base
         $this->fileService = $fileService;
     }
 
-    protected function getQueueEntryName($url, $status = self::STATUS_READY)
+    protected function getQueueEntryName($url, $pathRegex, $status = self::STATUS_READY)
     {
-        return $this->calculateUrlHash($url) . '.' . $status;
+        return $this->calculateUrlHash($url . $pathRegex) . '.' . $status;
     }
 
     protected function calculateUrlHash($url)

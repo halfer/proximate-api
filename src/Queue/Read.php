@@ -85,7 +85,8 @@ class Read extends Base
     protected function processQueueItem(array $itemData)
     {
         $url = $itemData['url'];
-        $this->changeItemStatus($url, self::STATUS_READY, self::STATUS_DOING);
+        $pathRegex = $itemData['path_regex'];
+        $this->changeItemStatus($url, $pathRegex, self::STATUS_READY, self::STATUS_DOING);
 
         try
         {
@@ -94,11 +95,12 @@ class Read extends Base
         }
         catch (\Exception $e)
         {
-            $this->setItemErrorMessage($url, self::STATUS_DOING, $e->getMessage());
+            $jsonPath = $this->getQueueEntryPathForRequest($url, $pathRegex, self::STATUS_DOING);
+            $this->setItemErrorMessage($jsonPath, $e->getMessage());
             $status = self::STATUS_ERROR;
         }
 
-        $this->changeItemStatus($url, self::STATUS_DOING, $status);
+        $this->changeItemStatus($url, $pathRegex, self::STATUS_DOING, $status);
     }
 
     /**
@@ -136,22 +138,21 @@ class Read extends Base
         );
     }
 
-    protected function changeItemStatus($url, $oldStatus, $newStatus)
+    protected function changeItemStatus($url, $pathRegex, $oldStatus, $newStatus)
     {
         $this->getFileService()->rename(
-            $this->getQueueEntryPathForUrl($url, $oldStatus),
-            $this->getQueueEntryPathForUrl($url, $newStatus)
+            $this->getQueueEntryPathForRequest($url, $pathRegex, $oldStatus),
+            $this->getQueueEntryPathForRequest($url, $pathRegex, $newStatus)
         );
     }
 
-    protected function setItemErrorMessage($url, $status, $message)
+    protected function setItemErrorMessage($itemPath, $message)
     {
-        $file = $this->getQueueEntryPathForUrl($url, $status);
-        $jsonIn = $this->getFileService()->fileGetContents($file);
+        $jsonIn = $this->getFileService()->fileGetContents($itemPath);
         $data = json_decode($jsonIn, true);
         $data['error'] = $message;
         $jsonOut = json_encode($data);
-        $this->getFileService()->filePutContents($file, $jsonOut);
+        $this->getFileService()->filePutContents($itemPath, $jsonOut);
     }
 
     protected function sleep()
@@ -181,11 +182,12 @@ class Read extends Base
      * Gets an entry for the given URL and status
      *
      * @param string $url
+     * @param string $pathRegex
      * @param string $status
      * @return string
      */
-    protected function getQueueEntryPathForUrl($url, $status)
+    protected function getQueueEntryPathForRequest($url, $pathRegex, $status)
     {
-        return $this->getQueueDir() . '/' . $this->getQueueEntryName($url, $status);
+        return $this->getQueueDir() . '/' . $this->getQueueEntryName($url, $pathRegex, $status);
     }
 }
