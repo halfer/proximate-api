@@ -37,3 +37,17 @@ The project needs access to two directories, which are set up at the root:
 the proxy
 
 Each of these directories can be a symlink to the real path if required.
+
+Usage
+---
+
+The API runs in Docker, and can be run in a stand-alone mode. The start script can be run thus:
+
+    ./host-start.sh
+
+You may need to alter that to get it to work for your use case (location of cache folder,
+host/port on which to expose the API, choice of timezone etc). This will require the proxy to be
+run in a separate container.
+
+Alternatively see the [application repo](https://github.com/halfer/proximate-api) for a
+Docker Compose solution that will run everything that is needed, including a web frontend.
