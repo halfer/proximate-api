@@ -12,7 +12,8 @@ FROM alpine:3.5
 RUN apk update
 
 # Install PHP
-RUN apk --update add php7
+# "php7-dom" is required by the Symfony crawler
+RUN apk --update add php7 php7-dom
 
 # Taken from the "alpine-supervisord-docker" repo
 ENV PYTHON_VERSION=2.7.13-r0
