@@ -116,6 +116,8 @@ class QueueWriteTest extends QueueTestBase
     }
 
     /**
+     * Checks that if a queue path exists already, it will fail to create
+     *
      * @expectedException Proximate\Exception\AlreadyQueued
      */
     public function testExistingQueueItemFails()
@@ -159,6 +161,7 @@ class QueueWriteTest extends QueueTestBase
         $this->
             getFileServiceMockWithBasicExpectations()->
             shouldReceive('fileExists')->
+            with(self::DUMMY_DIR . '/a6bf1757fff057f266b697df9cf176fd.ready')->
             once()->
             andReturn($fileExists);
     }

@@ -167,6 +167,23 @@ class QueueReadTest extends QueueTestBase
             andReturn($this->getCacheEntry(self::DUMMY_URL));
     }
 
+    /**
+     * Need to ensure that both vars are used to create the queue id
+     */
+    public function testUrlAndRegexAreBothHashed()
+    {
+        $queue = new QueueReadTestHarness();
+        $paths = array();
+        foreach (['http://one', 'http://two', ] as $url)
+        {
+            foreach (['#.+#', '/.*/', ] as $pathRegex)
+            {
+                $paths[] = $queue->getQueueEntryPathForRequest($url, $pathRegex, Queue::STATUS_READY);
+            }
+        }
+        $this->assertEquals(4, count(array_unique($paths)));
+    }
+
     protected function setGlobExpectation(array $queueItems)
     {
         $globPattern = self::DUMMY_DIR . '/*.' . Queue::STATUS_READY;
@@ -272,5 +289,10 @@ class QueueReadTestHarness extends Queue
     public function getSiteFetcherService()
     {
         return parent::getSiteFetcherService();
+    }
+
+    public function getQueueEntryPathForRequest($url, $pathRegex, $status)
+    {
+        return parent::getQueueEntryPathForRequest($url, $pathRegex, $status);
     }
 }
