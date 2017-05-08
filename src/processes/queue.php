@@ -15,17 +15,16 @@ $root = realpath(__DIR__ . '/../..');
 require_once $root . '/vendor/autoload.php';
 require_once $root . '/src/autoload.php';
 
-$commands = ['a' => 'address', 'p' => 'path', ];
-$actions = getopt('a:p:', ['address:', 'path:']);
+$actions = getopt('p:q:', ['proxy-address:', 'queue-path:']);
 
-$queuePath = isset($actions['path']) ? $actions['path'] : (isset($actions['p']) ? $actions['p'] : null);
-$proxyAddress = isset($actions['address']) ? $actions['address'] : (isset($actions['a']) ? $actions['a'] : null);
+$queuePath = isset($actions['queue-path']) ? $actions['queue-path'] : (isset($actions['q']) ? $actions['q'] : null);
+$proxyAddress = isset($actions['proxy-address']) ? $actions['proxy-address'] : (isset($actions['p']) ? $actions['p'] : null);
 
 if (!$queuePath || !$proxyAddress)
 {
     $command = __FILE__;
     die(
-        sprintf("Syntax: %s --address <api> --path <queue-path>\n", $command)
+        sprintf("Syntax: %s --proxy-address <proxy:port> --queue-path <queue-path>\n", $command)
     );
 }
 
