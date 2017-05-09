@@ -2,9 +2,6 @@
 #
 # PHP in the container takes it merely to 20M or so, but Supervisor requires
 # Python, and this bumps it up to 66M.
-#
-# A build server would negate the need for Composer and its dependencies, but the approach
-# of building in the container is fine for now.
 
 FROM alpine:3.5
 
@@ -14,15 +11,6 @@ RUN apk update
 # Install PHP
 # "php7-dom" is required by the Symfony crawler
 RUN apk --update add php7 php7-dom
-
-# Taken from the "alpine-supervisord-docker" repo
-ENV PYTHON_VERSION=2.7.13-r0
-ENV PY_PIP_VERSION=9.0.0-r1
-ENV SUPERVISOR_VERSION=3.3.0
-
-# Install Supervisor components from the same source
-RUN apk add python=$PYTHON_VERSION py-pip=$PY_PIP_VERSION
-RUN pip install supervisor==$SUPERVISOR_VERSION
 
 # Composer needs all of 'phpX-openssl phpX-json phpX-phar phpX-mbstring' and 'zlib' is
 # recommended
@@ -55,18 +43,15 @@ RUN cd /var/www && php /tmp/composer.phar install --no-dev
 RUN adduser -s /bin/false -D -H proximate
 
 # Create a folder to use as a queue
-RUN mkdir -p /var/proximate/queue && \
-	chown proximate /var/proximate/queue
-
-# Configure Supervisor
-COPY conf/supervisord.conf /etc/supervisord.conf
+RUN mkdir -p /remote/queue && \
+	chown proximate /remote/queue
 
 # Install main body of source code after other installations, since this will change more often
 COPY src /var/www/src
 COPY public /var/www/public
 
 # Configure cache and queue folders
-RUN ln -s /var/proximate/queue/ /var/www/queue
+RUN ln -s /remote/queue/ /var/www/queue
 RUN ln -s /remote/cache /var/www/cache
 
 # The port is:
@@ -74,9 +59,8 @@ RUN ln -s /remote/cache /var/www/cache
 # 8080 - API
 EXPOSE 8080
 
-# Copy container start (root) and web start (non-root) scripts
-COPY bin/container-start.sh /tmp/bin/
+# Copy start script
 COPY bin/web-server-start.sh /tmp/bin/
 
 # Use Supervisor as the entry point
-ENTRYPOINT ["sh", "/tmp/bin/container-start.sh"]
+ENTRYPOINT ["sh", "/tmp/bin/web-server-start.sh"]
