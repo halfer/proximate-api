@@ -7,6 +7,7 @@
         "proximate/core": "dev-master",
         "proximate/crawler": "dev-master",
         "proximate/requester": "dev-master",
+        "proximate/queue": "dev-master",
         "educoder/pest": "1.*",
         "icyapril/tail": "1.0.0"
     },
@@ -36,6 +37,10 @@
         {
             "type": "vcs",
             "url": "https://github.com/halfer/proximate-requester.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/halfer/proximate-queue.git"
         }
     ]
 }
