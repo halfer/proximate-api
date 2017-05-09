@@ -96,9 +96,9 @@ class Routing
             return $controller->execute();
         });
 
-        $app->get('/queue/{status}', function ($request, $response, $args) use ($routing) {
+        $app->get('/queue/{status}', function ($request, $response, $args) use ($queue, $routing) {
             $controller = $routing->getQueueListController($request, $response);
-            $controller->setQueuePath('/var/proximate/queue');
+            $controller->setQueuePath($queue->getQueuePath());
             $controller->setFileService(new FileService());
             $controller->setStatus($args['status']);
             return $controller->execute();

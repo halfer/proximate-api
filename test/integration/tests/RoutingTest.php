@@ -146,7 +146,7 @@ class RoutingTest extends TestCase
             [
                 'action' => 'getQueueListController',
                 'status' => 'ready',
-                'queue_path' => '/var/proximate/queue',
+                'queue_path' => '.',
                 'file_service' => 'Proximate\\Service\\File'
             ],
             $this->getJson($page)
