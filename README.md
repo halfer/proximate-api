@@ -49,5 +49,5 @@ You may need to alter that to get it to work for your use case (location of cach
 host/port on which to expose the API, choice of timezone etc). This will require the proxy to be
 run in a separate container.
 
-Alternatively see the [application repo](https://github.com/halfer/proximate-api) for a
+Alternatively see the [application repo](https://github.com/halfer/proximate-app) for a
 Docker Compose solution that will run everything that is needed, including a web frontend.
