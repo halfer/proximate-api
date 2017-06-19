@@ -2,6 +2,8 @@
 
 /* 
  * Custom autoloader
+ *
+ * @todo Swap this to a Composer approach instead
  */
 
 namespace Proximate;
