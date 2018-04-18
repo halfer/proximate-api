@@ -1,0 +1,51 @@
+DONE
+----
+
+a. Get list working - DONE
+b. View page - DONE
+c. Get delete working - DONE
+d. Add start crawl page - DONE
+e. Add test proxy mode - DONE
+f. Wrap proxied fetch in a try catch and test (unproxied first)
+g. Wrap proxied fetch in a try catch and test (proxied)
+h. Debug "The cache now contains 2 items", this is wrong!
+j. Why are proxied fetches not being recorded?
+i. Convert the log to say "The cache at `/remote/cache` now contains 2 items"
+k. Items are not deleting, why? (Permission issues).
+m. Add script to fix perms when API starts up
+i. Put logs somewhere visible (the redirection does not seem to have worked).
+   Maybe use a shell script with tee going to both stdout and file?
+l. New app page to view proxy logs
+w. Test crawler - needs to update the queue item with an error message
+v. List queue items in progress or errored
+o. Fix broken API tests (on Travis only)
+y. When deleting an item, stay on the same page
+q. When adding an item for crawling, stay on the same page
+n. Add a regex check in Proximate\Queue\Write so bad regexs can be rejected
+x. Add crawl timestamp to sites
+r. Move docker-compose.yml to app?
+z. Add instructions in api/readme on how to start with docker run
+A. Add instructions in app/readme on how to start with docker compose
+q. Publish proximate-app
+n. Requests for the same URL that differ in regex should have a different hash.
+p. SimpleCrawler goes to stderr, not stdout
+B. Queue is not working, debug this
+B1. Disable queue and run it manually
+B2. Investigate this in supervisord, "--address localhost:8080" - that looks wrong
+B3. Need to add "DOMDocument" to API container
+F. Move queue functionality to separate repo/container
+F. Queue has rename crash (caused by outdated hashes in old queue)
+H. Remove Supervisor from the API repo
+K. Can Docker re-start the queue automatically when it exits?
+J. Are queue items being created? Stop the queue and create .doing and .error items
+D. Add tests for Core
+E. Add build badge for Core
+
+TODO
+----
+
+I. Remove creation of queue folder from Dockerfile in API
+L. Collapse two volumes "/remote/x" into one volume "/remote"
+G. Add README for Queue repo
+B4. Can we add a "test on startup" in the proxy?
+C. If there is a name clash when renaming a status, add a count entry instead?
